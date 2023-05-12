@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".TransactionsFragment">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_margin="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/transactionDate"
+                android:layout_width="wrap_content"
+                android:layout_height="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="11dp"
+                android:text="04/27/2023"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toTopOf="@+id/transactionOrderNumber"
+                app:layout_constraintEnd_toStartOf="@+id/transactionTime"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/transactionTime"
+                android:layout_width="wrap_content"
+                android:layout_height="10dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="5dp"
+                android:text="3:55:32 PM"
+                android:textSize="8sp"
+                app:layout_constraintStart_toEndOf="@+id/transactionDate"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/transactionOrderNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="12dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="2dp"
+                android:text="# 05077"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transactionDate" />
+
+            <TextView
+                android:id="@+id/transactionID"
+                android:layout_width="wrap_content"
+                android:layout_height="11dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="1dp"
+                android:text="ABC12345678912334567"
+                android:textColor="@color/black"
+                android:textSize="9sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transactionOrderNumber" />
+
+            <TextView
+                android:id="@+id/transactionStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="12dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="6dp"
+                android:text="PENDING"
+                android:textColor="#FFC107"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transactionID"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/transactionTotal"
+                android:layout_width="60dp"
+                android:layout_height="17dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="end"
+                android:text="$ 9.99"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/PaymentType"
+                android:layout_width="30dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="20dp"
+                android:contentDescription="Payment Type"
+                android:src="@drawable/baseline_money_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/transactionTotal" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
