@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -137,9 +138,9 @@ public class HomeFragment extends Fragment {
                 Double itemSelected = Double.parseDouble(itemPrice.get(position));
 
                 // Test bottom Sheet
-                productName.add(itemName.get(position));
+                productName.add("Coke");
                 productTotal.add(2);
-                productPrice.add(itemPrice.get(position));
+                productPrice.add("2.94");
 
                 bottomSheetAdapter = new BottomSheetAdapter(productName, productTotal, productPrice, getContext());
 
@@ -162,24 +163,46 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Open bottom sheet layout
-                showButtonDialog();
+                Dialog dialog = showButtonDialog();
+                setBottomSheetHeight(dialog, 0.56); // Set the height to 60% of the screen height
+
             }
         });
 
     }
 
-    public void showButtonDialog(){
+    public Dialog showButtonDialog(){
         final Dialog dialog = new Dialog(getContext());
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.transaction_design_bottom_sheet);
-
+        dialog.setContentView(R.layout.bottomsheet_layout);
 
         dialog.show();
+
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+
+
+        return dialog;
     }
+
+    private void setBottomSheetHeight(Dialog dialog, double heightPercentage){
+        // Set the height of the dialog
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (int) (heightPercentage * getScreenHeight()));
+            window.setGravity(Gravity.BOTTOM);
+        }
+    }
+
+    private int getScreenHeight() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.heightPixels;
+    }
+
 
 }
