@@ -24,7 +24,8 @@
             android:background="@drawable/light_blue_border"
             android:backgroundTint="@color/white"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="TextSizeCheck">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImage"

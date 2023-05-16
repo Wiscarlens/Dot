@@ -22,9 +22,10 @@
             android:layout_gravity="right|bottom"
             android:layout_margin="40dp"
             android:backgroundTint="@color/dark_yellow"
+            android:contentDescription="@string/add_new_user"
             android:src="@drawable/baseline_add_24"
             app:tint="@color/white"
-            android:contentDescription="@string/add_new_user" />
+            tools:ignore="ImageContrastCheck,RtlHardcoded" />
 
     <TextView
         android:layout_width="match_parent"

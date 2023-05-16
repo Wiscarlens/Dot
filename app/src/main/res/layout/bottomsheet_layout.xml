@@ -47,22 +47,23 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_marginTop="5dp"
         android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp">
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="12dp"
+        tools:ignore="TextSizeCheck">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="35dp"
                 android:layout_weight="1"
-                android:text="Total"
+                android:text="@string/total"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -83,7 +84,6 @@
 
     </androidx.cardview.widget.CardView>
 
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -93,7 +93,6 @@
         android:layout_marginEnd="12dp"
         android:clickable="true"
         android:focusable="true"
-        android:maxWidth="380dp"
         android:text="@string/checkout"
         android:textColor="@color/white"
         android:textSize="18sp"
@@ -101,6 +100,6 @@
         app:cardCornerRadius="15dp"
         app:icon="@android:drawable/ic_lock_idle_lock"
         app:iconGravity="textStart"
-        tools:ignore="TextContrastCheck" />
+        tools:ignore="TextContrastCheck,VisualLintButtonSize" />
 
 </LinearLayout>

@@ -72,7 +72,8 @@
                 android:textColor="@color/black"
                 android:textSize="9sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/transactionOrderNumber" />
+                app:layout_constraintTop_toBottomOf="@+id/transactionOrderNumber"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/transactionStatus"
@@ -87,7 +88,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/transactionID"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/transactionTotal"

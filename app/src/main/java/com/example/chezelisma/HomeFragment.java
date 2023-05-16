@@ -1,8 +1,8 @@
 package com.example.chezelisma;
 
-/********************************************
- *Created by Wiscarlens Lucius on 1 February 2023.*
- ********************************************/
+/*
+ Created by Wiscarlens Lucius on 1 February 2023.
+ */
 
 import android.app.Dialog;
 import android.content.Context;
@@ -203,6 +203,5 @@ public class HomeFragment extends Fragment {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.heightPixels;
     }
-
 
 }

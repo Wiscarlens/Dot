@@ -64,6 +64,7 @@
     <string name="add_new_user">Add New User</string>
     <string name="slider">slidder</string>
     <string name="checkout">Checkout</string>
+    <string name="total">Total</string>
 
 
 </resources>

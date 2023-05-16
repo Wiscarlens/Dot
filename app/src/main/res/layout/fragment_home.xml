@@ -65,7 +65,7 @@
         android:textStyle="bold"
         app:cardCornerRadius="15dp"
         android:maxWidth="380dp"
-        tools:ignore="TextContrastCheck"
+        tools:ignore="TextContrastCheck,VisualLintButtonSize"
         android:clickable="true"
         android:focusable="true" />
 
