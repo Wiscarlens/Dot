@@ -10,10 +10,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.DisplayMetrics;
@@ -25,8 +27,14 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,6 +44,7 @@ public class HomeFragment extends Fragment {
     private GridView itemGridview;
     private FloatingActionButton scanButton;
     private Button chargeButton;
+    //private Button checkoutButton;
 
     private ArrayList<Integer> image = new ArrayList<>();
     private ArrayList<String> itemName = new ArrayList<>();
@@ -47,10 +56,14 @@ public class HomeFragment extends Fragment {
     private BottomSheetAdapter bottomSheetAdapter;
 
     // Variable to test bottom sheet
-    private RecyclerView recyclerView;
+    private RecyclerView bottomSheetrecyclerView;
     private ArrayList<String> productName =  new ArrayList<>();
     private ArrayList<Integer> productTotal  = new ArrayList<>();
     private ArrayList<String> productPrice  = new ArrayList<>();
+
+    // Test scanner check out
+    private AtomicReference<Double> price = new AtomicReference<>(0.0);
+    private String currentCharge;
 
 
     public void onAttach(@NonNull Context context) {
@@ -71,6 +84,7 @@ public class HomeFragment extends Fragment {
         itemGridview = view.findViewById(R.id.itemList);
         scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
+        //bottomSheetrecyclerView = view.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
 
         // Add item in the arraylist
         image.add(R.drawable.prestige);
@@ -127,48 +141,48 @@ public class HomeFragment extends Fragment {
 
         itemGridview.setAdapter(adapter);
 
-
-        AtomicReference<Double> price = new AtomicReference<>(0.0);
+        //AtomicReference<Double> price = new AtomicReference<>(0.0);
 
         // When user select an item
-        itemGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getContext(), "You selected " + itemName.get(position), Toast.LENGTH_SHORT).show();
-                Double itemSelected = Double.parseDouble(itemPrice.get(position));
-
-                // Test bottom Sheet
-                productName.add("Coke");
-                productTotal.add(2);
-                productPrice.add("2.94");
-
-                bottomSheetAdapter = new BottomSheetAdapter(productName, productTotal, productPrice, getContext());
+        itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
+            //Toast.makeText(getContext(), "You selected " + itemName.get(position), Toast.LENGTH_SHORT).show();
+            Double itemSelected = Double.parseDouble(itemPrice.get(position));
 
 
+            // Add selected item price together
+            price.set(price.get() + itemSelected);
 
-                // Add selected item price together
-                price.set(price.get() + itemSelected);
+            // Current total charge
+            //String currentCharge = "$ " + String.format("%.2f", price.get());
 
-                // Current total charge
-                String currentCharge = "$ " + String.format("%.2f", price.get());
+            currentCharge = "$ " + String.format("%.2f", price.get());
 
-                // Set the button text to the current value of price
-                chargeButton.setText(currentCharge);
+            // Set the button text to the current value of price
+            chargeButton.setText(currentCharge);
 
-            }
+            // Add data to the bottom sheet adapter
+            productName.add(itemName.get(position));
+            productTotal.add(2);
+            productPrice.add(itemPrice.get(position));
+
         });
 
         // When user click on charge button
-        chargeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open bottom sheet layout
-                Dialog dialog = showButtonDialog();
-                setBottomSheetHeight(dialog, 0.56); // Set the height to 60% of the screen height
-
-            }
+        chargeButton.setOnClickListener(v -> {
+            // Open bottom sheet layout
+            Dialog dialog = showButtonDialog();
+            setBottomSheetHeight(dialog, 0.56); // Set the height to 60% of the screen height
         });
 
+
+        //When user click on scanner button
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(fragmentActivity, "Scanner Work", Toast.LENGTH_SHORT).show();
+                scanCode();
+            }
+        });
     }
 
     public Dialog showButtonDialog(){
@@ -177,14 +191,29 @@ public class HomeFragment extends Fragment {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheet_layout);
 
+        TextView transactionTotal = dialog.findViewById(R.id.transactionTotal);
+        Button checkoutButton = dialog.findViewById(R.id.checkoutButton);
+        bottomSheetrecyclerView = dialog.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
+
+        transactionTotal.setText(currentCharge);
+
+        // Bottom sheet recycle view
+        bottomSheetrecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Create the adapter and set it to the RecyclerView
+        bottomSheetAdapter = new BottomSheetAdapter(productName, productTotal, productPrice, getContext());
+        bottomSheetrecyclerView.setAdapter(bottomSheetAdapter);
+
+        checkoutButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            Toast.makeText(fragmentActivity, "Test Work", Toast.LENGTH_SHORT).show();
+        });
+
         dialog.show();
 
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
-
-
 
         return dialog;
     }
@@ -204,4 +233,26 @@ public class HomeFragment extends Fragment {
         return displayMetrics.heightPixels;
     }
 
+    // Scanner bar/QR code
+    private void scanCode(){
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Press Volume Up to Turn Flash On");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        scannerLauncher.launch(options);
+    }
+
+    ActivityResultLauncher<ScanOptions>  scannerLauncher = registerForActivityResult(new ScanContract(), result -> {
+        //Toast.makeText(fragmentActivity, result.getContents(), Toast.LENGTH_SHORT).show();
+        String res = result.getContents();
+        if(res.equals("096619756803")){
+            Toast.makeText(fragmentActivity, "Water added", Toast.LENGTH_SHORT).show();
+            //Test scanner check out
+            // Add selected item price together
+            //price.set(price.get() + 1.99);
+        } else{
+            Toast.makeText(fragmentActivity, "Item " + result.getContents() + " not found", Toast.LENGTH_SHORT).show();
+        }
+    });
 }

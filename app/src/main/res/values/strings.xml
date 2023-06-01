@@ -60,11 +60,14 @@
     <string name="no">NO</string>
     <string name="current_sales">Current Sales</string>
     <string name="product_name">Product Name</string>
-    <string name="total_unit">x1</string>
+    <string name="total_unit">x</string>
     <string name="add_new_user">Add New User</string>
     <string name="slider">slidder</string>
     <string name="checkout">Checkout</string>
     <string name="total">Total</string>
+    <string name="One">1</string>
+    <string name="zero_dollar">0.00</string>
+    <string name="dollar_sign">$</string>
 
 
 </resources>

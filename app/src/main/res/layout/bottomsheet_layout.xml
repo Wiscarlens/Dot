@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/dialog_bkg"
-    tools:context=".MainActivity">
+    tools:context=".HomeFragment">
 
     <ImageView
         android:layout_width="70dp"
@@ -30,7 +30,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="240dp"
         android:layout_marginTop="8dp"
         android:layout_gravity="center"
         android:layout_marginStart="12dp"
@@ -61,7 +61,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="35dp"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:text="@string/total"
                 android:textColor="@color/black"
@@ -72,7 +72,7 @@
                 android:id="@+id/transactionTotal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="35dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:text="@string/default_charge"
                 android:textAlignment="textEnd"
@@ -85,6 +85,7 @@
     </androidx.cardview.widget.CardView>
 
     <Button
+        android:id="@+id/checkoutButton"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_gravity="center|bottom"
