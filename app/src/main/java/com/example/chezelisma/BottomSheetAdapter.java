@@ -16,22 +16,19 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.BottomViewHolder>{
     private ArrayList<String> productName;
-    private ArrayList<Integer> productTotal;
-    private ArrayList<String> productPrice;
-    
+    private ArrayList<Double> productPrice;
+    private Product[] product;
+    Map<String, Integer> nameFrequency;
 
     private Context context;
 
-    public BottomSheetAdapter(ArrayList<String> productName, ArrayList<Integer> productTotal,
-                              ArrayList<String> productPrice, Context context) {
-        this.productName = productName;
-        this.productTotal = productTotal;
-        this.productPrice = productPrice;
+    public BottomSheetAdapter(ArrayList<String> name, ArrayList<Double> price, Context context) {
+        this.productName = name;
+        this.productPrice = price;
         this.context = context;
     }
 
@@ -44,55 +41,44 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemCount() {
-        return productName.size();
+        nameFrequency = SelectedProduct.getProductFrequency(productName);
+        return nameFrequency.size();
     }
 
-    @NonNull
     @Override
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
-        holder.productTextView.setText(productName.get(position));
-        holder.totalTextView.setText(String.valueOf(productTotal.get(position))); // Convert to String
-        holder.priceTextView.setText(productPrice.get(position));
+        nameFrequency = SelectedProduct.getProductFrequency(productName);
+        Map<String, Double> namePrice = SelectedProduct.combinePriceName(productName, productPrice);
 
-        holder.cardView.setOnClickListener(v -> {
-            Toast.makeText(context, "You selected " + productName.get(position), Toast.LENGTH_SHORT).show();
-        });
+        product = SelectedProduct.getProductAsArray(nameFrequency, namePrice);
+
+        // Convert to String
+        String tempFrequency =  String.valueOf(product[position].getFrequency());
+        String tempPrice = Double.toString(product[position].getPrice());
+
+        holder.productNameTextView.setText(product[position].getName());
+        holder.frequencyTextView.setText(tempFrequency);
+        holder.priceTextView.setText(tempPrice);
+
+        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + product[position].getName(), Toast.LENGTH_SHORT).show());
     }
 
 
     public class BottomViewHolder extends RecyclerView.ViewHolder {
-        private TextView productTextView;
-        private TextView totalTextView;
+        private TextView productNameTextView;
+        private TextView frequencyTextView;
         private TextView priceTextView;
         private CardView cardView;
 
         public BottomViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            productTextView = itemView.findViewById(R.id.productName_design);
-            totalTextView = itemView.findViewById(R.id.unitTotal_design);
+            productNameTextView = itemView.findViewById(R.id.productName_design);
+            frequencyTextView = itemView.findViewById(R.id.unitTotal_design);
             priceTextView = itemView.findViewById(R.id.unitPrice_design);
             cardView = itemView.findViewById(R.id.bottomSheetDesignCardView);
 
         }
     }
 
-    public static Map<String, Integer> getProductFrequency(ArrayList<String> itemNames) {
-        Map<String, Integer> frequencyMap = new HashMap<>();
-
-        // Iterate through each item name
-        for (String itemName : itemNames) {
-            // If the item name is already in the map, increment its frequency
-            if (frequencyMap.containsKey(itemName)) {
-                int frequency = frequencyMap.get(itemName);
-                frequencyMap.put(itemName, frequency + 1);
-            }
-            // Otherwise, add the item name to the map with a frequency of 1
-            else {
-                frequencyMap.put(itemName, 1);
-            }
-        }
-
-        return frequencyMap;
-    }
 }
