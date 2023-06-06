@@ -22,7 +22,8 @@ public class ItemGridAdapter extends BaseAdapter {
 
     private Context context;
 
-    public ItemGridAdapter(ArrayList<Integer> image, ArrayList<String> name, ArrayList<String> price, ArrayList<String> unit,ArrayList<Integer> bkgColor, Context context) {
+    public ItemGridAdapter(ArrayList<Integer> image, ArrayList<String> name, ArrayList<String> price,
+                           ArrayList<String> unit,ArrayList<Integer> bkgColor, Context context) {
         this.itemImage = image;
         this.itemName = name;
         this.itemPrice = price;
@@ -64,7 +65,8 @@ public class ItemGridAdapter extends BaseAdapter {
 
         ItemImageView.setImageResource(itemImage.get(position));
         ItemNameTextView.setText(itemName.get(position));
-        priceTextView.setText(itemPrice.get(position));
+        //priceTextView.setText(itemPrice.get(position));
+        priceTextView.setText(CurrencyFormat.getCurrencyFormat(Double.parseDouble(itemPrice.get(position))));
         unitTextView.setText(itemUnitType.get(position));
         backgroundColor.setBackgroundColor(bkgColor.get(position));
 

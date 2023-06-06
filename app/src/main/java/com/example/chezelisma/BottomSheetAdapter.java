@@ -15,7 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.BottomViewHolder>{
@@ -47,19 +49,24 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
+        // ******************Need to optimize
         nameFrequency = SelectedProduct.getProductFrequency(productName);
         Map<String, Double> namePrice = SelectedProduct.combinePriceName(productName, productPrice);
 
         product = SelectedProduct.getProductAsArray(nameFrequency, namePrice);
 
+        // Format the double value into currency format
+        NumberFormat formatCurrency = NumberFormat.getCurrencyInstance(Locale.US);
+
         // Convert to String
         String tempFrequency =  String.valueOf(product[position].getFrequency());
-        String tempPrice = Double.toString(product[position].getPrice());
+        String tempPrice = CurrencyFormat.getCurrencyFormat(product[position].getPrice());
 
         holder.productNameTextView.setText(product[position].getName());
         holder.frequencyTextView.setText(tempFrequency);
         holder.priceTextView.setText(tempPrice);
 
+        // When User click in a product in bottom sheet
         holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + product[position].getName(), Toast.LENGTH_SHORT).show());
     }
 

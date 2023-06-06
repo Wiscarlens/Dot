@@ -33,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
@@ -130,26 +131,23 @@ public class HomeFragment extends Fragment {
 
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
-            //Toast.makeText(getContext(), "You selected " + itemName.get(position), Toast.LENGTH_SHORT).show();
             Double itemSelected = Double.parseDouble(itemPrice.get(position));
-            //Double itemSelected = itemPrice.get(position);
-
 
             // Add selected item price together
             totalPrice.set(totalPrice.get() + itemSelected);
 
+            // Format the double value into currency format
+            //NumberFormat formatCurrency = NumberFormat.getCurrencyInstance(Locale.US);
+
             // Current total charge
-
-            //currentCharge = "$ " + String.format("%.2f", totalPrice.get());
-            currentCharge = "$ " + String.format(Locale.US, "%.2f", totalPrice.get());
-
+            //currentCharge = formatCurrency.format(totalPrice.get());
+            currentCharge = CurrencyFormat.getCurrencyFormat(totalPrice.get());
 
             // Set the button text to the current value of price
             chargeButton.setText(currentCharge);
 
             // Add data to the bottom sheet adapter
             productName.add(itemName.get(position));
-            //productTotal.add(2);
             productPrice.add(Double.valueOf(itemPrice.get(position)));
 
         });
@@ -175,15 +173,15 @@ public class HomeFragment extends Fragment {
         TextView transactionTotal = dialog.findViewById(R.id.transactionTotal);
         Button checkoutButton = dialog.findViewById(R.id.checkoutButton);
         // Variable to test bottom sheet
-        RecyclerView bottomSheetrecyclerView = dialog.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
+        RecyclerView bottomSheetRecyclerView = dialog.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
 
         transactionTotal.setText(currentCharge);
 
         // Bottom sheet recycle view
-        bottomSheetrecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // Create the adapter and set it to the RecyclerView
         BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(productName, productPrice, getContext());
-        bottomSheetrecyclerView.setAdapter(bottomSheetAdapter);
+        bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
 
         checkoutButton.setOnClickListener(v -> {
             dialog.dismiss();

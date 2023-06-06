@@ -36,7 +36,7 @@ public class SignUpFragment extends Fragment {
     private TextInputEditText confirmPassword;
     private TextInputLayout confirmPasswordLayout;
     private Button signup;
-    TextInputEditText dateOfBirth;
+    private TextInputEditText dateOfBirth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
