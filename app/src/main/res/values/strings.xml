@@ -8,6 +8,7 @@
     <string name="confirm">Confirm</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="confirm_logout">Are you sure you want to logout?</string>
+    <string name="confirm_checkout">Are you sure you want to checkout?</string>
     <string name="remember_me">Remember me</string>
     <string name="forgot_your_password">Forgot password?</string>
     <string name="required">Required</string>
@@ -41,8 +42,9 @@
     <string name="fullname">Full NAME</string>
     <string name="sign_up">Sign Up</string>
     <string name="field_empty">This field cannot be empty</string>
-    <string name="password_empty"> Password cannot be empty</string>
+    <string name="password_empty">Password cannot be empty</string>
     <string name="email_empty"> Email cannot be empty</string>
+    <string name="empty_cart">Your cart is empty!</string>
     <string name="valid_email"> Please enter a valid email</string>
     <string name="password_not_same">Password are not the same</string>
     <string name="login_successful">Login Successful</string>
@@ -54,7 +56,7 @@
     <string name="position">Position</string>
     <string name="scanner_barcode">Barcode Scanner</string>
     <string name="new_item">New Item</string>
-    <string name="default_charge">0.00</string>
+    <string name="default_charge">$ 0.00</string>
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">NO</string>
@@ -68,6 +70,45 @@
     <string name="One">1</string>
     <string name="zero_dollar">0.00</string>
     <string name="dollar_sign">$</string>
+    <string name="receipt">Receipt</string>
+    <string name="start_a_new_sale">Start a new sale</string>
+    <string name="done">Done</string>
+    <string name="transaction_confirmation">Transaction Confirmation</string>
+    <string name="Street_Name_Sample">12 Main st</string>
+    <string name="city_st_zipcode">City, ST 00000</string>
+    <string name="date_sample">06–15–2023</string>
+    <string name="time_sample">3:55:32 PM</string>
+    <string name="transaction_id_sample">ABC12345678912334567</string>
+    <string name="cart">Cart</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="tax">Tax</string>
+    <string name="pending">PENDING</string>
+    <string name="print">Print</string>
+    <string name="share">Share</string>
+    <string name="barcode">Barcode</string>
+    <string name="payment_type">Payment Type</string>
+
+    <string name="step1button">Step1Button</string>
+    <string name="step2button">step2Button</string>
+    <string name="step3button">step3Button</string>
+    <string name="previousButton">previousButton</string>
+    <string name="nextButton">nextButton</string>
+    <string name="create_a_new_user">CREATE A NEW USER</string>
+    <string name="account">Account</string>
+    <string name="personal">Personal</string>
+    <string name="success">Success</string>
+    <string name="contact">Contact</string>
+    <string name="other">Other</string>
+    <string name="personal_information">Personal Information:</string>
+    <string name="middle_name">Middle Name</string>
+    <string name="gender">Gender</string>
+    <string name="new_user_profile">New User Profile Picture</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="street_name">Street Name</string>
+    <string name="state">State</string>
+    <string name="zip_code">Zip Code</string>
+    <string name="contact_information">Contact Information:</string>
+    <string name="city">City</string>
 
 
 </resources>

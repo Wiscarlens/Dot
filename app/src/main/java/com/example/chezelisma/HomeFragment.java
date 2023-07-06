@@ -4,8 +4,10 @@ package com.example.chezelisma;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,9 +38,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class HomeFragment extends Fragment {
@@ -46,14 +49,12 @@ public class HomeFragment extends Fragment {
     private ArrayList<String> itemPrice = new ArrayList<>();
     private ArrayList<String> itemUnitType = new ArrayList<>();
     private ArrayList<Integer> backgroundColor = new ArrayList<>();
-
-    private ArrayList<String> productName =  new ArrayList<>();
-    private ArrayList<Double> productPrice  = new ArrayList<>();
+    private ArrayList<String> selectProductName =  new ArrayList<>();
+    private ArrayList<Double> selectProductPrice = new ArrayList<>();
 
     // Select item total
     private AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
     private String currentCharge;
-
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -137,18 +138,14 @@ public class HomeFragment extends Fragment {
             totalPrice.set(totalPrice.get() + itemSelected);
 
             // Format the double value into currency format
-            //NumberFormat formatCurrency = NumberFormat.getCurrencyInstance(Locale.US);
-
-            // Current total charge
-            //currentCharge = formatCurrency.format(totalPrice.get());
             currentCharge = CurrencyFormat.getCurrencyFormat(totalPrice.get());
 
             // Set the button text to the current value of price
             chargeButton.setText(currentCharge);
 
             // Add data to the bottom sheet adapter
-            productName.add(itemName.get(position));
-            productPrice.add(Double.valueOf(itemPrice.get(position)));
+            selectProductName.add(itemName.get(position));
+            selectProductPrice.add(Double.valueOf(itemPrice.get(position)));
 
         });
 
@@ -179,13 +176,29 @@ public class HomeFragment extends Fragment {
 
         // Bottom sheet recycle view
         bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         // Create the adapter and set it to the RecyclerView
-        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(productName, productPrice, getContext());
+        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(selectProductName, selectProductPrice, getContext());
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
 
         checkoutButton.setOnClickListener(v -> {
             dialog.dismiss();
-            Toast.makeText(fragmentActivity, "Test Work", Toast.LENGTH_SHORT).show();
+
+            // Check if recycle view is empty before check out
+            if (!selectProductName.isEmpty()) {
+                // Sending data to another fragment
+                Bundle result = new Bundle();
+                result.putString("price", currentCharge);
+                getParentFragmentManager().setFragmentResult("priceData", result);
+
+                // Open confirmation fragment
+                showDialogMessage();
+
+            } else {
+                String message = getResources().getString(R.string.empty_cart);
+                Toast.makeText(fragmentActivity, message, Toast.LENGTH_SHORT).show();
+            }
+
         });
 
         dialog.show();
@@ -207,6 +220,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    // Set bottom sheet height
     private int getScreenHeight() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -234,4 +248,24 @@ public class HomeFragment extends Fragment {
             Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
         }
     });
+
+    private void showDialogMessage() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(getResources().getString(R.string.confirm))
+                .setMessage(getResources().getString(R.string.confirm_checkout))
+                .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> {
+                    // If user click on NO nothing happen
+                })
+                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                    // Open ConfirmationFragment when user click on YES
+                    FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    ConfirmationFragment confirmationFragment = new ConfirmationFragment();
+                    fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
+                    fragmentTransaction.commit();
+                }).show();
+    }
+
+
+
 }

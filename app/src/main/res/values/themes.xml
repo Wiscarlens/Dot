@@ -24,4 +24,10 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <!--    Make the progress bar thicker-->
+    <style name="CustomProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/custom_progress_bar</item>
+    </style>
+
 </resources>
