@@ -5,42 +5,33 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    tools:context=".MainActivity"
     android:paddingStart="40dp"
     android:paddingEnd="40dp"
     android:gravity="center_vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/product_information"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:gravity="start"
-        android:textColor="@color/black"
-        android:layout_marginBottom="30dp"/>
-
     <ImageView
-        android:id="@+id/newItemImage"
+        android:id="@+id/newProfileImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:src="@drawable/uploading"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center"
-        android:contentDescription="@string/new_item_image" />
+        android:contentDescription="@string/new_user_profile" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ProductNameLayout"
+        android:id="@+id/signupPositionLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="@string/product_name"
+        android:hint="@string/position"
         app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
         app:endIconMode="clear_text">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ProductNameText"
+            android:id="@+id/signupPositionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
@@ -48,35 +39,43 @@
             android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <Spinner
-        android:id="@+id/productCategoryText"
-        style="@style/Widget.AppCompat.Spinner.DropDown"
-        android:layout_width="330dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/spinner_border"
-        android:gravity="start|center_vertical"
-        android:paddingStart="5dp"
-        android:textColor="@color/gray" />
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/unitPriceLayout"
+        android:id="@+id/signupPasswordLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="@string/unit_price"
+        android:hint="@string/password"
         app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
-        app:endIconMode="clear_text">
+        app:endIconMode="password_toggle">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/unitPriceText"
+            android:id="@+id/signupPasswordText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
-            android:inputType="numberDecimal"
+            android:inputType="textPassword"
+            android:textColor="@color/black" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signupConfirmPasswordLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/confirm_password"
+        app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="@color/white"
+        app:endIconMode="password_toggle">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signupConfirmPasswordText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:inputType="textPassword"
             android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 

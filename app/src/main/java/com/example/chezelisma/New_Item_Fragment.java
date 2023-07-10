@@ -15,17 +15,21 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 
 public class New_Item_Fragment extends Fragment {
@@ -50,7 +54,7 @@ public class New_Item_Fragment extends Fragment {
     // Step One field
     private ImageView itemImage;
     private TextInputEditText itemName;
-    private TextInputEditText category;
+    private Spinner category;
     private TextInputEditText unitPrice;
 
     // Step Two field
@@ -152,18 +156,21 @@ public class New_Item_Fragment extends Fragment {
         // Show the initial step content
         showStepContent(currentStep);
 
-//        ArrayList<String> itemList = new ArrayList<String>();
-//        itemList.add("Soft Drink");
-//        itemList.add("Alcohol");
-//        itemList.add("Game");
+        // Category Option
+        ArrayList<String> categoryOptions = new ArrayList<>();
+        categoryOptions.add("Category");
+        categoryOptions.add("Soft Drink");
+        categoryOptions.add("Alcohol");
+        categoryOptions.add("Game");
 
-//        ArrayAdapter categoryList = new ArrayAdapter(getContext(), R.layout.list_item, itemList);
-//        category.setAdapter(categoryList);
 
-//        category.setOnItemClickListener((parent, view1, position, id) -> {
-//            String item = parent.getItemAtPosition(position).toString();
-//            //Toast.makeText(NewItem.this, item, Toast.LENGTH_SHORT).show();
-//        });
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categoryOptions);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        category.setAdapter(categoryAdapter);
+
+
+
+
 
 //        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
 //                new ActivityResultContracts.StartActivityForResult(),
@@ -320,7 +327,7 @@ public class New_Item_Fragment extends Fragment {
 
     public void uploadData(){
         String Name = String.valueOf(itemName.getText()).trim();
-        String Category = String.valueOf(category.getText());
+        String Category = category.getSelectedItem().toString();
         String stock = String.valueOf(this.stock.getText());
         String SKU = String.valueOf(sku.getText()).trim();
         String UnitType = String.valueOf(unitType.getText());
@@ -334,7 +341,7 @@ public class New_Item_Fragment extends Fragment {
                         String message = getResources().getString(R.string.save);
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     }
-                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage().toString(), Toast.LENGTH_SHORT).show());
+                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
 }
