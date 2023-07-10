@@ -1,209 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".New_Item_Fragment">
 
-    <androidx.cardview.widget.CardView
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_new_item"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_gravity="center"
+        android:padding="15dp"/>
+
+    <LinearLayout
+        android:id="@+id/stepContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="20dp">
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_marginBottom="10dp">
 
+        <View
+            android:layout_width="50dp"
+            android:layout_height="2dp"
+            android:background="@color/dark_yellow"
+            android:layout_marginStart="5dp" />
+
+        <!-- Step 1 -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/light_blue_border"
-            android:backgroundTint="@color/pink_gold"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/stepOneButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circular_button"
+                android:backgroundTint="@color/dark_yellow"
+                android:contentDescription="@string/step2button"
+                android:src="@drawable/box_icon"
+                app:tint="@color/white"
+                tools:ignore="ImageContrastCheck" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/create_item"
-                android:textAlignment="center"
+                android:text="@string/product"
                 android:textColor="@color/dark_yellow"
-                android:textSize="20sp" />
+                android:textStyle="bold"
+                tools:ignore="TextContrastCheck" />
 
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/newItemImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/uploading"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/roundedImageViewRounded"/>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/itemName"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="@string/name"
-                app:boxBackgroundColor="@color/white"
-                app:boxBackgroundMode="outline"
-                app:boxCornerRadiusBottomEnd="30dp"
-                app:boxCornerRadiusBottomStart="30dp"
-                app:boxCornerRadiusTopEnd="30dp"
-                app:boxCornerRadiusTopStart="30dp"
-                app:endIconMode="clear_text">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/itemNameText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/itemCategory"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="@string/category"
-                app:boxBackgroundColor="@color/white"
-                app:boxBackgroundMode="outline"
-
-                app:boxCornerRadiusBottomEnd="30dp"
-                app:boxCornerRadiusBottomStart="30dp"
-                app:boxCornerRadiusTopEnd="30dp"
-                app:boxCornerRadiusTopStart="30dp"
-                app:helperTextEnabled="false"
-                app:hintAnimationEnabled="true">
-
-                <AutoCompleteTextView
-                    android:id="@+id/itemCategoryText"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:gravity="start|center_vertical"
-                    android:paddingLeft="15dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/itemOptions"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="@string/options"
-                app:boxBackgroundColor="@color/white"
-                app:boxBackgroundMode="outline"
-
-                app:boxCornerRadiusBottomEnd="30dp"
-                app:boxCornerRadiusBottomStart="30dp"
-                app:boxCornerRadiusTopEnd="30dp"
-                app:boxCornerRadiusTopStart="30dp"
-                app:endIconMode="clear_text">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/itemOptionsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/itemSKU"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="@string/sku"
-                app:boxBackgroundColor="@color/white"
-                app:boxBackgroundMode="outline"
-                app:endIconMode="clear_text"
-
-                app:boxCornerRadiusBottomEnd="30dp"
-                app:boxCornerRadiusBottomStart="30dp"
-                app:boxCornerRadiusTopEnd="30dp"
-                app:boxCornerRadiusTopStart="30dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/itemSKUText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/itemUnitType"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="@string/unit_type"
-                app:boxBackgroundColor="@color/white"
-                app:boxBackgroundMode="outline"
-                app:endIconMode="clear_text"
-
-                app:boxCornerRadiusBottomEnd="30dp"
-                app:boxCornerRadiusBottomStart="30dp"
-                app:boxCornerRadiusTopEnd="30dp"
-                app:boxCornerRadiusTopStart="30dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/itemUnitTypeText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:inputType="text"
-                    android:textColorHint="#757575" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/itemPrice"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="@string/price"
-                app:boxBackgroundColor="@color/white"
-                app:boxBackgroundMode="outline"
-                app:endIconMode="clear_text"
-
-                app:boxCornerRadiusBottomEnd="30dp"
-                app:boxCornerRadiusBottomStart="30dp"
-                app:boxCornerRadiusTopEnd="30dp"
-                app:boxCornerRadiusTopStart="30dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/itemPriceText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:inputType="numberDecimal" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <Button
-                android:id="@+id/addButton"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/add"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                app:cornerRadius="20dp" />
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+        <View
+            android:id="@+id/contactLeftView"
+            android:layout_width="50dp"
+            android:layout_height="2dp"
+            android:background="#B1ACAC" />
+
+        <!-- Step 2 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/stepTwoButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circular_button"
+                android:contentDescription="@string/step1button"
+                android:src="@drawable/baseline_numbers_24"
+                app:tint="@color/white"
+                tools:ignore="ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/stepTwoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/details"
+                android:textColor="@color/light_gray"
+                android:textStyle="bold"
+                tools:ignore="TextContrastCheck" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/contactRightView"
+            android:layout_width="50dp"
+            android:layout_height="2dp"
+            android:background="#B1ACAC" />
+
+        <!-- Step 3 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/stepThreeButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/circular_button"
+                android:contentDescription="@string/step3button"
+                android:src="@drawable/baseline_attach_money_24"
+                app:tint="#FFFFFF"
+                tools:ignore="ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/stepThreeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/price"
+                android:textColor="@color/light_gray"
+                android:textStyle="bold"
+                tools:ignore="TextContrastCheck" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/OtherRightView"
+            android:layout_width="50dp"
+            android:layout_height="2dp"
+            android:layout_marginEnd="5dp"
+            android:background="#B1ACAC" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:max="100"
+        style="@style/CustomProgressBar"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp" />
+
+    <!-- Step Content -->
+    <FrameLayout
+        android:id="@+id/stepContentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center">
+
+        <include layout="@layout/new_item_form_step_one" />
+
+    </FrameLayout>
+
+    <!-- Previous and Next Buttons -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/previousButton"
+            android:layout_width="80dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/button_style"
+            android:src="@drawable/baseline_arrow_back_24"
+            app:tint="@color/black"
+            android:contentDescription="@string/previousButton"/>
+
+        <ImageButton
+            android:id="@+id/nextButton"
+            android:layout_width="80dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:background="@drawable/button_style"
+            android:backgroundTint="@color/dark_yellow"
+            android:contentDescription="@string/nextButton"
+            android:src="@drawable/baseline_arrow_forward_24"
+            app:tint="@color/black"
+            tools:ignore="ImageContrastCheck" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="80dp"
+            android:layout_height="58dp"
+            android:text="@string/save"
+            android:textColor="@color/black"
+            android:backgroundTint="#4CAF50"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/nextButton"
+            android:visibility="gone"/>
+
+    </LinearLayout>
 
 
-</ScrollView>
+</LinearLayout>

@@ -87,7 +87,6 @@
     <string name="share">Share</string>
     <string name="barcode">Barcode</string>
     <string name="payment_type">Payment Type</string>
-
     <string name="step1button">Step1Button</string>
     <string name="step2button">step2Button</string>
     <string name="step3button">step3Button</string>
@@ -109,6 +108,16 @@
     <string name="zip_code">Zip Code</string>
     <string name="contact_information">Contact Information:</string>
     <string name="city">City</string>
+    <string name="add_new_item">ADD NEW ITEM</string>
+    <string name="product">Product</string>
+    <string name="details">Details</string>
+    <string name="product_information">Product Information:</string>
+    <string name="new_item_image">New Item Image</string>
+    <string name="product_category">Product Category</string>
+    <string name="unit_price">Unit Price</string>
+    <string name="product_details">Product Details:</string>
+    <string name="unit">Unit</string>
+    <string name="stock">Stock</string>
 
 
 </resources>

@@ -185,6 +185,8 @@ public class SignUpFragment extends Fragment {
 
         saveButton.setOnClickListener(v -> {
             showDialogMessage(); // Test Line
+
+
 //            String userPosition = position.getText().toString().trim();
 //            String userFirstName = firstName.getText().toString().trim();
 //            String userLastName = lastName.getText().toString().trim();

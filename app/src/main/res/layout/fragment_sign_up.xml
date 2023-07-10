@@ -54,7 +54,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/personal"
                 android:textColor="@color/dark_yellow"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="TextContrastCheck" />
 
         </LinearLayout>
 
@@ -65,8 +66,6 @@
             android:background="#B1ACAC" />
 
         <!-- Step 2 -->
-
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,7 +79,8 @@
                 android:background="@drawable/circular_button"
                 android:contentDescription="@string/step1button"
                 android:src="@drawable/baseline_local_phone_24"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                tools:ignore="ImageContrastCheck" />
 
             <TextView
                 android:id="@+id/stepTwoTextView"
@@ -88,7 +88,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/contact"
                 android:textColor="@color/light_gray"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:ignore="TextContrastCheck" />
 
         </LinearLayout>
 
@@ -122,7 +123,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/other"
                 android:textColor="@color/light_gray"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="TextContrastCheck" />
 
         </LinearLayout>
 
@@ -185,7 +187,8 @@
             android:backgroundTint="@color/dark_yellow"
             android:contentDescription="@string/nextButton"
             android:src="@drawable/baseline_arrow_forward_24"
-            app:tint="@color/black" />
+            app:tint="@color/black"
+            tools:ignore="ImageContrastCheck" />
 
         <Button
             android:id="@+id/saveButton"
