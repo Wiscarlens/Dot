@@ -118,6 +118,9 @@
     <string name="product_details">Product Details:</string>
     <string name="unit">Unit</string>
     <string name="stock">Stock</string>
+    <string name="product_price">Product Price:</string>
+    <string name="wholesales_price">Wholesales Price</string>
+    <string name="item_name">Item Name</string>
 
 
 </resources>

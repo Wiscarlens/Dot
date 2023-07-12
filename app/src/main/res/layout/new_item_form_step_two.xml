@@ -40,25 +40,37 @@
             android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/unitLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/unit"
-        app:boxBackgroundMode="outline"
-        app:boxBackgroundColor="@color/white"
-        app:endIconMode="clear_text">
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/unitLayout"-->
+<!--        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+<!--        android:layout_width="330dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:hint="@string/unit"-->
+<!--        app:boxBackgroundMode="outline"-->
+<!--        app:boxBackgroundColor="@color/white"-->
+<!--        app:endIconMode="clear_text">-->
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/unitText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:inputType="text"
-            android:textColor="@color/black" />
-    </com.google.android.material.textfield.TextInputLayout>
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:id="@+id/unitText"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="start|center_vertical"-->
+<!--            android:inputType="text"-->
+<!--            android:textColor="@color/black" />-->
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+    <Spinner
+        android:id="@+id/unitSpinner"
+        style="@style/Widget.AppCompat.Spinner.DropDown"
+        android:layout_width="330dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/spinner_border"
+        android:gravity="start|center_vertical"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/gray" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/stockLayout"

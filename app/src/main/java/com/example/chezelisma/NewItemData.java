@@ -2,19 +2,40 @@ package com.example.chezelisma;
 
 public class NewItemData {
     private String name;
+    private double price;
     private String category;
-    private String options;
+
     private String sku;
     private String unitType;
-    private String price;
+    private int stock;
 
-    public NewItemData(String name, String category, String options, String sku, String unitType, String price) {
+    private double wholesalesPrice;
+    private double tax;
+    private String description;
+
+    //private String options;
+
+
+//    public NewItemData(String name, String category, String options, String sku, String unitType, String price) {
+//        this.name = name;
+//        this.category = category;
+//        this.options = options;
+//        this.sku = sku;
+//        this.unitType = unitType;
+//        this.price = price;
+//    }
+
+
+    public NewItemData(String name, double price, String category, String sku, String unitType, int stock, double wholesalesPrice, double tax, String description) {
         this.name = name;
+        this.price = price;
         this.category = category;
-        this.options = options;
         this.sku = sku;
         this.unitType = unitType;
-        this.price = price;
+        this.stock = stock;
+        this.wholesalesPrice = wholesalesPrice;
+        this.tax = tax;
+        this.description = description;
     }
 
     public String getName() {
@@ -25,20 +46,20 @@ public class NewItemData {
         this.name = name;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public String getCategory() {
         return category;
     }
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getOptions() {
-        return options;
-    }
-
-    public void setOptions(String options) {
-        this.options = options;
     }
 
     public String getSku() {
@@ -57,11 +78,35 @@ public class NewItemData {
         this.unitType = unitType;
     }
 
-    public String getPrice() {
-        return price;
+    public int getStock() {
+        return stock;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public double getWholesalesPrice() {
+        return wholesalesPrice;
+    }
+
+    public void setWholesalesPrice(double wholesalesPrice) {
+        this.wholesalesPrice = wholesalesPrice;
+    }
+
+    public double getTax() {
+        return tax;
+    }
+
+    public void setTax(double tax) {
+        this.tax = tax;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

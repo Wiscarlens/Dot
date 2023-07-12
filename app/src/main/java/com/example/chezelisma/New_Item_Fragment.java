@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -59,24 +58,24 @@ public class New_Item_Fragment extends Fragment {
 
     // Step Two field
     private TextInputEditText sku;
-    private TextInputEditText unitType;
-    private TextInputEditText stock;
+    private Spinner unitType;
+    private TextInputEditText itemStock;
 
     // Step Three field
     private TextInputEditText wholesalePrice;
-    private TextInputEditText tax;
-    private TextInputEditText description;
+    private TextInputEditText itemTax;
+    private TextInputEditText itemDescription;
 
     private Button saveButton;
+    FragmentActivity fragmentActivity;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        FragmentActivity fragmentActivity = (FragmentActivity) context;
+        fragmentActivity = (FragmentActivity) context;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_new_item_, container, false);
     }
@@ -111,19 +110,19 @@ public class New_Item_Fragment extends Fragment {
 
         // Step One form
         itemImage = stepOneLayout.findViewById(R.id.newItemImage);
-        itemName = stepOneLayout.findViewById(R.id.ProductNameText);
+        itemName = stepOneLayout.findViewById(R.id.itemNameText);
         category = stepOneLayout.findViewById(R.id.productCategoryText);
         unitPrice = stepOneLayout.findViewById(R.id.unitPriceText);
 
         // Step two form
         sku = stepTwoLayout.findViewById(R.id.SKUText);
-        unitType = stepTwoLayout.findViewById(R.id.unitText);
-        stock = stepTwoLayout.findViewById(R.id.stockText);
+        unitType = stepTwoLayout.findViewById(R.id.unitSpinner);
+        itemStock = stepTwoLayout.findViewById(R.id.stockText);
 
         // Step three form
         wholesalePrice = stepThreeLayout.findViewById(R.id.wholesalesPrice);
-        tax = stepThreeLayout.findViewById(R.id.taxText);
-        description = stepThreeLayout.findViewById(R.id.productDescriptionText);
+        itemTax = stepThreeLayout.findViewById(R.id.taxText);
+        itemDescription = stepThreeLayout.findViewById(R.id.productDescriptionText);
 
         // Progress bar default value
         progressBar.setProgress(33);
@@ -163,39 +162,32 @@ public class New_Item_Fragment extends Fragment {
         categoryOptions.add("Alcohol");
         categoryOptions.add("Game");
 
-
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categoryOptions);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category.setAdapter(categoryAdapter);
 
+        // Product Unit
+        ArrayList<String> unitOptions = new ArrayList<>();
+        unitOptions.add("Unit");
+        unitOptions.add("Hour");
+        unitOptions.add("Liter");
 
+        ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, unitOptions);
+        unitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        unitType.setAdapter(unitAdapter);
 
+        saveButton.setOnClickListener(v -> {
+            uploadData();
 
+            // Replace Add item fragment with Home Fragment
+            FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-//        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-//                new ActivityResultContracts.StartActivityForResult(),
-//                result -> {
-//                    if(result.getResultCode() == Activity.RESULT_OK){
-////                            Intent data = result.getData();
-////                            uri = data.getData();
-////                            itemName.setText(uri);
-//                    }
-//
-//                }
-//        );
-
-//        saveButton.setOnClickListener(v -> {
-//            uploadData();
-//
-//            // Replace Add item fragment with Home Fragment
-//            FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//            HomeFragment homeFragment = new HomeFragment();
-//            fragmentTransaction.replace(R.id.fragment_container, homeFragment); // Replace previous fragment
-//            fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
-//            fragmentTransaction.commit();
-//        });
+            HomeFragment homeFragment = new HomeFragment();
+            fragmentTransaction.replace(R.id.fragment_container, homeFragment); // Replace previous fragment
+            fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
+            fragmentTransaction.commit();
+        });
     }
 
     private void showStepContent(int step) {
@@ -326,14 +318,21 @@ public class New_Item_Fragment extends Fragment {
     }
 
     public void uploadData(){
-        String Name = String.valueOf(itemName.getText()).trim();
-        String Category = category.getSelectedItem().toString();
-        String stock = String.valueOf(this.stock.getText());
-        String SKU = String.valueOf(sku.getText()).trim();
-        String UnitType = String.valueOf(unitType.getText());
-        String Price = String.valueOf(unitPrice.getText());
+        // Upload picture
 
-        NewItemData newItemData = new NewItemData(Name, Category, stock, SKU, UnitType, Price);
+        String Name = String.valueOf(itemName.getText()).trim();
+        double Price = Double.parseDouble(String.valueOf(unitPrice.getText()));
+        String Category = category.getSelectedItem().toString();
+
+        String SKU = String.valueOf(sku.getText()).trim();
+        String UnitType = unitType.getSelectedItem().toString();
+        int stock = Integer.parseInt(String.valueOf(itemStock.getText()));
+
+        double wholesalesPrice = Double.parseDouble(String.valueOf(wholesalePrice.getText()));
+        double tax = Double.parseDouble(String.valueOf(itemTax.getText()));
+        String description = String.valueOf(itemDescription.getText());
+
+        NewItemData newItemData = new NewItemData(Name, Price, Category, SKU, UnitType, stock, wholesalesPrice, tax, description);
 
         FirebaseDatabase.getInstance().getReference("Items").child(Name)
                 .setValue(newItemData).addOnCompleteListener(task -> {
