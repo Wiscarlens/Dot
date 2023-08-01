@@ -16,11 +16,11 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
-    Intent loginActivity;
-    String messages;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private Intent loginActivity;
+    private String messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     finish();
                 }).show();
     }
-
 
 }

@@ -1,9 +1,18 @@
 package com.example.chezelisma;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -26,8 +35,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -52,6 +63,7 @@ public class New_Item_Fragment extends Fragment {
 
     // Step One field
     private ImageView itemImage;
+    private TextInputLayout itemNameLayout;
     private TextInputEditText itemName;
     private Spinner category;
     private TextInputEditText unitPrice;
@@ -67,7 +79,7 @@ public class New_Item_Fragment extends Fragment {
     private TextInputEditText itemDescription;
 
     private Button saveButton;
-    FragmentActivity fragmentActivity;
+    private FragmentActivity fragmentActivity;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -110,6 +122,7 @@ public class New_Item_Fragment extends Fragment {
 
         // Step One form
         itemImage = stepOneLayout.findViewById(R.id.newItemImage);
+        itemNameLayout = stepOneLayout.findViewById(R.id.itemNameLayout);
         itemName = stepOneLayout.findViewById(R.id.itemNameText);
         category = stepOneLayout.findViewById(R.id.productCategoryText);
         unitPrice = stepOneLayout.findViewById(R.id.unitPriceText);
@@ -123,6 +136,10 @@ public class New_Item_Fragment extends Fragment {
         wholesalePrice = stepThreeLayout.findViewById(R.id.wholesalesPrice);
         itemTax = stepThreeLayout.findViewById(R.id.taxText);
         itemDescription = stepThreeLayout.findViewById(R.id.productDescriptionText);
+
+        // Have data from the database
+        ArrayList<String> categoryOptions = new ArrayList<>(); // Category Option Spinner
+        ArrayList<String> unitOptions = new ArrayList<>(); // Unit Option Spinner
 
         // Progress bar default value
         progressBar.setProgress(33);
@@ -155,8 +172,7 @@ public class New_Item_Fragment extends Fragment {
         // Show the initial step content
         showStepContent(currentStep);
 
-        // Category Option
-        ArrayList<String> categoryOptions = new ArrayList<>();
+        // Load data to Category Option Spinner
         categoryOptions.add("Category");
         categoryOptions.add("Soft Drink");
         categoryOptions.add("Alcohol");
@@ -166,8 +182,7 @@ public class New_Item_Fragment extends Fragment {
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         category.setAdapter(categoryAdapter);
 
-        // Product Unit
-        ArrayList<String> unitOptions = new ArrayList<>();
+        // Load data to Product Unit spinner
         unitOptions.add("Unit");
         unitOptions.add("Hour");
         unitOptions.add("Liter");
@@ -176,15 +191,39 @@ public class New_Item_Fragment extends Fragment {
         unitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitType.setAdapter(unitAdapter);
 
+        // Selected Image
+        ActivityResultLauncher<Intent> imagePickerLauncher =
+                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                        result -> {
+                            if (result.getResultCode() == RESULT_OK) {
+                                assert result.getData() != null;
+                                Uri uri = result.getData().getData();
+                                itemImage.setImageURI(uri);  // Set image to itemImage view
+                            }
+                        });
+
+        // Click on Image Item
+        itemImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                imagePickerLauncher.launch(intent);
+
+            }
+        });
+
         saveButton.setOnClickListener(v -> {
-            uploadData();
+            saveToDatabase(); // Save data locally
+            //uploadData();
 
             // Replace Add item fragment with Home Fragment
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            HomeFragment homeFragment = new HomeFragment();
-            fragmentTransaction.replace(R.id.fragment_container, homeFragment); // Replace previous fragment
+            ItemsFragment itemsFragment = new ItemsFragment();
+            fragmentTransaction.replace(R.id.fragment_container, itemsFragment); // Replace previous fragment
             fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
             fragmentTransaction.commit();
         });
@@ -316,6 +355,23 @@ public class New_Item_Fragment extends Fragment {
         }
 
     }
+    private void saveToDatabase() {
+        // Convert the selected image to a byte array (Blob)
+        byte[] imageData = getByteArrayFromDrawable(itemImage.getDrawable());
+        String Name = String.valueOf(itemName.getText());
+        double Price = Double.parseDouble(String.valueOf(unitPrice.getText()));
+        String Category = category.getSelectedItem().toString();
+        String SKU = String.valueOf(sku.getText()).trim();
+        String UnitType = unitType.getSelectedItem().toString();
+        int stock = Integer.parseInt(String.valueOf(itemStock.getText()));
+        double wholesalesPrice = Double.parseDouble(String.valueOf(wholesalePrice.getText()));
+        double tax = Double.parseDouble(String.valueOf(itemTax.getText()));
+        String description = String.valueOf(itemDescription.getText());
+
+        try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
+            myDB.addItem(imageData, Name, Price, Category, SKU, UnitType, stock, wholesalesPrice, tax, description);
+        }
+    }
 
     public void uploadData(){
         // Upload picture
@@ -343,4 +399,10 @@ public class New_Item_Fragment extends Fragment {
                 }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    private byte[] getByteArrayFromDrawable(Drawable drawable) {
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        return outputStream.toByteArray();
+    }
 }

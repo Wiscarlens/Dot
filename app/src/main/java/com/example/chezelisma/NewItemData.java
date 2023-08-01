@@ -13,18 +13,6 @@ public class NewItemData {
     private double tax;
     private String description;
 
-    //private String options;
-
-
-//    public NewItemData(String name, String category, String options, String sku, String unitType, String price) {
-//        this.name = name;
-//        this.category = category;
-//        this.options = options;
-//        this.sku = sku;
-//        this.unitType = unitType;
-//        this.price = price;
-//    }
-
 
     public NewItemData(String name, double price, String category, String sku, String unitType, int stock, double wholesalesPrice, double tax, String description) {
         this.name = name;

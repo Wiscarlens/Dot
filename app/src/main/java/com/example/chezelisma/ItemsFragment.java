@@ -1,6 +1,11 @@
 package com.example.chezelisma;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,18 +28,21 @@ import java.util.ArrayList;
 
 
 public class ItemsFragment extends Fragment {
-    FloatingActionButton addItem;
+    private FloatingActionButton addItem;
     private FragmentActivity fragmentActivity;
 
     private GridView itemGridview;
 
-    private ArrayList<Integer> image = new ArrayList<>();
-    private ArrayList<String> itemName = new ArrayList<>();
-    private ArrayList<String> itemPrice = new ArrayList<>();
-    private ArrayList<String> itemUnitType = new ArrayList<>();
-    private ArrayList<Integer> backgroundColor = new ArrayList<>();
+    // Hold data from the database
+    private ArrayList<Drawable> image;
+    private ArrayList<String> itemName;
+    private ArrayList<String> itemPrice;
+    private ArrayList<String> itemUnitType;
+    private ArrayList<Integer> backgroundColor;
 
     private ItemGridAdapter adapter;
+
+    private MyDatabaseHelper myDB;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -53,57 +61,18 @@ public class ItemsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         itemGridview = view.findViewById(R.id.itemList);
+        addItem = view.findViewById(R.id.addButton); // Add Item floating button
 
-        // Add item in the arraylist
-        image.add(R.drawable.prestige);
-        image.add(R.drawable.cokecane);
-        image.add(R.drawable.jumex);
-        image.add(R.drawable.toro);
-        image.add(R.drawable.sevenup);
-        image.add(R.drawable.barbancourt);
-        image.add(R.drawable.mortalcombat);
-        image.add(R.drawable.nba);
-        image.add(R.drawable.fifa);
+        // Local database
+        myDB = new MyDatabaseHelper(getContext());
 
-        itemName.add("Prestige");
-        itemName.add("Coca Cola");
-        itemName.add("Jumex");
-        itemName.add("Toro");
-        itemName.add("7 UP");
-        itemName.add("Barbancourt");
-        itemName.add("Mortal Combat");
-        itemName.add("NBA 2023");
-        itemName.add("FIFA 2023");
+        image = new ArrayList<>();
+        itemName = new ArrayList<>();
+        itemPrice = new ArrayList<>();
+        itemUnitType = new ArrayList<>();
+        backgroundColor = new ArrayList<>();
 
-        itemPrice.add("5.99");
-        itemPrice.add("1.99");
-        itemPrice.add("3.47");
-        itemPrice.add("6.99");
-        itemPrice.add("1.89");
-        itemPrice.add("15.75");
-        itemPrice.add("25");
-        itemPrice.add("30");
-        itemPrice.add("50");
-
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Hour");
-        itemUnitType.add("Hour");
-        itemUnitType.add("Hour");
-
-        backgroundColor.add(R.color.white);
-        backgroundColor.add(R.color.pink_gold);
-        backgroundColor.add(R.color.blue_AF);
-        backgroundColor.add(R.color.white);
-        backgroundColor.add(R.color.pink_gold);
-        backgroundColor.add(R.color.blue_AF);
-        backgroundColor.add(R.color.white);
-        backgroundColor.add(R.color.pink_gold);
-        backgroundColor.add(R.color.blue_AF);
+        storeDataInArrays(); // Save item data from database to the arraylist
 
         adapter = new ItemGridAdapter(image, itemName, itemPrice, itemUnitType, backgroundColor, getContext());
 
@@ -112,14 +81,9 @@ public class ItemsFragment extends Fragment {
         itemGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Toast.makeText(getContext(), "You selected " + itemName.get(position), Toast.LENGTH_SHORT).show();
-
             }
         });
-
-        // Add Item button
-        addItem = view.findViewById(R.id.addButton);
 
         addItem.setOnClickListener(view1 -> {
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
@@ -130,5 +94,31 @@ public class ItemsFragment extends Fragment {
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         });
+    }
+
+    private void storeDataInArrays(){
+        Cursor cursor = myDB.readAllData();
+
+        if (cursor.getCount() == 0){
+            Toast.makeText(fragmentActivity, "Empty", Toast.LENGTH_SHORT).show();
+
+        } else{
+            while (cursor.moveToNext()){
+                // Retrieve item data from the database
+                byte[] imageData = cursor.getBlob(1);
+
+                // Convert the image byte array to a Bitmap
+                Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
+                // Convert the Bitmap to a Drawable if needed
+                Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
+
+                image.add(itemImageDrawable); // Test Line
+                itemName.add(cursor.getString(2));
+                itemPrice.add(cursor.getString(3));
+                itemUnitType.add(cursor.getString(6));
+                backgroundColor.add(R.color.white); // Default Background Color
+            }
+        }
     }
 }

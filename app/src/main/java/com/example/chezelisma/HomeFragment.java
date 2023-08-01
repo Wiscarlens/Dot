@@ -7,14 +7,19 @@ package com.example.chezelisma;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -29,7 +34,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +48,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class HomeFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     private Button chargeButton;
-    private ArrayList<Integer> image = new ArrayList<>();
+    private ArrayList<Drawable> image = new ArrayList<>();
     private ArrayList<String> itemName = new ArrayList<>();
     private ArrayList<String> itemPrice = new ArrayList<>();
     private ArrayList<String> itemUnitType = new ArrayList<>();
@@ -55,6 +59,8 @@ public class HomeFragment extends Fragment {
     // Select item total
     private AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
     private String currentCharge;
+
+    private MyDatabaseHelper myDB;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -75,56 +81,10 @@ public class HomeFragment extends Fragment {
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
 
-        // Add item in the arraylist
-        image.add(R.drawable.prestige);
-        image.add(R.drawable.cokecane);
-        image.add(R.drawable.jumex);
-        image.add(R.drawable.toro);
-        image.add(R.drawable.sevenup);
-        image.add(R.drawable.barbancourt);
-        image.add(R.drawable.mortalcombat);
-        image.add(R.drawable.nba);
-        image.add(R.drawable.fifa);
+        // Local database
+        myDB = new MyDatabaseHelper(getContext());
 
-        itemName.add("Prestige");
-        itemName.add("Coca Cola");
-        itemName.add("Jumex");
-        itemName.add("Toro");
-        itemName.add("7 UP");
-        itemName.add("Barbancourt");
-        itemName.add("Mortal Combat");
-        itemName.add("NBA 2023");
-        itemName.add("FIFA 2023");
-
-        itemPrice.add("5.99");
-        itemPrice.add("1.99");
-        itemPrice.add("3.47");
-        itemPrice.add("6.99");
-        itemPrice.add("1.89");
-        itemPrice.add("15.75");
-        itemPrice.add("25.00");
-        itemPrice.add("30.00");
-        itemPrice.add("50.00");
-
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Unit");
-        itemUnitType.add("Hourly");
-        itemUnitType.add("Hourly");
-        itemUnitType.add("Hourly");
-
-        backgroundColor.add(R.color.white);
-        backgroundColor.add(R.color.pink_gold);
-        backgroundColor.add(R.color.blue_AF);
-        backgroundColor.add(R.color.white);
-        backgroundColor.add(R.color.pink_gold);
-        backgroundColor.add(R.color.blue_AF);
-        backgroundColor.add(R.color.white);
-        backgroundColor.add(R.color.pink_gold);
-        backgroundColor.add(R.color.blue_AF);
+        storeDataInArrays(); // Save item data from database to the arraylist
 
         ItemGridAdapter adapter = new ItemGridAdapter(image, itemName, itemPrice, itemUnitType, backgroundColor, getContext());
 
@@ -266,6 +226,30 @@ public class HomeFragment extends Fragment {
                 }).show();
     }
 
+    private void storeDataInArrays(){
+        Cursor cursor = myDB.readAllData();
 
+        if (cursor.getCount() == 0){
+            Toast.makeText(fragmentActivity, "Empty", Toast.LENGTH_SHORT).show();
+
+        } else{
+            while (cursor.moveToNext()){
+                // Retrieve item data from the database
+                byte[] imageData = cursor.getBlob(1);
+
+                // Convert the image byte array to a Bitmap
+                Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
+                // Convert the Bitmap to a Drawable if needed
+                Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
+
+                image.add(itemImageDrawable); // Test Line
+                itemName.add(cursor.getString(2));
+                itemPrice.add(cursor.getString(3));
+                itemUnitType.add(cursor.getString(6));
+                backgroundColor.add(R.color.white); // Default Background Color
+            }
+        }
+    }
 
 }
