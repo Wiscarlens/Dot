@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class HomeFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     private Button chargeButton;
+    private ImageView noDataImage;
+    private TextView noDataText;
+    private GridView itemGridview;
     private ArrayList<Drawable> image = new ArrayList<>();
     private ArrayList<String> itemName = new ArrayList<>();
     private ArrayList<String> itemPrice = new ArrayList<>();
@@ -77,7 +81,9 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        GridView itemGridview = view.findViewById(R.id.itemList);
+        noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
+        noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
+        itemGridview = view.findViewById(R.id.itemList);
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
 
@@ -230,11 +236,17 @@ public class HomeFragment extends Fragment {
         Cursor cursor = myDB.readAllData();
 
         if (cursor.getCount() == 0){
-            Toast.makeText(fragmentActivity, "Empty", Toast.LENGTH_SHORT).show();
+            itemGridview.setVisibility(View.GONE);
+            noDataImage.setVisibility(View.VISIBLE);
+            noDataText.setVisibility(View.VISIBLE);
 
         } else{
+            // Retrieve item data from the database
             while (cursor.moveToNext()){
-                // Retrieve item data from the database
+                noDataImage.setVisibility(View.GONE);
+                noDataText.setVisibility(View.GONE);
+                itemGridview.setVisibility(View.VISIBLE);
+
                 byte[] imageData = cursor.getBlob(1);
 
                 // Convert the image byte array to a Bitmap
@@ -243,7 +255,7 @@ public class HomeFragment extends Fragment {
                 // Convert the Bitmap to a Drawable if needed
                 Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
 
-                image.add(itemImageDrawable); // Test Line
+                image.add(itemImageDrawable);
                 itemName.add(cursor.getString(2));
                 itemPrice.add(cursor.getString(3));
                 itemUnitType.add(cursor.getString(6));

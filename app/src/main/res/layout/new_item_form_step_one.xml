@@ -63,7 +63,10 @@
         android:hint="@string/unit_price"
         app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
-        app:endIconMode="clear_text">
+        app:endIconMode="clear_text"
+        app:helperText="@string/required"
+        app:helperTextTextColor="@color/red"
+        app:helperTextEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/unitPriceText"

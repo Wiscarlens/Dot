@@ -121,6 +121,7 @@
     <string name="product_price">Product Price:</string>
     <string name="wholesales_price">Wholesales Price</string>
     <string name="item_name">Item Name</string>
-
+    <string name="no_items">No Items</string>
+    <string name="no_data_message">Show when there is no data</string>
 
 </resources>

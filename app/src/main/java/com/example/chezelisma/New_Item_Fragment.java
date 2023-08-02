@@ -66,6 +66,7 @@ public class New_Item_Fragment extends Fragment {
     private TextInputLayout itemNameLayout;
     private TextInputEditText itemName;
     private Spinner category;
+    private TextInputLayout unitPriceLayout;
     private TextInputEditText unitPrice;
 
     // Step Two field
@@ -125,6 +126,7 @@ public class New_Item_Fragment extends Fragment {
         itemNameLayout = stepOneLayout.findViewById(R.id.itemNameLayout);
         itemName = stepOneLayout.findViewById(R.id.itemNameText);
         category = stepOneLayout.findViewById(R.id.productCategoryText);
+        unitPriceLayout = stepOneLayout.findViewById(R.id.unitPriceLayout);
         unitPrice = stepOneLayout.findViewById(R.id.unitPriceText);
 
         // Step two form

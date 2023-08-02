@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".itemsFragment">
+    tools:context=".ItemsFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_margin="20dp"
-        android:layout_marginEnd="20dp"
         app:cardCornerRadius="15dp"
         app:cardElevation="20dp">
 
@@ -37,6 +36,30 @@
             android:text="@string/items"
             android:textSize="15sp" />
 
+        <ImageView
+            android:id="@+id/no_data_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="245dp"
+            android:alpha="0.1"
+            android:contentDescription="@string/no_data_message"
+            app:srcCompat="@drawable/ic_empty"
+            tools:ignore="ImageContrastCheck"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/no_data_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:alpha="0.4"
+            android:text="@string/no_items"
+            android:textSize="20sp"
+            tools:ignore="TextContrastCheck"
+            android:visibility="gone"/>
+
         <GridView
             android:id="@+id/itemList"
             android:layout_width="match_parent"
@@ -48,4 +71,4 @@
 
     </androidx.cardview.widget.CardView>
 
-</FrameLayout>
+</RelativeLayout>

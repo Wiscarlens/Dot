@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,6 +33,8 @@ public class ItemsFragment extends Fragment {
     private FloatingActionButton addItem;
     private FragmentActivity fragmentActivity;
 
+    private ImageView noDataImage;
+    private TextView noDataText;
     private GridView itemGridview;
 
     // Hold data from the database
@@ -60,7 +64,9 @@ public class ItemsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        itemGridview = view.findViewById(R.id.itemList);
+        noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
+        noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
+        itemGridview = view.findViewById(R.id.itemList); // When list of item will show
         addItem = view.findViewById(R.id.addButton); // Add Item floating button
 
         // Local database
@@ -74,6 +80,7 @@ public class ItemsFragment extends Fragment {
 
         storeDataInArrays(); // Save item data from database to the arraylist
 
+        // Initialize adapter with the arrays
         adapter = new ItemGridAdapter(image, itemName, itemPrice, itemUnitType, backgroundColor, getContext());
 
         itemGridview.setAdapter(adapter);
@@ -100,10 +107,18 @@ public class ItemsFragment extends Fragment {
         Cursor cursor = myDB.readAllData();
 
         if (cursor.getCount() == 0){
-            Toast.makeText(fragmentActivity, "Empty", Toast.LENGTH_SHORT).show();
+            itemGridview.setVisibility(View.GONE);
+            noDataImage.setVisibility(View.VISIBLE);
+            noDataText.setVisibility(View.VISIBLE);
+
+            //Toast.makeText(fragmentActivity, "Empty", Toast.LENGTH_SHORT).show();
 
         } else{
             while (cursor.moveToNext()){
+                noDataImage.setVisibility(View.GONE);
+                noDataText.setVisibility(View.GONE);
+                itemGridview.setVisibility(View.VISIBLE);
+
                 // Retrieve item data from the database
                 byte[] imageData = cursor.getBlob(1);
 
