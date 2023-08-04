@@ -5,6 +5,7 @@ package com.example.chezelisma;
  */
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,11 @@ import java.util.ArrayList;
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder> {
     private ArrayList<String> fullname;
     private ArrayList<String> positionList;
-    private ArrayList<Integer> image;
+    private ArrayList<Drawable> image;
 
     private Context context;
 
-    public UserRecyclerAdapter(ArrayList<String> fullname, ArrayList<String> position, ArrayList<Integer> image, Context context) {
+    public UserRecyclerAdapter(ArrayList<String> fullname, ArrayList<String> position, ArrayList<Drawable> image, Context context) {
         this.fullname = fullname;
         this.positionList = position;
         this.image = image;
@@ -47,7 +48,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         holder.fullNameTextView.setText(fullname.get(position));
         holder.positionTextView.setText(positionList.get(position));
-        holder.photoProfile.setImageResource(image.get(position));
+        holder.photoProfile.setImageDrawable(image.get(position)); // Set the Drawable object
 
         holder.cardView.setOnClickListener(v -> {
             Toast.makeText(context, "You selected " + fullname.get(position), Toast.LENGTH_SHORT).show();

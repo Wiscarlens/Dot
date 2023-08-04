@@ -1,5 +1,9 @@
 package com.example.chezelisma;
 
+/*
+ Created by Wiscarlens Lucius on 1 August 2023.
+ */
+
 import static com.example.chezelisma.PasswordUtils.hashPassword;
 
 import android.content.ContentValues;
@@ -56,7 +60,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     // Order Table
     private static final String ORDERS_TABLE_NAME = "orders";
     private static final String ORDER_COLUMN_ID = "_id";
-    private static final String ORDER_COLUMN_CREATOR_NAME = "order_creator";
+    private static final String ORDER_COLUMN_CREATOR_ID = "order_creator";
     private static final String ORDER_COLUMN_ORDER_DATE = "order_date";
     private static final String ORDER_COLUMN_TOTAL_AMOUNT = "total_amount";
     private static final String ORDER_COLUMN_PAYMENT_METHOD = "payment_method";
@@ -115,14 +119,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // SQL query to create the "orders" table
         String query_orders = "CREATE TABLE " + ORDERS_TABLE_NAME +
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ORDER_COLUMN_CREATOR_NAME + " TEXT NOT NULL, " +
+                ORDER_COLUMN_CREATOR_ID + " INTEGER NOT NULL, " +
                 ORDER_COLUMN_ORDER_DATE + " DATE NOT NULL, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +
                 ORDER_COLUMN_PAYMENT_METHOD + " TEXT NOT NULL, " +
                 ORDER_COLUMN_PAYMENT_STATUS + " TEXT NOT NULL, " +
-                " FOREIGN KEY (" + ORDER_COLUMN_CREATOR_NAME
-                + ") REFERENCES " + USERS_TABLE_NAME + " (" + USERS_COLUMN_FIRST_NAME
-                + ", " + USERS_COLUMN_LAST_NAME + "));";
+                " FOREIGN KEY (" + ORDER_COLUMN_CREATOR_ID
+                + ") REFERENCES " + USERS_TABLE_NAME + " (" + USERS_COLUMN_ID + "));";
 
 
         // SQL query to create the "transactions" table
@@ -237,13 +240,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      */
     public void addUser(String firstName, String middleName, String lastName, String dob, String gender,
                         String email, String phoneNumber, String streetName, String city, String state,
-                        String zipCode, byte[] profileImage, String position, String password)
+                        int zipCode, byte[] profileImage, String position, String password)
             throws SQLiteException {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues cv = new ContentValues();
 
-            // Hash the encryption using bcrypt
+            // Hash the plain text password using bcrypt
             String hashedPassword = hashPassword(password);
 
             cv.put(USERS_COLUMN_FIRST_NAME, firstName);

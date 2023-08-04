@@ -19,7 +19,6 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -28,7 +27,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,7 +89,7 @@ public class HomeFragment extends Fragment {
         // Local database
         myDB = new MyDatabaseHelper(getContext());
 
-        storeDataInArrays(); // Save item data from database to the arraylist
+        storeItemsDataInArrays(); // Save item data from database to the arraylist
 
         ItemGridAdapter adapter = new ItemGridAdapter(image, itemName, itemPrice, itemUnitType, backgroundColor, getContext());
 
@@ -233,7 +231,7 @@ public class HomeFragment extends Fragment {
                 }).show();
     }
 
-    private void storeDataInArrays(){
+    private void storeItemsDataInArrays(){
         Cursor cursor = myDB.readAllData();
 
         if (cursor.getCount() == 0){

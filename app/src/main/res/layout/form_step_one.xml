@@ -28,7 +28,10 @@
         android:hint="@string/first_name"
         app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
-        app:endIconMode="clear_text">
+        app:endIconMode="clear_text"
+        app:helperText="@string/required"
+        app:helperTextTextColor="@color/red"
+        app:helperTextEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signupFirstNameText"
@@ -71,7 +74,10 @@
         android:hint="@string/last_name"
         app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
-        app:endIconMode="clear_text">
+        app:endIconMode="clear_text"
+        app:helperText="@string/required"
+        app:helperTextTextColor="@color/red"
+        app:helperTextEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signupLastNameText"
@@ -93,7 +99,10 @@
         app:endIconMode="custom"
         app:endIconDrawable="@drawable/baseline_calendar_month_24"
         app:boxBackgroundMode="outline"
-        app:boxBackgroundColor="@color/white">
+        app:boxBackgroundColor="@color/white"
+        app:helperText="@string/required"
+        app:helperTextTextColor="@color/red"
+        app:helperTextEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signupDOBText"
@@ -105,24 +114,16 @@
             android:textColorHint="#757575" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signupGenderLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <Spinner
+        android:id="@+id/signupGenderText"
+        style="@style/Widget.AppCompat.Spinner.DropDown"
         android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/gender"
-        app:boxBackgroundMode="outline"
-        app:boxBackgroundColor="@color/white" >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signupGenderText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:inputType="text"
-            android:textColor="@color/black"
-            android:textColorHint="#757575" />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/spinner_border"
+        android:gravity="start|center_vertical"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/gray" />
 
 </LinearLayout>

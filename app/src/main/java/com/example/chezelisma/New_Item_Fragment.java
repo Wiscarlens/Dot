@@ -376,8 +376,6 @@ public class New_Item_Fragment extends Fragment {
     }
 
     public void uploadData(){
-        // Upload picture
-
         String Name = String.valueOf(itemName.getText()).trim();
         double Price = Double.parseDouble(String.valueOf(unitPrice.getText()));
         String Category = category.getSelectedItem().toString();

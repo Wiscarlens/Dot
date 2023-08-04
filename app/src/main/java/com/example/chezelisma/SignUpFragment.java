@@ -1,24 +1,38 @@
 package com.example.chezelisma;
 
+import static android.app.Activity.RESULT_OK;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +43,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -58,7 +74,8 @@ public class SignUpFragment extends Fragment {
     private TextInputEditText lastName;
     private TextInputEditText DOB;
     private TextInputLayout DOB_layout;
-    private TextInputEditText gender;
+    //private TextInputEditText gender;
+    private Spinner gender;
 
     // Declare Form part two field
     private TextInputEditText email;
@@ -70,7 +87,7 @@ public class SignUpFragment extends Fragment {
 
     // Declare Form part two field
     private ImageView profileImage;
-    private TextInputEditText position;
+    private Spinner position;
     private TextInputEditText password;
     private TextInputLayout passwordLayout;
     private TextInputEditText confirmedPassword;
@@ -79,6 +96,14 @@ public class SignUpFragment extends Fragment {
     private Button saveButton;
 
     private String message;
+
+    private FragmentActivity fragmentActivity;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        fragmentActivity = (FragmentActivity) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -140,6 +165,10 @@ public class SignUpFragment extends Fragment {
         passwordLayout = stepThreeLayout.findViewById(R.id.signupPasswordLayout);
         confirmedPassword = stepThreeLayout.findViewById(R.id.signupConfirmPasswordText);
 
+        // Have data from the database
+        ArrayList<String> genderOptions = new ArrayList<>(); // Gender Option Spinner
+        ArrayList<String> positionOptions = new ArrayList<>(); // Category Option Spinner
+
         // This field a copy of the error message from the String resources file.
         message = getResources().getString(R.string.field_empty);
 
@@ -150,6 +179,45 @@ public class SignUpFragment extends Fragment {
                 selectDate();
             }
         });
+
+        // Selected Image
+        ActivityResultLauncher<Intent> imagePickerLauncher =
+                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                        result -> {
+                            if (result.getResultCode() == RESULT_OK) {
+                                assert result.getData() != null;
+                                Uri uri = result.getData().getData();
+                                profileImage.setImageURI(uri);  // Set image to itemImage view
+                            }
+                        });
+
+        // Click on Image Item
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                imagePickerLauncher.launch(intent);
+
+            }
+        });
+
+        // Load data to Gender Option Spinner
+        genderOptions.add("Male");
+        genderOptions.add("Female");
+
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, genderOptions);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        gender.setAdapter(genderAdapter);
+
+        positionOptions.add("Cashier");
+        positionOptions.add("Manager");
+        positionOptions.add("Administrator");
+
+        ArrayAdapter<String> positionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, positionOptions);
+        positionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        position.setAdapter(positionAdapter);
 
 
         // Progress bar default value
@@ -184,76 +252,22 @@ public class SignUpFragment extends Fragment {
         showStepContent(currentStep);
 
         saveButton.setOnClickListener(v -> {
-            showDialogMessage(); // Test Line
+            if(password.getText().toString().equals(confirmedPassword.getText().toString())){
+                saveToDatabase();
+            } else {
+                Toast.makeText(getContext(), "Password do not match", Toast.LENGTH_SHORT).show();
+            }
 
+            // Replace Add item fragment with Home Fragment
+            FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-//            String userPosition = position.getText().toString().trim();
-//            String userFirstName = firstName.getText().toString().trim();
-//            String userLastName = lastName.getText().toString().trim();
-//            String userEmail = email.getText().toString().toLowerCase().trim();
-//            String userPassword = password.getText().toString();
-//            String userConfirmPassword = confirmedPassword.getText().toString();
-//
-//            // This field a copy of the error message from the String resources file.
-//            String message = getResources().getString(R.string.field_empty);
-//
-//            if(userPosition.isEmpty()){
-//                position.setError(message);
-//            }
-//
-//            if(userFirstName.isEmpty()){
-//                firstName.setError(message);
-//            }
-//
-//            if(userLastName.isEmpty()){
-//                lastName.setError(message);
-//            }
-//
-//            if(userEmail.isEmpty()){
-//                email.setError(message);
-//            }
-//
-//            if(userPassword.isEmpty()){
-//                // Hide password toggle so it does go over the error message
-//                passwordLayout.setEndIconVisible(false);
-//                password.setError(getResources().getString(R.string.password_empty));
-//            }
-//
-//            if(userConfirmPassword.isEmpty()){
-//                // Hide password toggle so does go over the error message
-//                confirmedPasswordLayout.setEndIconVisible(false);
-//                confirmedPassword.setError(message);
-//            }
-//
-//
-//            else {
-//                if(!userConfirmPassword.equals(userPassword)){
-//                    // Hide password toggle so does go over the error message
-//                    confirmedPasswordLayout.setEndIconVisible(false);
-//
-//                    message = getResources().getString(R.string.password_not_same);
-//                    confirmedPassword.setError(message);
-//
-//                } else {
-//                    auth.createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener
-//                            (new OnCompleteListener<AuthResult>() {
-//                        String toastMessage = "";
-//                        @Override
-//                        public void onComplete(@NonNull Task<AuthResult> task) {
-//                            if(task.isSuccessful()){
-//                                toastMessage = getResources().getString(R.string.signup_Successful);
-//                                Toast.makeText(getContext(), toastMessage, Toast.LENGTH_SHORT).show();
-//                                startActivity(new Intent(getContext(), MainActivity.class));
-//                            } else{
-//                                toastMessage = getResources().getString(R.string.signup_failed);
-//                                Toast.makeText(getContext(), toastMessage + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//                }
-//
-//            }
+            UsersFragment usersFragment = new UsersFragment();
+            fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
+            fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
+            fragmentTransaction.commit();
         });
+
 
     }
 
@@ -424,6 +438,40 @@ public class SignUpFragment extends Fragment {
 
 
                 }).show();
+    }
+
+    private void saveToDatabase() {
+        // Convert the selected image to a byte array (Blob)
+        String Fname = String.valueOf(firstName.getText());
+        String Mname = String.valueOf(middleName.getText());
+        String Lname = String.valueOf(lastName.getText());
+        String DateOfBirth = String.valueOf(DOB.getText());
+        String Gender = String.valueOf(gender.getSelectedItem());
+        String Email = String.valueOf(email.getText());
+
+        String PhoneNumber = String.valueOf(phoneNumber.getText());
+        String StreetName = String.valueOf(streetName.getText());
+        String City = String.valueOf(city.getText());
+        String State = String.valueOf(state.getText());
+        int ZipCode = Integer.parseInt(String.valueOf(zipCode.getText()));
+
+        // Convert the selected image to a byte array (Blob)
+        byte[] ProfileImage = getByteArrayFromDrawable(profileImage.getDrawable());
+        String Position = String.valueOf(zipCode.getText());
+        String Password = String.valueOf(zipCode.getText());
+
+
+        try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
+            myDB.addUser(Fname, Mname, Lname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
+                    City, State, ZipCode, ProfileImage, Position, Password);
+        }
+    }
+
+    private byte[] getByteArrayFromDrawable(Drawable drawable) {
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        return outputStream.toByteArray();
     }
 
 }
