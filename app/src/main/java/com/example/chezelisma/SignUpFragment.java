@@ -436,15 +436,14 @@ public class SignUpFragment extends Fragment {
                 .setPositiveButton("Yes", (dialog, which) -> {
                     // Open ConfirmationFragment when user click on YES
 
-
                 }).show();
     }
 
     private void saveToDatabase() {
         // Convert the selected image to a byte array (Blob)
-        String Fname = String.valueOf(firstName.getText());
-        String Mname = String.valueOf(middleName.getText());
-        String Lname = String.valueOf(lastName.getText());
+        String Firstname = String.valueOf(firstName.getText());
+        String Middlename = String.valueOf(middleName.getText());
+        String Lastname = String.valueOf(lastName.getText());
         String DateOfBirth = String.valueOf(DOB.getText());
         String Gender = String.valueOf(gender.getSelectedItem());
         String Email = String.valueOf(email.getText());
@@ -457,12 +456,12 @@ public class SignUpFragment extends Fragment {
 
         // Convert the selected image to a byte array (Blob)
         byte[] ProfileImage = getByteArrayFromDrawable(profileImage.getDrawable());
-        String Position = String.valueOf(zipCode.getText());
-        String Password = String.valueOf(zipCode.getText());
+        String Position = String.valueOf(position.getSelectedItem());
+        String Password = String.valueOf(password.getText());
 
 
         try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-            myDB.addUser(Fname, Mname, Lname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
+            myDB.addUser(Firstname, Middlename, Lastname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
                     City, State, ZipCode, ProfileImage, Position, Password);
         }
     }

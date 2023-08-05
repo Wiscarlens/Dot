@@ -36,6 +36,29 @@
         android:text="@string/users"
         android:textSize="15sp" />
 
+        <ImageView
+            android:id="@+id/no_user_imageview"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="245dp"
+            android:alpha="0.1"
+            android:contentDescription="@string/no_data_message"
+            app:srcCompat="@drawable/baseline_people_alt_24"
+            tools:ignore="ImageContrastCheck"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/no_user_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0.4"
+            android:text="@string/no_users"
+            android:textSize="20sp"
+            tools:ignore="TextContrastCheck"
+            android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userList"
         android:layout_width="match_parent"

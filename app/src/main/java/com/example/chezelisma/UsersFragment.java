@@ -20,9 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -31,6 +30,8 @@ import java.util.ArrayList;
 public class UsersFragment extends Fragment {
     private FloatingActionButton addUser;
     private FragmentActivity fragmentActivity;
+    private ImageView noUserImage;
+    private TextView noUserText;
     private RecyclerView recyclerView;
     private ArrayList<String> fullname = new ArrayList<>();
     private ArrayList<String> position = new ArrayList<>();
@@ -56,9 +57,10 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        addUser = view.findViewById(R.id.addUserButton); // Add User button
-
+        noUserImage = view.findViewById(R.id.no_user_imageview); // When users Database is empty
+        noUserText = view.findViewById(R.id.no_user_textview); // When users Database is empty
         recyclerView = view.findViewById(R.id.userList);
+        addUser = view.findViewById(R.id.addUserButton); // Add User button
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -74,8 +76,7 @@ public class UsersFragment extends Fragment {
 //        image.add(R.drawable.elisma);
 //        image.add(R.drawable.carline);
 
-        // Local database
-        myDB = new MyDatabaseHelper(getContext());
+        myDB = new MyDatabaseHelper(getContext()); // Local database
 
         storeItemsDataInArrays(); // Save item data from database to the arraylist
 
@@ -96,19 +97,19 @@ public class UsersFragment extends Fragment {
     }
 
     private void storeItemsDataInArrays(){
-        Cursor cursor = myDB.readAllData();
+        Cursor cursor = myDB.readAllUsersData();
 
         if (cursor.getCount() == 0){
-//            itemGridview.setVisibility(View.GONE);
-//            noDataImage.setVisibility(View.VISIBLE);
-//            noDataText.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            noUserImage.setVisibility(View.VISIBLE);
+            noUserText.setVisibility(View.VISIBLE);
 
         } else {
             // Retrieve item data from the database
             while (cursor.moveToNext()){
-//                noDataImage.setVisibility(View.GONE);
-//                noDataText.setVisibility(View.GONE);
-//                itemGridview.setVisibility(View.VISIBLE);
+                noUserImage.setVisibility(View.GONE);
+                noUserText.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
 
                 byte[] imageData = cursor.getBlob(12);
 
@@ -118,7 +119,10 @@ public class UsersFragment extends Fragment {
                 // Convert the Bitmap to a Drawable if needed
                 Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
 
-                fullname.add(cursor.getString(1) + " " + cursor.getString(3));
+                // Concatenate first and last name
+                String FullName = cursor.getString(1) + " " + cursor.getString(3);
+
+                fullname.add(FullName);
                 position.add(cursor.getString(13));
                 image.add(itemImageDrawable);
             }
