@@ -104,7 +104,7 @@ public class ItemsFragment extends Fragment {
     }
 
     private void storeDataInArrays(){
-        Cursor cursor = myDB.readAllData();
+        Cursor cursor = myDB.readAllItemsData();
 
         if (cursor.getCount() == 0){
             itemGridview.setVisibility(View.GONE);

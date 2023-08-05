@@ -244,6 +244,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             throws SQLiteException {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
+            // Check if the email already exists in the database
+            if (emailExists(db, email)) {
+                Toast.makeText(context, "Email already exists. Please use a different email.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             ContentValues cv = new ContentValues();
 
             // Hash the plain text password using bcrypt
@@ -270,12 +276,29 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 Toast.makeText(context, "User added successfully!", Toast.LENGTH_SHORT).show();
             }
         } catch (SQLiteException e) {
+            e.printStackTrace(); // Log the error stack trace for debugging
             Toast.makeText(context, "Failed to add user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             throw e;
         }
     }
 
+    /**
+     * Checks if a given email already exists in the "users" table of the database.
+     *
+     * @param db    The SQLiteDatabase object to perform the query on.
+     * @param email The email address to check for existence in the database.
+     * @return {@code true} if the email exists in the "users" table, {@code false} otherwise.
+     */
+    private boolean emailExists(SQLiteDatabase db, String email) {
+        // Perform a database query to check for the existence of the email
+        Cursor cursor = db.query(USERS_TABLE_NAME, new String[]{USERS_COLUMN_EMAIL},
+                USERS_COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
 
+        boolean exists = cursor.getCount() > 0; // Check email exists in the database
+
+        cursor.close(); // Close the cursor to release resources
+        return exists; // Return the result indicating whether the email exists or not
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
@@ -283,8 +306,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    Cursor readAllData(){
+    Cursor readAllItemsData(){
         String query = "SELECT * FROM " + ITEMS_TABLE;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = null;
+
+        if(db != null){
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
+    }
+
+    Cursor readAllUsersData(){
+        String query = "SELECT * FROM " + USERS_TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = null;

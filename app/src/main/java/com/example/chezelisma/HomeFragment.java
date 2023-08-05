@@ -232,7 +232,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void storeItemsDataInArrays(){
-        Cursor cursor = myDB.readAllData();
+        Cursor cursor = myDB.readAllItemsData();
 
         if (cursor.getCount() == 0){
             itemGridview.setVisibility(View.GONE);

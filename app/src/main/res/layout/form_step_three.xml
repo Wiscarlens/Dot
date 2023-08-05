@@ -22,7 +22,7 @@
     <Spinner
         android:id="@+id/signupPositionText"
         style="@style/Widget.AppCompat.Spinner.DropDown"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/spinner_border"
@@ -34,7 +34,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupPasswordLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/password"
@@ -57,7 +57,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupConfirmPasswordLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/confirm_password"

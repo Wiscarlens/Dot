@@ -34,7 +34,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/itemNameLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/item_name"
@@ -57,7 +57,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/unitPriceLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/unit_price"
@@ -80,7 +80,7 @@
     <Spinner
         android:id="@+id/productCategoryText"
         style="@style/Widget.AppCompat.Spinner.DropDown"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/spinner_border"

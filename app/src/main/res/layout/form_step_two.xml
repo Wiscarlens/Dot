@@ -22,7 +22,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupEmailLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/email"
@@ -45,7 +45,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupPhoneNumberLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/phone_number"
@@ -66,7 +66,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupStreetNameLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/street_name"
@@ -86,7 +86,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupCityLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/city"
@@ -106,7 +106,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupStateLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/state"
@@ -126,7 +126,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupZipCodeLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/zip_code"
