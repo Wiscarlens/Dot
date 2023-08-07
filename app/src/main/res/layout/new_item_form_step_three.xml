@@ -44,19 +44,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:focusable="auto"
         android:hint="@string/tax"
-        app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
+        app:boxBackgroundMode="outline"
         app:endIconMode="clear_text">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/taxText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="auto"
+            android:focusableInTouchMode="true"
             android:gravity="start|center_vertical"
             android:inputType="numberDecimal"
-            android:textColor="@color/black"
-            android:focusable="true"/>
+            android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -65,24 +67,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:focusable="auto"
         android:hint="@string/description"
-        app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
+        app:boxBackgroundMode="outline"
         app:endIconMode="clear_text">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/productDescriptionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="auto"
+            android:focusableInTouchMode="true"
             android:gravity="top"
             android:inputType="textMultiLine"
             android:lines="4"
             android:overScrollMode="always"
-            android:scrollbars="vertical"
             android:scrollbarStyle="insideInset"
+            android:scrollbars="vertical"
             android:scrollHorizontally="false"
-            android:textColor="@color/black"
-            android:focusable="true"/>
+            android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
