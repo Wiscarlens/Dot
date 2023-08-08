@@ -125,5 +125,6 @@
     <string name="no_data_message">Show when there is no data</string>
     <string name="no_users">No Users</string>
     <string name="description">Description</string>
+    <string name="orders">Orders</string>
 
 </resources>
