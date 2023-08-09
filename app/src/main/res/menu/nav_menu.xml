@@ -17,14 +17,19 @@
             android:title="@string/users"/>
 
         <item
+            android:id="@+id/nav_items"
+            android:icon="@drawable/baseline_sell_24"
+            android:title="@string/items"/>
+
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/baseline_shopping_bag_24"
+            android:title="Orders"/>
+
+        <item
             android:id="@+id/nav_transactions"
             android:icon="@drawable/baseline_compare_arrows_24"
             android:title="@string/transactions"/>
-
-        <item
-            android:id="@+id/nav_items"
-            android:icon="@drawable/items_icon"
-            android:title="@string/items"/>
 
         <item
             android:id="@+id/nav_settings"

@@ -22,6 +22,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginBottom="30dp"
         android:text="@string/settings"
+        android:textAllCaps="true"
         android:textSize="15sp" />
 
     </androidx.cardview.widget.CardView>

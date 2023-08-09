@@ -51,23 +51,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+       final int home = R.id.nav_home;
+       final int users = R.id.nav_users;
+       final int items = R.id.nav_items;
+       final int orders = R.id.nav_orders;
+       final int transactions = R.id.nav_transactions;
+       final int settings = R.id.nav_settings;
+       final int logout = R.id.nav_logout;
+
+
         switch (item.getItemId()) {
-            case R.id.nav_home:
+            case home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
                 break;
-            case R.id.nav_users:
+            case users:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UsersFragment()).commit();
                 break;
-            case R.id.nav_transactions:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TransactionsFragment()).commit();
-                break;
-            case R.id.nav_items:
+            case items:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ItemsFragment()).commit();
                 break;
-            case R.id.nav_settings:
+            case orders:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OrdersFragment()).commit();
+                break;
+            case transactions:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TransactionsFragment()).commit();
+                break;
+            case settings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
-            case R.id.nav_logout:
+            case logout:
                 // Confirmation Message for log out
                 showDialogMessage();
 
