@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,10 +18,7 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
     private Intent loginActivity;
-    private String messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +26,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-        toolbar = findViewById(R.id.toolbar);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
@@ -49,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
        final int home = R.id.nav_home;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
        final int transactions = R.id.nav_transactions;
        final int settings = R.id.nav_settings;
        final int logout = R.id.nav_logout;
-
 
         switch (item.getItemId()) {
             case home:
@@ -84,10 +82,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 showDialogMessage();
 
                 // Toast Message for log out
-                messages = getResources().getString(R.string.logout);
+                String messages = getResources().getString(R.string.logout);
+
                 Toast.makeText(this, messages + "!", Toast.LENGTH_SHORT).show();
                 break;
         }
+
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }

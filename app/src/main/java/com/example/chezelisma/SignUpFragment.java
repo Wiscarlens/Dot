@@ -442,7 +442,7 @@ public class SignUpFragment extends Fragment {
     private void saveToDatabase() {
         // Convert the selected image to a byte array (Blob)
         String Firstname = String.valueOf(firstName.getText());
-        String Middlename = String.valueOf(middleName.getText());
+        String MiddleName = String.valueOf(middleName.getText());
         String Lastname = String.valueOf(lastName.getText());
         String DateOfBirth = String.valueOf(DOB.getText());
         String Gender = String.valueOf(gender.getSelectedItem());
@@ -461,7 +461,7 @@ public class SignUpFragment extends Fragment {
 
 
         try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-            myDB.addUser(Firstname, Middlename, Lastname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
+            myDB.addUser(Firstname, MiddleName, Lastname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
                     City, State, ZipCode, ProfileImage, Position, Password);
         }
     }

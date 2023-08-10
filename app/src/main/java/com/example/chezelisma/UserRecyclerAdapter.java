@@ -20,14 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder> {
-    private ArrayList<String> fullname;
+    private ArrayList<String> fullName;
     private ArrayList<String> positionList;
     private ArrayList<Drawable> image;
 
     private Context context;
 
-    public UserRecyclerAdapter(ArrayList<String> fullname, ArrayList<String> position, ArrayList<Drawable> image, Context context) {
-        this.fullname = fullname;
+    public UserRecyclerAdapter(ArrayList<String> fullName, ArrayList<String> position, ArrayList<Drawable> image, Context context) {
+        this.fullName = fullName;
         this.positionList = position;
         this.image = image;
         this.context = context;
@@ -42,17 +42,15 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return fullname.size();
+        return fullName.size();
     }
 
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        holder.fullNameTextView.setText(fullname.get(position));
+        holder.fullNameTextView.setText(fullName.get(position));
         holder.positionTextView.setText(positionList.get(position));
         holder.photoProfile.setImageDrawable(image.get(position)); // Set the Drawable object
 
-        holder.cardView.setOnClickListener(v -> {
-            Toast.makeText(context, "You selected " + fullname.get(position), Toast.LENGTH_SHORT).show();
-        });
+        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + fullName.get(position), Toast.LENGTH_SHORT).show());
     }
 
     public class UserViewHolder extends RecyclerView.ViewHolder {

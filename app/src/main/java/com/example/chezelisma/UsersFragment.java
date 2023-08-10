@@ -28,7 +28,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class UsersFragment extends Fragment {
-    private FloatingActionButton addUser;
     private FragmentActivity fragmentActivity;
     private ImageView noUserImage;
     private TextView noUserText;
@@ -60,21 +59,9 @@ public class UsersFragment extends Fragment {
         noUserImage = view.findViewById(R.id.no_user_imageview); // When users Database is empty
         noUserText = view.findViewById(R.id.no_user_textview); // When users Database is empty
         recyclerView = view.findViewById(R.id.userList);
-        addUser = view.findViewById(R.id.addUserButton); // Add User button
+        FloatingActionButton addUser = view.findViewById(R.id.addUserButton); // Add User button
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-//        fullname.add("Wiscarlens Lucius");
-//        fullname.add("Jean-Marc Elisma");
-//        fullname.add("Carline Clerveau");
-//
-//        position.add("Admin");
-//        position.add("Manager");
-//        position.add("Associate");
-//
-//        image.add(R.drawable.wiscarlens);
-//        image.add(R.drawable.elisma);
-//        image.add(R.drawable.carline);
 
         myDB = new MyDatabaseHelper(getContext()); // Local database
 
@@ -83,7 +70,6 @@ public class UsersFragment extends Fragment {
         adapter = new UserRecyclerAdapter(fullname, position, image, getContext());
 
         recyclerView.setAdapter(adapter);
-
 
         // Create new user button
         addUser.setOnClickListener(view1 -> {

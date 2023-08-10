@@ -7,12 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +17,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 public class TransactionsFragment extends Fragment {
-    private FragmentActivity fragmentActivity;
-    private RecyclerView recyclerView;
-    private TransactionRecyclerAdapter adapter;
 
     private ArrayList<String> transactionDate = new ArrayList<>();
     private ArrayList<String> transactionTime = new ArrayList<>();
@@ -34,7 +28,7 @@ public class TransactionsFragment extends Fragment {
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        fragmentActivity = (FragmentActivity) context;
+        FragmentActivity fragmentActivity = (FragmentActivity) context;
     }
 
     @Override
@@ -48,7 +42,7 @@ public class TransactionsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Connect to Recyclerview in fragment_users
-        recyclerView = view.findViewById(R.id.transactionList);
+        RecyclerView recyclerView = view.findViewById(R.id.transactionList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -93,7 +87,7 @@ public class TransactionsFragment extends Fragment {
         transactionTotal.add("$ 69.99");
         paymentType.add(R.drawable.discover);
 
-        adapter = new  TransactionRecyclerAdapter(transactionDate, transactionTime, orderNumber,
+        TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactionDate, transactionTime, orderNumber,
                 transactionID, transactionStatus, transactionTotal, paymentType, getContext());
 
         recyclerView.setAdapter(adapter);
