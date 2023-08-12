@@ -34,7 +34,8 @@
             android:alpha="0.1"
             android:contentDescription="@string/no_data_message"
             app:srcCompat="@drawable/baseline_receipt_24"
-            tools:ignore="ImageContrastCheck" />
+            tools:ignore="ImageContrastCheck"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/no_orders_textview"
@@ -45,15 +46,15 @@
             android:alpha="0.4"
             android:text="@string/no_orders"
             android:textSize="20sp"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="TextContrastCheck"
+            android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ordersList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="35dp"
-            tools:listitem="@layout/transaction_design"
-            android:visibility="gone"/>
+            tools:listitem="@layout/orders_design" />
 
     </androidx.cardview.widget.CardView>
 
