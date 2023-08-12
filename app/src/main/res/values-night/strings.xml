@@ -126,5 +126,6 @@
     <string name="no_users">No Users</string>
     <string name="description">Description</string>
     <string name="orders">Orders</string>
+    <string name="order_number"># 05077</string>
 
 </resources>

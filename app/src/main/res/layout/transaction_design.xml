@@ -55,7 +55,7 @@
                 android:layout_height="12dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="2dp"
-                android:text="# 05077"
+                android:text="@string/order_number"
                 android:textColor="@color/black"
                 android:textSize="11sp"
                 android:textStyle="bold"

@@ -126,5 +126,10 @@
     <string name="no_users">No Users</string>
     <string name="description">Description</string>
     <string name="orders">Orders</string>
+    <string name="no_orders">No Orders Yet</string>
+    <string name="order_number"># 00000</string>
+    <string name="status">Status</string>
+    <string name="completed">Completed</string>
+    <string name="bar">|</string>
 
 </resources>
