@@ -190,33 +190,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-//    public void addItem(byte[] imageData, String name, double price, String category, String sku, String unitType,
-//                 int stock, double wsPrice, double tax, String description) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues cv = new ContentValues();
-//
-//        cv.put(ITEMS_COLUMN_IMAGE, imageData);
-//        cv.put(ITEMS_COLUMN_NAME, name);
-//        cv.put(ITEMS_COLUMN_PRICE, price);
-//        cv.put(ITEMS_COLUMN_CATEGORY, category);
-//        cv.put(ITEMS_COLUMN_SKU, sku);
-//        cv.put(ITEMS_COLUMN_TYPE, unitType);
-//        cv.put(ITEMS_COLUMN_STOCK, stock);
-//        cv.put(ITEMS_COLUMN_WS_PRICE, wsPrice);
-//        cv.put(ITEMS_COLUMN_TAX, tax);
-//        cv.put(ITEMS_COLUMN_DESCRIPTION, description);
-//
-//        long result = db.insert(ITEMS_TABLE,null, cv);
-//
-//        if (result == -1) {
-//            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(context, "Added Successfully!", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        db.close();
-//    }
-
 
     /**
      * Adds a new user to the "users" table in the database.

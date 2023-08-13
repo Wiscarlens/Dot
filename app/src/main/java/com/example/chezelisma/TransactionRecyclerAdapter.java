@@ -35,7 +35,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         this.transactionStatus = transactionStatus;
         this.transactionTotal = transactionTotal;
         this.paymentType = paymentType;
-        this.context = context;// **
+        this.context = context;
     }
 
     @NonNull

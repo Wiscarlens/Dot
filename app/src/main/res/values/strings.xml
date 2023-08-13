@@ -131,5 +131,6 @@
     <string name="status">Status</string>
     <string name="completed">Completed</string>
     <string name="bar">|</string>
+    <string name="no_item">0 Items</string>
 
 </resources>
