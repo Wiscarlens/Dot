@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/*
+ Created by Wiscarlens Lucius on 14 August 2023.
+ */
+
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignViewHolder> {
     private final ArrayList<String> orderNumber;
     private final ArrayList<String> orderDate;

@@ -15,13 +15,13 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 public class OrdersFragment extends Fragment {
-
     private ArrayList<String> orderNumber = new ArrayList<>();
     private ArrayList<String> orderDate = new ArrayList<>();
     private ArrayList<String> orderTime = new ArrayList<>();
     private ArrayList<String> orderStatus = new ArrayList<>();
     private ArrayList<String> orderTotalItems = new ArrayList<>();
     private ArrayList<String> orderTotalAmount = new ArrayList<>();
+    private Object[][] ItemImage; // Selected item images
 
 
     @Override
