@@ -1,5 +1,6 @@
 package com.example.chezelisma;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,7 +22,8 @@ public class OrdersFragment extends Fragment {
     private ArrayList<String> orderStatus = new ArrayList<>();
     private ArrayList<String> orderTotalItems = new ArrayList<>();
     private ArrayList<String> orderTotalAmount = new ArrayList<>();
-    private Object[][] ItemImage; // Selected item images
+
+    private ArrayList<Integer> selectedItemParent = new ArrayList<>();; // Selected item images
 
 
     @Override
@@ -40,6 +42,17 @@ public class OrdersFragment extends Fragment {
 
         OrderListView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // **********
+//        View orders_design = LayoutInflater.from(getContext()).inflate(R.layout.orders_design, null); // Test line
+//        RecyclerView selectedItemRecyclerView = orders_design.findViewById(R.id.selectedItemRV); // Test line
+//        selectedItemRecyclerView.setLayoutManager(new LinearLayoutManager(getContext())); // Test line
+//
+//        selectedItemParent.add(R.drawable.amex);
+//        selectedItemParent.add(R.drawable.discover);
+//
+//        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(selectedItemParent, getContext()); // Test Line
+//        selectedItemRecyclerView.setAdapter(selectedItemsAdapter); // Test Line
+
         orderNumber.add("# 55555");
         orderDate.add("8-13-2023");
         orderTime.add("5:14:20 PM");
@@ -47,12 +60,12 @@ public class OrdersFragment extends Fragment {
         orderTotalItems.add("6 Items");
         orderTotalAmount.add("$ 27.23");
 
-        orderNumber.add("# 12346");
-        orderDate.add("7-28-2023");
-        orderTime.add("11:28:10 AM");
-        orderStatus.add("Competed");
-        orderTotalItems.add("25 Items");
-        orderTotalAmount.add("$ 147.33");
+//        orderNumber.add("# 12346");
+//        orderDate.add("7-28-2023");
+//        orderTime.add("11:28:10 AM");
+//        orderStatus.add("Competed");
+//        orderTotalItems.add("25 Items");
+//        orderTotalAmount.add("$ 147.33");
 
         OrdersAdapter ordersAdapter = new OrdersAdapter(orderNumber, orderDate, orderTime,
                 orderStatus, orderTotalItems, orderTotalAmount, getContext());

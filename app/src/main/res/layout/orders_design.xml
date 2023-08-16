@@ -67,7 +67,7 @@
             </LinearLayout>
 
             <HorizontalScrollView
-                android:id="@+id/ItemhorizontalScrollView"
+                android:id="@+id/itemHorizontalScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:contentDescription="@string/product"
@@ -82,12 +82,12 @@
                     android:orientation="horizontal">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/itemShortList"
+                        android:id="@+id/selectedItemRV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         android:orientation="horizontal"
-                        tools:listitem="@layout/items_orders_design" />
+                        tools:listitem="@layout/selected_items_design" />
 
                 </LinearLayout>
 

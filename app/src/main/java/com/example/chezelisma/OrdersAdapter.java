@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 /*
- Created by Wiscarlens Lucius on 14 August 2023.
+ Created by Wiscarlens Lucius on 13 August 2023.
  */
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignViewHolder> {
@@ -40,7 +40,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
     @NonNull
     @Override
     public OrdersAdapter.DesignViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.orders_design, parent, false);
+        View view = LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.orders_design, parent, false);
         return new DesignViewHolder(view);
     }
 
