@@ -41,7 +41,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String USERS_COLUMN_POSITION = "position";
     private static final String USERS_COLUMN_PASSWORD = "password";
 
-
     // Items Table
     private static final String ITEMS_TABLE = "items";
     private static final String ITEMS_COLUMN_ID = "_id";
@@ -65,6 +64,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String ORDER_COLUMN_TOTAL_AMOUNT = "total_amount";
     private static final String ORDER_COLUMN_PAYMENT_METHOD = "payment_method";
     private static final String ORDER_COLUMN_PAYMENT_STATUS = "payment_status";
+
+    // Order Items Table
+    private static final String ORDER_ITEMS_TABLE_NAME = "order_items";
+    private static final String ORDER_ITEM_COLUMN_ID = "_id";
+    private static final String ORDER_ITEM_COLUMN_ORDER_ID = "order_id";
+    private static final String ORDER_ITEM_COLUMN_ITEM_ID = "item_id";
+    private static final String ORDER_ITEM_COLUMN_QUANTITY = "item_quantity";
 
     // Transaction Table
     private static final String TRANSACTION_TABLE = "transactions";
@@ -120,19 +126,29 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         String query_orders = "CREATE TABLE " + ORDERS_TABLE_NAME +
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ORDER_COLUMN_CREATOR_ID + " INTEGER NOT NULL, " +
-                ORDER_COLUMN_ORDER_DATE + " DATE NOT NULL, " +
+                ORDER_COLUMN_ORDER_DATE + " DATE DEFAULT CURRENT_TIMESTAMP, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +
                 ORDER_COLUMN_PAYMENT_METHOD + " TEXT NOT NULL, " +
                 ORDER_COLUMN_PAYMENT_STATUS + " TEXT NOT NULL, " +
                 " FOREIGN KEY (" + ORDER_COLUMN_CREATOR_ID
                 + ") REFERENCES " + USERS_TABLE_NAME + " (" + USERS_COLUMN_ID + "));";
 
+        // SQL query to create the "selected_items" table
+        String query_order_items = "CREATE TABLE " + ORDER_ITEMS_TABLE_NAME +
+                " (" + ORDER_ITEM_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ORDER_ITEM_COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
+                ORDER_ITEM_COLUMN_ITEM_ID + " INTEGER NOT NULL, " + // Add the item ID column
+                ORDER_ITEM_COLUMN_QUANTITY + " INTEGER NOT NULL, " +
+                " FOREIGN KEY (" + ORDER_ITEM_COLUMN_ORDER_ID +
+                ") REFERENCES " + ORDERS_TABLE_NAME + " (" + ORDER_COLUMN_ID + "), " +
+                " FOREIGN KEY (" + ORDER_ITEM_COLUMN_ITEM_ID +
+                ") REFERENCES " + ITEMS_TABLE + " (" + ITEMS_COLUMN_ID + "));";
 
         // SQL query to create the "transactions" table
         String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE +
                 " (" + TRANSACTION_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TRANSACTION_COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
-                TRANSACTION_COLUMN_PAYMENT_DATE + " DATE NOT NULL, " +
+                TRANSACTION_COLUMN_PAYMENT_DATE + " DATE DEFAULT CURRENT_TIMESTAMP, " +
                 TRANSACTION_COLUMN_AMOUNT + " REAL NOT NULL, " +
                 TRANSACTION_COLUMN_STATUS + " TEXT NOT NULL, " +
                 TRANSACTION_COLUMN_PAYMENT_METHOD + " TEXT, " +
@@ -142,6 +158,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query_users);
         db.execSQL(query_items);
         db.execSQL(query_orders);
+        db.execSQL(query_order_items);
         db.execSQL(query_transactions);
     }
 
@@ -153,7 +170,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param price       The price of the item.
      * @param category    The category of the item.
      * @param sku         The SKU (stock keeping unit) of the item.
-     * @param unitType    The unit type of the item (e.g., "pcs", "kg", "lb").
+     * @param unitType    The unit type of the item (e.g., "unit", "kg", "lb").
      * @param stock       The available stock quantity of the item.
      * @param wsPrice     The wholesale price of the item.
      * @param tax         The tax rate applied to the item.
@@ -188,8 +205,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             throw e;
         }
     }
-
-
 
     /**
      * Adds a new user to the "users" table in the database.
@@ -256,6 +271,35 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Adds an order item to the database associated with the specified order and item.
+     *
+     * @param orderId   The ID of the order to which the item belongs.
+     * @param itemId    The ID of the item being added to the order.
+     * @param quantity  The quantity of the item being added to the order.
+     * @throws SQLiteException If there is an error while interacting with the SQLite database.
+     */
+    public void addOrderItem(int orderId, int itemId, int quantity)
+            throws SQLiteException {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(ORDER_ITEM_COLUMN_ORDER_ID, orderId);
+            cv.put(ORDER_ITEM_COLUMN_ITEM_ID, itemId); // Make sure to provide the correct item ID
+            cv.put(ORDER_ITEM_COLUMN_QUANTITY, quantity);
+
+            long result = result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
+
+            if (result != -1) {
+                Toast.makeText(context, "Added Order Item Successfully!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (SQLiteException e) {
+            Toast.makeText(context, "Failed to add order item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            throw e;
+        }
+    }
+
+    /**
      * Checks if a given email already exists in the "users" table of the database.
      *
      * @param db    The SQLiteDatabase object to perform the query on.
@@ -265,7 +309,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private boolean emailExists(SQLiteDatabase db, String email) {
         // Perform a database query to check for the existence of the email
         Cursor cursor = db.query(USERS_TABLE_NAME, new String[]{USERS_COLUMN_EMAIL},
-                USERS_COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
+                USERS_COLUMN_EMAIL + "=?", new String[]{email},
+                null, null, null);
 
         boolean exists = cursor.getCount() > 0; // Check email exists in the database
 
@@ -303,8 +348,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public void updateItemData(String row_id, byte[] imageData, String name, double price, String category, String sku, String unitType,
-                        int stock, double wsPrice, double tax, String description){
+    public void updateItemData(String row_id, byte[] imageData, String name, double price,
+                               String category, String sku, String unitType, int stock,
+                               double wsPrice, double tax, String description){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -328,7 +374,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
 
         db.close();
-
     }
 
     void deleteItemRow(String row_id){

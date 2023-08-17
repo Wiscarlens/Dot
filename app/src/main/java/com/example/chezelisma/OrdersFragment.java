@@ -15,9 +15,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 public class OrdersFragment extends Fragment {
-    ArrayList<Orders> ordersArrayList = new ArrayList<>();
-    ArrayList<SelectedItems> selectedItemsArrayList = new ArrayList<>();
-    OrdersAdapter ordersAdapter;
+    private ArrayList<Orders> ordersArrayList = new ArrayList<>();
+    private ArrayList<SelectedItems> selectedItemsArrayList = new ArrayList<>();
+    private OrdersAdapter ordersAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,17 +37,18 @@ public class OrdersFragment extends Fragment {
         selectedItemsArrayList.add(new SelectedItems(R.drawable.redbull));
         selectedItemsArrayList.add(new SelectedItems(R.drawable.gatorade));
 
-        ordersArrayList.add(new Orders("55555", "8-13-2023",
-                "5:14:20 PM", "Refund", 6,
-                27.23, selectedItemsArrayList));
+        ordersArrayList.add(new Orders(
+                "55555", "8-13-2023", "5:14:20 PM",
+                "Refund", 6, 27.23,
+                selectedItemsArrayList));
 
-        ordersArrayList.add(new Orders("12346", "7-28-2023",
-                "11:28:10 AM", "Competed", 25,
-                147.33, selectedItemsArrayList));
+        ordersArrayList.add(new Orders(
+                "12346", "7-28-2023", "11:28:10 AM",
+                "Competed", 25, 147.33,
+                selectedItemsArrayList));
 
         ordersAdapter = new OrdersAdapter(ordersArrayList, getContext());
         OrderList_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         OrderList_RecyclerView.setAdapter(ordersAdapter);
-
     }
 }

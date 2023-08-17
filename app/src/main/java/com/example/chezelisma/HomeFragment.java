@@ -159,6 +159,11 @@ public class HomeFragment extends Fragment {
                 // Open confirmation fragment
                 showDialogMessage();
 
+                // Make dialog message boolean method
+                // if user choose to continue add order details and transaction details to database
+
+                //
+
             } else {
                 String message = getResources().getString(R.string.empty_cart);
                 Toast.makeText(fragmentActivity, message, Toast.LENGTH_SHORT).show();
