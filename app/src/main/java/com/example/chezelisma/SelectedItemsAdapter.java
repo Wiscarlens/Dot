@@ -1,7 +1,6 @@
 package com.example.chezelisma;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -12,16 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /*
  Created by Wiscarlens Lucius on 15 August 2023.
  */
 
 public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdapter.DesignViewHolder> {
-    private final ArrayList<Integer> selectedItemImage;
-    private final Context context;
+    ArrayList<SelectedItems> selectedItems;
+    Context context;
 
-    public SelectedItemsAdapter(ArrayList<Integer> selectedItem, Context context) {
-        this.selectedItemImage = selectedItem;
+    public SelectedItemsAdapter(ArrayList<SelectedItems> selectedItem, Context context) {
+        this.selectedItems = selectedItem;
         this.context = context;
     }
 
@@ -36,21 +37,21 @@ public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdap
 
     @Override
     public void onBindViewHolder(@NonNull DesignViewHolder holder, int position) {
-       // holder.item_image.setImageDrawable(selectedItemImage.get(position));
-        holder.item_image.setImageResource(selectedItemImage.get(position));
+        holder.selectedItem_ImageView.setImageResource(selectedItems.get(position).itemImage);
     }
 
     @Override
     public int getItemCount() {
-        return selectedItemImage.size();
+        return selectedItems.size();
     }
 
     public static class DesignViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView item_image;
+        private final ImageView selectedItem_ImageView;
 
         public DesignViewHolder(@NonNull View itemView) {
             super(itemView);
-            item_image = itemView.findViewById(R.id.selectedItemDesign);
+
+            selectedItem_ImageView = itemView.findViewById(R.id.selectedItemDesign);
         }
     }
 }

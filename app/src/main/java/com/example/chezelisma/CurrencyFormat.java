@@ -8,8 +8,8 @@ public class CurrencyFormat {
     // System will cache the data
 
     private static final Locale localCountry = Locale.US;
-    //private static final Locale localCountry = Locale.FRANCE;
-    //private static final Locale localCountry = new Locale("fr", "HT");
+//    private static final Locale localCountry = Locale.FRANCE;
+//    private static final Locale localCountry = new Locale("fr", "HT");
 
     public static String getCurrencyFormat(double amount){
         NumberFormat usDollarFormat = NumberFormat.getCurrencyInstance(localCountry);

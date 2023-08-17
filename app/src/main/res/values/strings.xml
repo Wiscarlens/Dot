@@ -127,10 +127,12 @@
     <string name="description">Description</string>
     <string name="orders">Orders</string>
     <string name="no_orders">No Orders Yet</string>
-    <string name="order_number"># 00000</string>
+    <string name="order_number">00000</string>
+    <string name="pound">#</string>
     <string name="status">Status</string>
     <string name="completed">Completed</string>
     <string name="bar">|</string>
-    <string name="no_item">0 Items</string>
+    <string name="item"> Items</string>
+    <string name="zero">0</string>
 
 </resources>

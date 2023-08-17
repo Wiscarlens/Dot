@@ -1,37 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="2dp"
+    android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+    <ImageView
+        android:id="@+id/selectedItemDesign"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        app:cardElevation="30dp"
-        android:padding="10dp"
-        app:cardCornerRadius="10dp"
-        android:gravity="center">
-
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_gravity="center_horizontal"-->
-<!--            android:gravity="center"-->
-<!--            android:padding="2dp">-->
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/selectedItemDesign"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/items"
-                android:src="@drawable/baseline_image_24"
-                android:scaleType="centerCrop" />
-
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-
-    </androidx.cardview.widget.CardView>
+        android:layout_gravity="center"
+        android:contentDescription="@string/items"
+        android:src="@drawable/baseline_image_24"
+        android:scaleType="fitCenter" />
 
 </LinearLayout>

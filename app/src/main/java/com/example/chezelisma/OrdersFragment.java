@@ -1,6 +1,5 @@
 package com.example.chezelisma;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,19 +15,12 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 public class OrdersFragment extends Fragment {
-    private ArrayList<String> orderNumber = new ArrayList<>();
-    private ArrayList<String> orderDate = new ArrayList<>();
-    private ArrayList<String> orderTime = new ArrayList<>();
-    private ArrayList<String> orderStatus = new ArrayList<>();
-    private ArrayList<String> orderTotalItems = new ArrayList<>();
-    private ArrayList<String> orderTotalAmount = new ArrayList<>();
-
-    private ArrayList<Integer> selectedItemParent = new ArrayList<>();; // Selected item images
-
+    ArrayList<Orders> ordersArrayList = new ArrayList<>();
+    ArrayList<SelectedItems> selectedItemsArrayList = new ArrayList<>();
+    OrdersAdapter ordersAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_orders, container, false);
     }
@@ -38,39 +30,24 @@ public class OrdersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Connect to Recyclerview in fragment_orders
-        RecyclerView OrderListView = view.findViewById(R.id.ordersList);
+        RecyclerView OrderList_RecyclerView = view.findViewById(R.id.ordersList);
 
-        OrderListView.setLayoutManager(new LinearLayoutManager(getContext()));
+        selectedItemsArrayList.add(new SelectedItems(R.drawable.coke));
+        selectedItemsArrayList.add(new SelectedItems(R.drawable.fiji));
+        selectedItemsArrayList.add(new SelectedItems(R.drawable.redbull));
+        selectedItemsArrayList.add(new SelectedItems(R.drawable.gatorade));
 
-        // **********
-//        View orders_design = LayoutInflater.from(getContext()).inflate(R.layout.orders_design, null); // Test line
-//        RecyclerView selectedItemRecyclerView = orders_design.findViewById(R.id.selectedItemRV); // Test line
-//        selectedItemRecyclerView.setLayoutManager(new LinearLayoutManager(getContext())); // Test line
-//
-//        selectedItemParent.add(R.drawable.amex);
-//        selectedItemParent.add(R.drawable.discover);
-//
-//        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(selectedItemParent, getContext()); // Test Line
-//        selectedItemRecyclerView.setAdapter(selectedItemsAdapter); // Test Line
+        ordersArrayList.add(new Orders("55555", "8-13-2023",
+                "5:14:20 PM", "Refund", 6,
+                27.23, selectedItemsArrayList));
 
-        orderNumber.add("# 55555");
-        orderDate.add("8-13-2023");
-        orderTime.add("5:14:20 PM");
-        orderStatus.add("Refund");
-        orderTotalItems.add("6 Items");
-        orderTotalAmount.add("$ 27.23");
+        ordersArrayList.add(new Orders("12346", "7-28-2023",
+                "11:28:10 AM", "Competed", 25,
+                147.33, selectedItemsArrayList));
 
-//        orderNumber.add("# 12346");
-//        orderDate.add("7-28-2023");
-//        orderTime.add("11:28:10 AM");
-//        orderStatus.add("Competed");
-//        orderTotalItems.add("25 Items");
-//        orderTotalAmount.add("$ 147.33");
-
-        OrdersAdapter ordersAdapter = new OrdersAdapter(orderNumber, orderDate, orderTime,
-                orderStatus, orderTotalItems, orderTotalAmount, getContext());
-
-        OrderListView.setAdapter(ordersAdapter);
+        ordersAdapter = new OrdersAdapter(ordersArrayList, getContext());
+        OrderList_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        OrderList_RecyclerView.setAdapter(ordersAdapter);
 
     }
 }
