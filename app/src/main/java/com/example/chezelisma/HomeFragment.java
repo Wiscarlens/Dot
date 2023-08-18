@@ -43,6 +43,7 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class HomeFragment extends Fragment {
@@ -156,13 +157,29 @@ public class HomeFragment extends Fragment {
                 result.putString("price", currentCharge);
                 getParentFragmentManager().setFragmentResult("priceData", result);
 
-                // Open confirmation fragment
-                showDialogMessage();
 
-                // Make dialog message boolean method
-                // if user choose to continue add order details and transaction details to database
+                CompletableFuture<Boolean> userResponse = showDialogMessage(); // Open confirmation fragment
 
-                //
+                userResponse.thenAcceptAsync(confirmed -> {
+                    if (confirmed) {
+                        // Adding order and transaction details to the database
+
+                        //addOrderAndTransactionDetailsToDatabase();
+
+
+
+                        // Open Confirmation fragment
+                        FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        ConfirmationFragment confirmationFragment = new ConfirmationFragment();
+                        fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
+                        fragmentTransaction.commit();
+                    } else {
+                        // User chose not to continue
+                        // Simulate showing a toast message
+                        Toast.makeText(getContext(), "Order cancelled.", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             } else {
                 String message = getResources().getString(R.string.empty_cart);
@@ -219,22 +236,24 @@ public class HomeFragment extends Fragment {
         }
     });
 
-    private void showDialogMessage() {
+
+    private CompletableFuture<Boolean> showDialogMessage() {
+        CompletableFuture<Boolean> checkoutFuture = new CompletableFuture<>();
+
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
         alertDialog.setTitle(getResources().getString(R.string.confirm))
                 .setMessage(getResources().getString(R.string.confirm_checkout))
                 .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> {
-                    // If user click on NO nothing happen
+                    checkoutFuture.complete(false);  // Complete with the value 'false'
                 })
                 .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
-                    // Open ConfirmationFragment when user click on YES
-                    FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    ConfirmationFragment confirmationFragment = new ConfirmationFragment();
-                    fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
-                    fragmentTransaction.commit();
+                    checkoutFuture.complete(true);   // Complete with the value 'true'
+
                 }).show();
+
+        return checkoutFuture;  // Return the CompletableFuture<Boolean>
     }
+
 
     private void storeItemsDataInArrays(){
         Cursor cursor = myDB.readAllItemsData();
