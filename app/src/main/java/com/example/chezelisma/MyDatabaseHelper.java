@@ -111,6 +111,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         String query_items = "CREATE TABLE " + ITEMS_TABLE +
                 " (" + ITEMS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ITEMS_COLUMN_IMAGE + " BLOB, " +
+                // Need to be a unique value
                 ITEMS_COLUMN_NAME + " TEXT NOT NULL, " +
                 ITEMS_COLUMN_PRICE + " REAL NOT NULL, " +
                 ITEMS_COLUMN_CATEGORY + " TEXT, " +
@@ -125,11 +126,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // SQL query to create the "orders" table
         String query_orders = "CREATE TABLE " + ORDERS_TABLE_NAME +
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ORDER_COLUMN_CREATOR_ID + " INTEGER NOT NULL, " +
+                // Make not null in the future
+                ORDER_COLUMN_CREATOR_ID + " INTEGER, " +
                 ORDER_COLUMN_ORDER_DATE + " DATE DEFAULT CURRENT_TIMESTAMP, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +
                 ORDER_COLUMN_PAYMENT_METHOD + " TEXT NOT NULL, " +
-                ORDER_COLUMN_PAYMENT_STATUS + " TEXT NOT NULL, " +
+                // not null in the future
+                ORDER_COLUMN_PAYMENT_STATUS + " TEXT, " +
                 " FOREIGN KEY (" + ORDER_COLUMN_CREATOR_ID
                 + ") REFERENCES " + USERS_TABLE_NAME + " (" + USERS_COLUMN_ID + "));";
 
@@ -271,6 +274,44 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Adds an order to the database and returns the ID of the newly inserted order.
+     *
+     * @param creatorId       The ID of the user who created the order.
+     * @param totalAmount     The total amount of the order.
+     * @param paymentMethod   The payment method used for the order.
+     * @param paymentStatus   The payment status of the order.
+     * @return The ID of the newly inserted order, or -1 if insertion failed.
+     * @throws SQLiteException If there is an error while interacting with the SQLite database.
+     */
+    public long addOrder(Integer creatorId, double totalAmount, String paymentMethod, String paymentStatus)
+            throws SQLiteException {
+        long newOrderId = -1;
+
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+
+            ContentValues cv = new ContentValues();
+
+            cv.put(ORDER_COLUMN_CREATOR_ID, creatorId);
+            cv.put(ORDER_COLUMN_TOTAL_AMOUNT, totalAmount);
+            cv.put(ORDER_COLUMN_PAYMENT_METHOD, paymentMethod);
+            cv.put(ORDER_COLUMN_PAYMENT_STATUS, paymentStatus);
+
+            newOrderId = db.insertOrThrow(ORDERS_TABLE_NAME, null, cv);
+
+            if (newOrderId != -1) {
+                Toast.makeText(context, "Added Order Successfully!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (SQLiteException e) {
+            Toast.makeText(context, "Failed to add order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            throw e;
+        }
+
+        return newOrderId;
+    }
+
+
+
+    /**
      * Adds an order item to the database associated with the specified order and item.
      *
      * @param orderId   The ID of the order to which the item belongs.
@@ -298,6 +339,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             throw e;
         }
     }
+
 
     /**
      * Checks if a given email already exists in the "users" table of the database.

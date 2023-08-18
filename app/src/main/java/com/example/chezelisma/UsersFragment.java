@@ -32,7 +32,7 @@ public class UsersFragment extends Fragment {
     private ImageView noUserImage;
     private TextView noUserText;
     private RecyclerView recyclerView;
-    private ArrayList<String> fullname = new ArrayList<>();
+    private ArrayList<String> fullName = new ArrayList<>();
     private ArrayList<String> position = new ArrayList<>();
     private ArrayList<Drawable> image = new ArrayList<>();
     private UserRecyclerAdapter adapter;
@@ -65,9 +65,9 @@ public class UsersFragment extends Fragment {
 
         myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        storeItemsDataInArrays(); // Save item data from database to the arraylist
+        storeUsersDataInArrays(); // Save item data from database to the arraylist
 
-        adapter = new UserRecyclerAdapter(fullname, position, image, getContext());
+        adapter = new UserRecyclerAdapter(fullName, position, image, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -82,7 +82,7 @@ public class UsersFragment extends Fragment {
         });
     }
 
-    private void storeItemsDataInArrays(){
+    private void storeUsersDataInArrays(){
         Cursor cursor = myDB.readAllUsersData();
 
         if (cursor.getCount() == 0){
@@ -108,7 +108,7 @@ public class UsersFragment extends Fragment {
                 // Concatenate first and last name
                 String FullName = cursor.getString(1) + " " + cursor.getString(3);
 
-                fullname.add(FullName);
+                fullName.add(FullName);
                 position.add(cursor.getString(13));
                 image.add(itemImageDrawable);
             }

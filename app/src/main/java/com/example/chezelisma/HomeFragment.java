@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,9 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -53,10 +57,14 @@ public class HomeFragment extends Fragment {
     private TextView noDataText;
     private GridView itemGridview;
     private ArrayList<Drawable> image = new ArrayList<>();
+
+    private Map<Integer, String> itemId_and_name = new HashMap<>();
+
     private ArrayList<String> itemName = new ArrayList<>();
     private ArrayList<String> itemPrice = new ArrayList<>();
     private ArrayList<String> itemUnitType = new ArrayList<>();
     private ArrayList<Integer> backgroundColor = new ArrayList<>();
+
     private ArrayList<String> selectProductName =  new ArrayList<>();
     private ArrayList<Double> selectProductPrice = new ArrayList<>();
 
@@ -152,34 +160,73 @@ public class HomeFragment extends Fragment {
 
             // Check if recycle view is empty before check out
             if (!selectProductName.isEmpty()) {
-                // Sending data to another fragment
+                // Sending data to next fragment
                 Bundle result = new Bundle();
                 result.putString("price", currentCharge);
                 getParentFragmentManager().setFragmentResult("priceData", result);
 
+                int creatorId = 1;
+                double totalAmount = totalPrice.get();
+                String paymentMethod = "Visa";
+                String paymentStatus = "Completed";
+                int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
 
-                CompletableFuture<Boolean> userResponse = showDialogMessage(); // Open confirmation fragment
+                // Find selectProductName ID in the database
+                Integer[] itemID = getItemIdsFromNames(selectProductName);
+                Integer[] itemFrequency = getFrequencies(selectProductName);
 
-                userResponse.thenAcceptAsync(confirmed -> {
-                    if (confirmed) {
-                        // Adding order and transaction details to the database
+                for(int i = 0; i < itemID.length; i++){
+                    myDB.addOrderItem(newOrderID, itemID[i], itemFrequency[i]);
+                }
 
-                        //addOrderAndTransactionDetailsToDatabase();
+                // TODO: Find how to read data from the database using terminal
+
+                // Open Confirmation fragment
+                FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                ConfirmationFragment confirmationFragment = new ConfirmationFragment();
+                fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
+                fragmentTransaction.commit();
+
+                //Toast.makeText(fragmentActivity, "Add to database", Toast.LENGTH_LONG).show();
 
 
+//                CompletableFuture<Boolean> userResponse = showDialogMessage(); // Open confirmation fragment
 
-                        // Open Confirmation fragment
-                        FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        ConfirmationFragment confirmationFragment = new ConfirmationFragment();
-                        fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
-                        fragmentTransaction.commit();
-                    } else {
-                        // User chose not to continue
-                        // Simulate showing a toast message
-                        Toast.makeText(getContext(), "Order cancelled.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                userResponse.thenAcceptAsync(confirmed -> {
+//                    if (confirmed) {
+//                        // Adding order and transaction details to the database
+//
+//
+//                        int creatorId = 1;
+//                        double totalAmount = totalPrice.get();
+//                        String paymentMethod = "Visa";
+//                        String paymentStatus = "Completed";
+//                        int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
+//
+//                        // Find selectProductName ID in the database
+//                        Integer[] itemID = getItemIdsFromNames(selectProductName);
+//                        Integer[] itemFrequency = getFrequencies(selectProductName);
+//
+//                        for(int i = 0; i < itemID.length; i++){
+//                            myDB.addOrderItem(newOrderID, itemID[i], itemFrequency[i]);
+//                        }
+//
+//
+//                        // Open Confirmation fragment
+//                        FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+//                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                        ConfirmationFragment confirmationFragment = new ConfirmationFragment();
+//                        fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
+//                        fragmentTransaction.commit();
+//
+//                        Toast.makeText(fragmentActivity, "Add to database", Toast.LENGTH_LONG).show();
+//                    } else {
+//                        // User chose not to continue
+//                        // Simulate showing a toast message
+//                        Toast.makeText(getContext(), "Order cancelled.", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
             } else {
                 String message = getResources().getString(R.string.empty_cart);
@@ -258,6 +305,7 @@ public class HomeFragment extends Fragment {
     private void storeItemsDataInArrays(){
         Cursor cursor = myDB.readAllItemsData();
 
+        // In case database if empty
         if (cursor.getCount() == 0){
             itemGridview.setVisibility(View.GONE);
             noDataImage.setVisibility(View.VISIBLE);
@@ -270,6 +318,7 @@ public class HomeFragment extends Fragment {
                 noDataText.setVisibility(View.GONE);
                 itemGridview.setVisibility(View.VISIBLE);
 
+                // get item image
                 byte[] imageData = cursor.getBlob(1);
 
                 // Convert the image byte array to a Bitmap
@@ -279,6 +328,10 @@ public class HomeFragment extends Fragment {
                 Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
 
                 image.add(itemImageDrawable);
+
+                // Add the ID and item name to the map
+                itemId_and_name.put(cursor.getInt(0), cursor.getString(2));
+
                 itemName.add(cursor.getString(2));
                 itemPrice.add(cursor.getString(3));
                 itemUnitType.add(cursor.getString(6));
@@ -286,5 +339,64 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+
+    /**
+     * Retrieves the item IDs associated with given unique item names from the itemId_and_name map.
+     *
+     * @param itemNamesToFind The list of unique item names for which the corresponding item IDs are to be retrieved.
+     * @return An array of item IDs corresponding to the provided unique item names. If an item name is not found, the corresponding array element will be null.
+     */
+    private Integer[] getItemIdsFromNames(ArrayList<String> itemNamesToFind) {
+        // Remove duplicates from the itemNamesToFind ArrayList
+        ArrayList<String> uniqueItemNamesToFind = new ArrayList<>(
+                new LinkedHashSet<>(itemNamesToFind)); // Do not copy a value twice
+
+        Integer[] itemIds = new Integer[uniqueItemNamesToFind.size()];
+
+        for (int i = 0; i < uniqueItemNamesToFind.size(); i++) {
+            String itemNameToFind = uniqueItemNamesToFind.get(i);
+
+            for (Map.Entry<Integer, String> entry : itemId_and_name.entrySet()) {
+                if (entry.getValue().equals(itemNameToFind)) {
+                    itemIds[i] = entry.getKey();
+                    break; // Move to the next item name
+                }
+            }
+
+            // Log if an item name is not found in the map
+            if (itemIds[i] == null) {
+                Log.d("error", "HomeFragment: Item name '" + itemNameToFind + "' is not found in the map");
+            }
+        }
+
+        return itemIds;
+    }
+
+    /**
+     * Calculates the frequency of each name in the input ArrayList and returns an array of frequencies.
+     *
+     * @param selectProductName The ArrayList of strings containing the names to calculate frequencies for.
+     * @return An array of integers representing the frequency of each name in the input ArrayList.
+     */
+    public static Integer[] getFrequencies(ArrayList<String> selectProductName) {
+        // Create a HashMap to store the frequency of each name
+        Map<String, Integer> nameFrequencyMap = new HashMap<>();
+
+        // Count the frequency of each name
+        for (String name : selectProductName) {
+            nameFrequencyMap.put(name, nameFrequencyMap.getOrDefault(name, 0) + 1);
+        }
+
+        // Create an array to store the frequencies
+        Integer[] frequencies = new Integer[selectProductName.size()];
+
+        // Populate the array with frequencies
+        for (int i = 0; i < selectProductName.size(); i++) {
+            frequencies[i] = nameFrequencyMap.get(selectProductName.get(i));
+        }
+
+        return frequencies;
+    }
+
 
 }

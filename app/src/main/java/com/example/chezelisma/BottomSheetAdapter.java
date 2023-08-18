@@ -15,16 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Map;
 
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.BottomViewHolder>{
     private ArrayList<String> productName;
     private ArrayList<Double> productPrice;
     private Product[] product;
-    Map<String, Integer> nameFrequency;
+    Map<String, Integer> name_and_frequency;
 
     private Context context;
 
@@ -43,20 +41,17 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemCount() {
-        nameFrequency = SelectedProduct.getProductFrequency(productName);
-        return nameFrequency.size();
+        name_and_frequency = SelectedProduct.getProductFrequency(productName);
+        return name_and_frequency.size();
     }
 
     @Override
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
         // ******************Need to optimize
-        nameFrequency = SelectedProduct.getProductFrequency(productName);
-        Map<String, Double> namePrice = SelectedProduct.combinePriceName(productName, productPrice);
+        name_and_frequency = SelectedProduct.getProductFrequency(productName);
+        Map<String, Double> name_and_price = SelectedProduct.combinePriceName(productName, productPrice);
 
-        product = SelectedProduct.getProductAsArray(nameFrequency, namePrice);
-
-        // Format the double value into currency format
-        NumberFormat formatCurrency = NumberFormat.getCurrencyInstance(Locale.US);
+        product = SelectedProduct.getProductAsArray(name_and_frequency, name_and_price);
 
         // Convert to String
         String tempFrequency =  String.valueOf(product[position].getFrequency());
@@ -72,10 +67,10 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
 
     public class BottomViewHolder extends RecyclerView.ViewHolder {
-        private TextView productNameTextView;
-        private TextView frequencyTextView;
-        private TextView priceTextView;
-        private CardView cardView;
+        private final TextView productNameTextView;
+        private final TextView frequencyTextView;
+        private final TextView priceTextView;
+        private final CardView cardView;
 
         public BottomViewHolder(@NonNull View itemView) {
             super(itemView);
