@@ -14,60 +14,43 @@ import androidx.cardview.widget.CardView;
 import java.util.ArrayList;
 
 public class ItemGridAdapter extends BaseAdapter {
-    private ArrayList<Drawable> itemImage;
-    private ArrayList<String> itemName;
-    private ArrayList<String> itemPrice;
-    private ArrayList<String> itemUnitType;
-    private ArrayList<Integer> bkgColor;
+    private ArrayList<Items> items;
 
-    private Context context;
 
-    public ItemGridAdapter(ArrayList<Drawable> image, ArrayList<String> name, ArrayList<String> price,
-                           ArrayList<String> unit, ArrayList<Integer> bkgColor, Context context) {
-        this.itemImage = image;
-        this.itemName = name;
-        this.itemPrice = price;
-        this.itemUnitType = unit;
-        this.bkgColor = bkgColor;
-        this.context = context;
+    public ItemGridAdapter(ArrayList<Items> items) {
+        this.items = items;
     }
 
     @Override
     public int getCount() {
-        return itemName.size();
+        return items.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return items.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return items.get(position).getId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_design, parent, false);
 
-        ImageView ItemImageView;
-        TextView ItemNameTextView;
-        TextView priceTextView;
-        TextView unitTextView;
-        CardView backgroundColor;
+        ImageView ItemImageView = view.findViewById(R.id.itemImageDesign);
+        TextView ItemNameTextView = view.findViewById(R.id.itemNameHolderDesign);
+        TextView priceTextView = view.findViewById(R.id.itemPriceHolderDesign);
+        TextView unitTypeTextView = view.findViewById(R.id.itemUnitTypeHolderDesign);
+        CardView backgroundColor = view.findViewById(R.id.ItemBackgroundColor);
 
-        ItemImageView = view.findViewById(R.id.itemImageDesign);
-        ItemNameTextView = view.findViewById(R.id.itemNameHolderDesign);
-        priceTextView = view.findViewById(R.id.itemPriceHolderDesign);
-        unitTextView = view.findViewById(R.id.itemUnitTypeHolderDesign);
-        backgroundColor = view.findViewById(R.id.ItemBackgroundColor);
-
-        ItemImageView.setImageDrawable(itemImage.get(position)); // Set the Drawable object
-        ItemNameTextView.setText(itemName.get(position));
-        priceTextView.setText(CurrencyFormat.getCurrencyFormat(Double.parseDouble(itemPrice.get(position))));
-        unitTextView.setText(itemUnitType.get(position));
-        backgroundColor.setBackgroundColor(bkgColor.get(position));
+        ItemImageView.setImageDrawable(items.get(position).getImage()); // Set the Drawable object
+        ItemNameTextView.setText(items.get(position).getName());
+        priceTextView.setText(CurrencyFormat.getCurrencyFormat(items.get(position).getPrice()));
+        unitTypeTextView.setText((items.get(position).getUnitType()));
+        backgroundColor.setBackgroundColor((items.get(position).getBackgroundColor()));
 
         return view;
     }

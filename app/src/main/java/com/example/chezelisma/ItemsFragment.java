@@ -1,11 +1,6 @@
 package com.example.chezelisma;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -30,23 +25,10 @@ import java.util.ArrayList;
 
 
 public class ItemsFragment extends Fragment {
-    private FloatingActionButton addItem;
     private FragmentActivity fragmentActivity;
 
-    private ImageView noDataImage;
-    private TextView noDataText;
-    private GridView itemGridview;
-
     // Hold data from the database
-    private ArrayList<Drawable> image;
-    private ArrayList<String> itemName;
-    private ArrayList<String> itemPrice;
-    private ArrayList<String> itemUnitType;
-    private ArrayList<Integer> backgroundColor;
-
-    private ItemGridAdapter adapter;
-
-    private MyDatabaseHelper myDB;
+    private final ArrayList<Items> items_for_display = new ArrayList<>();
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -64,31 +46,26 @@ public class ItemsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
-        noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
-        itemGridview = view.findViewById(R.id.itemList); // When list of item will show
-        addItem = view.findViewById(R.id.addButton); // Add Item floating button
+        ImageView noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
+        TextView noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
+        GridView itemGridview = view.findViewById(R.id.itemList); // When list of item will show
+        FloatingActionButton addItem = view.findViewById(R.id.addButton); // Add Item floating button
 
-        // Local database
-        myDB = new MyDatabaseHelper(getContext());
+        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        image = new ArrayList<>();
-        itemName = new ArrayList<>();
-        itemPrice = new ArrayList<>();
-        itemUnitType = new ArrayList<>();
-        backgroundColor = new ArrayList<>();
+        // Save item data from database to the arraylist
+        Utils.storeItemsDataInArrays(myDB, items_for_display, itemGridview, noDataImage,
+                noDataText, getResources());
 
-        storeDataInArrays(); // Save item data from database to the arraylist
-
-        // Initialize adapter with the arrays
-        adapter = new ItemGridAdapter(image, itemName, itemPrice, itemUnitType, backgroundColor, getContext());
+         // Initialize adapter with the arrays
+        ItemGridAdapter adapter = new ItemGridAdapter(items_for_display);
 
         itemGridview.setAdapter(adapter);
 
         itemGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), "You selected " + itemName.get(position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "You selected " + items_for_display.get(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -101,39 +78,5 @@ public class ItemsFragment extends Fragment {
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         });
-    }
-
-    private void storeDataInArrays(){
-        Cursor cursor = myDB.readAllItemsData();
-
-        if (cursor.getCount() == 0){
-            itemGridview.setVisibility(View.GONE);
-            noDataImage.setVisibility(View.VISIBLE);
-            noDataText.setVisibility(View.VISIBLE);
-
-            //Toast.makeText(fragmentActivity, "Empty", Toast.LENGTH_SHORT).show();
-
-        } else{
-            while (cursor.moveToNext()){
-                noDataImage.setVisibility(View.GONE);
-                noDataText.setVisibility(View.GONE);
-                itemGridview.setVisibility(View.VISIBLE);
-
-                // Retrieve item data from the database
-                byte[] imageData = cursor.getBlob(1);
-
-                // Convert the image byte array to a Bitmap
-                Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-
-                // Convert the Bitmap to a Drawable if needed
-                Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
-
-                image.add(itemImageDrawable); // Test Line
-                itemName.add(cursor.getString(2));
-                itemPrice.add(cursor.getString(3));
-                itemUnitType.add(cursor.getString(6));
-                backgroundColor.add(R.color.white); // Default Background Color
-            }
-        }
     }
 }

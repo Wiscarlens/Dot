@@ -10,7 +10,7 @@ import java.util.Set;
  Created by Wiscarlens Lucius on 3 JUne 2023.
  */
 
-public class SelectedProduct {
+public class SelectedProductUtils {
     public static Map<String, Integer> getProductFrequency(ArrayList<String> itemNames) {
         Map<String, Integer> frequencyName = new HashMap<>();
 
@@ -50,7 +50,7 @@ public class SelectedProduct {
         return combinedPriceName;
     }
 
-    public static Product[] getProductAsArray(Map<String, Integer> nameFrequency, Map<String, Double> namePrice) {
+    public static Items[] getItemsAsArray(Map<String, Integer> nameFrequency, Map<String, Double> namePrice) {
         Set<Map.Entry<String, Integer>> frequencyEntrySet = nameFrequency.entrySet();
         Set<Map.Entry<String, Double>> priceEntrySet = namePrice.entrySet();
 
@@ -58,7 +58,7 @@ public class SelectedProduct {
         Iterator<Map.Entry<String, Double>> priceIterator = priceEntrySet.iterator();
 
         int size = Math.min(frequencyEntrySet.size(), priceEntrySet.size());
-        Product[] productArray = new Product[size];
+        Items[] productArray = new Items[size];
 
         for (int i = 0; i < size; i++) {
             Map.Entry<String, Integer> frequencyEntry = frequencyIterator.next();
@@ -68,7 +68,7 @@ public class SelectedProduct {
             Map.Entry<String, Double> priceEntry = priceIterator.next();
             Double price = priceEntry.getValue();
 
-            productArray[i] = new Product(name, frequency, price);
+            productArray[i] = new Items(name, frequency, price);
         }
 
         return productArray;

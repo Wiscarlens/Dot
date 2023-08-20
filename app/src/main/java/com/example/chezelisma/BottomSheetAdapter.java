@@ -21,7 +21,7 @@ import java.util.Map;
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.BottomViewHolder>{
     private ArrayList<String> productName;
     private ArrayList<Double> productPrice;
-    private Product[] product;
+    private Items[] product;
     Map<String, Integer> name_and_frequency;
 
     private Context context;
@@ -41,17 +41,17 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemCount() {
-        name_and_frequency = SelectedProduct.getProductFrequency(productName);
+        name_and_frequency = SelectedProductUtils.getProductFrequency(productName);
         return name_and_frequency.size();
     }
 
     @Override
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
         // ******************Need to optimize
-        name_and_frequency = SelectedProduct.getProductFrequency(productName);
-        Map<String, Double> name_and_price = SelectedProduct.combinePriceName(productName, productPrice);
+        name_and_frequency = SelectedProductUtils.getProductFrequency(productName);
+        Map<String, Double> name_and_price = SelectedProductUtils.combinePriceName(productName, productPrice);
 
-        product = SelectedProduct.getProductAsArray(name_and_frequency, name_and_price);
+        product = SelectedProductUtils.getItemsAsArray(name_and_frequency, name_and_price);
 
         // Convert to String
         String tempFrequency =  String.valueOf(product[position].getFrequency());

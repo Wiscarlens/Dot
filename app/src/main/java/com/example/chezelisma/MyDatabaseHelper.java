@@ -126,7 +126,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // SQL query to create the "orders" table
         String query_orders = "CREATE TABLE " + ORDERS_TABLE_NAME +
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                // Make not null in the future
+                // TODO: Make not null in the future
                 ORDER_COLUMN_CREATOR_ID + " INTEGER, " +
                 ORDER_COLUMN_ORDER_DATE + " DATE DEFAULT CURRENT_TIMESTAMP, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +

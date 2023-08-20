@@ -7,6 +7,7 @@ package com.example.chezelisma;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -53,17 +54,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class HomeFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     private Button chargeButton;
-    private ImageView noDataImage;
-    private TextView noDataText;
-    private GridView itemGridview;
+
+    private ArrayList<Items> items_for_display = new ArrayList<>();
     private ArrayList<Drawable> image = new ArrayList<>();
 
     private Map<Integer, String> itemId_and_name = new HashMap<>();
-
-    private ArrayList<String> itemName = new ArrayList<>();
-    private ArrayList<String> itemPrice = new ArrayList<>();
-    private ArrayList<String> itemUnitType = new ArrayList<>();
-    private ArrayList<Integer> backgroundColor = new ArrayList<>();
 
     private ArrayList<String> selectProductName =  new ArrayList<>();
     private ArrayList<Double> selectProductPrice = new ArrayList<>();
@@ -89,24 +84,25 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
-        noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
-        itemGridview = view.findViewById(R.id.itemList);
+        ImageView noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
+        TextView noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
+        GridView itemGridview = view.findViewById(R.id.itemList);
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
 
         // Local database
         myDB = new MyDatabaseHelper(getContext());
 
-        storeItemsDataInArrays(); // Save item data from database to the arraylist
+        // Save item data from database to the arraylist
+        storeItemsDataInArrays(myDB, items_for_display, itemGridview, noDataImage, noDataText, getResources());
 
-        ItemGridAdapter adapter = new ItemGridAdapter(image, itemName, itemPrice, itemUnitType, backgroundColor, getContext());
+        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(items_for_display);
+        itemGridview.setAdapter(itemGridAdapter);
 
-        itemGridview.setAdapter(adapter);
 
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
-            Double itemSelected = Double.parseDouble(itemPrice.get(position));
+            Double itemSelected = items_for_display.get(position).getPrice();
 
             // Add selected item price together
             totalPrice.set(totalPrice.get() + itemSelected);
@@ -117,9 +113,8 @@ public class HomeFragment extends Fragment {
             // Set the button text to the current value of price
             chargeButton.setText(currentCharge);
 
-            // Add data to the bottom sheet adapter
-            selectProductName.add(itemName.get(position));
-            selectProductPrice.add(Double.valueOf(itemPrice.get(position)));
+            selectProductName.add(items_for_display.get(position).getName());
+            selectProductPrice.add(items_for_display.get(position).getPrice());
 
         });
 
@@ -136,15 +131,15 @@ public class HomeFragment extends Fragment {
     }
 
     public Dialog showButtonDialog(){
-        final Dialog dialog = new Dialog(getContext());
+        final Dialog bottomSheetDialog = new Dialog(getContext());
 
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.bottomsheet_layout);
+        bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        bottomSheetDialog.setContentView(R.layout.bottomsheet_layout);
 
-        TextView transactionTotal = dialog.findViewById(R.id.transactionTotal);
-        Button checkoutButton = dialog.findViewById(R.id.checkoutButton);
+        TextView transactionTotal = bottomSheetDialog.findViewById(R.id.transactionTotal);
+        Button checkoutButton = bottomSheetDialog.findViewById(R.id.checkoutButton);
         // Variable to test bottom sheet
-        RecyclerView bottomSheetRecyclerView = dialog.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
+        RecyclerView bottomSheetRecyclerView = bottomSheetDialog.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
 
         transactionTotal.setText(currentCharge);
 
@@ -156,7 +151,7 @@ public class HomeFragment extends Fragment {
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
 
         checkoutButton.setOnClickListener(v -> {
-            dialog.dismiss();
+            bottomSheetDialog.dismiss();
 
             // Check if recycle view is empty before check out
             if (!selectProductName.isEmpty()) {
@@ -165,68 +160,43 @@ public class HomeFragment extends Fragment {
                 result.putString("price", currentCharge);
                 getParentFragmentManager().setFragmentResult("priceData", result);
 
-                int creatorId = 1;
-                double totalAmount = totalPrice.get();
-                String paymentMethod = "Visa";
-                String paymentStatus = "Completed";
-                int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
+                // Confirmation message to check out
+                AlertDialog.Builder checkoutConfirmation = new AlertDialog.Builder(getContext());
 
-                // Find selectProductName ID in the database
-                Integer[] itemID = getItemIdsFromNames(selectProductName);
-                Integer[] itemFrequency = getFrequencies(selectProductName);
+                checkoutConfirmation.setTitle(getResources().getString(R.string.confirm))
+                        .setMessage(getResources().getString(R.string.confirm_checkout))
+                        .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> {
+                             // Complete with the value 'false'
+                        }).setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
+                           // If user click on yes
+                            int creatorId = 1;
+                            double totalAmount = totalPrice.get();
+                            String paymentMethod = "Visa";
+                            String paymentStatus = "Completed";
+                            // TODO: update to long datatype
+                            int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
 
-                for(int i = 0; i < itemID.length; i++){
-                    myDB.addOrderItem(newOrderID, itemID[i], itemFrequency[i]);
-                }
+                            // Find selectProductName ID in the database
+                            // Remove duplicates from the itemNamesToFind ArrayList
+//                            ArrayList<Items> uniqueItemNamesToFind = new ArrayList<>(new LinkedHashSet<>(items_for_display));
 
-                // TODO: Find how to read data from the database using terminal
+                            Integer[] itemID = getItemIdsFromNames(selectProductName);
+                            Integer[] itemFrequency = getFrequencies(selectProductName);
 
-                // Open Confirmation fragment
-                FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                ConfirmationFragment confirmationFragment = new ConfirmationFragment();
-                fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
-                fragmentTransaction.commit();
+                            for(int i = 0; i < itemID.length; i++){
+                                myDB.addOrderItem(newOrderID, itemID[i], itemFrequency[i]);
+                            }
 
-                //Toast.makeText(fragmentActivity, "Add to database", Toast.LENGTH_LONG).show();
+                            // TODO: Find how to read data from the database using terminal
 
+                            // Open Confirmation fragment
+                            FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            ConfirmationFragment confirmationFragment = new ConfirmationFragment();
+                            fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
+                            fragmentTransaction.commit();
 
-//                CompletableFuture<Boolean> userResponse = showDialogMessage(); // Open confirmation fragment
-
-//                userResponse.thenAcceptAsync(confirmed -> {
-//                    if (confirmed) {
-//                        // Adding order and transaction details to the database
-//
-//
-//                        int creatorId = 1;
-//                        double totalAmount = totalPrice.get();
-//                        String paymentMethod = "Visa";
-//                        String paymentStatus = "Completed";
-//                        int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
-//
-//                        // Find selectProductName ID in the database
-//                        Integer[] itemID = getItemIdsFromNames(selectProductName);
-//                        Integer[] itemFrequency = getFrequencies(selectProductName);
-//
-//                        for(int i = 0; i < itemID.length; i++){
-//                            myDB.addOrderItem(newOrderID, itemID[i], itemFrequency[i]);
-//                        }
-//
-//
-//                        // Open Confirmation fragment
-//                        FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
-//                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                        ConfirmationFragment confirmationFragment = new ConfirmationFragment();
-//                        fragmentTransaction.replace(R.id.fragment_container, confirmationFragment);
-//                        fragmentTransaction.commit();
-//
-//                        Toast.makeText(fragmentActivity, "Add to database", Toast.LENGTH_LONG).show();
-//                    } else {
-//                        // User chose not to continue
-//                        // Simulate showing a toast message
-//                        Toast.makeText(getContext(), "Order cancelled.", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+                        }).show();
 
             } else {
                 String message = getResources().getString(R.string.empty_cart);
@@ -235,108 +205,133 @@ public class HomeFragment extends Fragment {
 
         });
 
-        dialog.show();
+        bottomSheetDialog.show();
 
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
 
-        return dialog;
+        return bottomSheetDialog;
     }
 
+    /**
+     * Sets the height of a dialog displayed as a bottom sheet to a specified percentage of the screen height.
+     *
+     * @param dialog The dialog for which to set the height.
+     * @param heightPercentage The desired height of the dialog as a percentage of the screen height.
+     */
     private void setBottomSheetHeight(Dialog dialog, double heightPercentage){
         // Set the height of the dialog
         Window window = dialog.getWindow();
+
         if (window != null) {
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (int) (heightPercentage * getScreenHeight()));
             window.setGravity(Gravity.BOTTOM);
         }
     }
 
-    // Set bottom sheet height
+    /**
+     * Retrieves the height of the device screen in pixels.
+     *
+     * @return The height of the screen in pixels.
+     */
     private int getScreenHeight() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.heightPixels;
     }
 
-    // Scanner bar/QR code
+    /**
+     * Initiates a barcode scanning process using the specified scan options.
+     */
     private void scanCode(){
         ScanOptions options = new ScanOptions();
+
         options.setPrompt("Press Volume Up to Turn Flash On");
         options.setBeepEnabled(true);
         options.setOrientationLocked(true);
         options.setCaptureActivity(CaptureAct.class);
+
         scannerLauncher.launch(options);
     }
 
+    /**
+     * Result launcher for initiating barcode scanning and handling the scanning result.
+     */
     ActivityResultLauncher<ScanOptions>  scannerLauncher = registerForActivityResult(new ScanContract(), result -> {
+        /**
+         * Handles the result of a barcode scanning operation.
+         *
+         * @param result The scanning result containing the scanned contents.
+         */
         String res = result.getContents();
+
+        // Check if the scanned code corresponds to a specific item
         if(res.equals("096619756803")){
             Toast.makeText(fragmentActivity, "Water added", Toast.LENGTH_SHORT).show();
-            //Test scanner check out
-            // Add selected item price together
-            //price.set(price.get() + 1.99);
+            // TODO: Additional logic for processing the scanned item, e.g., updating prices
+            // TODO: price.set(price.get() + 1.99);
         } else{
             Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
         }
     });
 
-
-    private CompletableFuture<Boolean> showDialogMessage() {
-        CompletableFuture<Boolean> checkoutFuture = new CompletableFuture<>();
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-        alertDialog.setTitle(getResources().getString(R.string.confirm))
-                .setMessage(getResources().getString(R.string.confirm_checkout))
-                .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> {
-                    checkoutFuture.complete(false);  // Complete with the value 'false'
-                })
-                .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
-                    checkoutFuture.complete(true);   // Complete with the value 'true'
-
-                }).show();
-
-        return checkoutFuture;  // Return the CompletableFuture<Boolean>
-    }
-
-
-    private void storeItemsDataInArrays(){
+    /**
+     * Stores the item data from the database into arrays.
+     *
+     * @param myDB The database object.
+     * @param itemGridview item grid view
+     * @param noDataImage  Data message image
+     * @param noDataText Data message text
+     */
+    private void storeItemsDataInArrays(MyDatabaseHelper myDB, ArrayList<Items> items_for_display,
+                                        GridView itemGridview, ImageView noDataImage,
+                                        TextView noDataText, Resources resources) {
+        // Get a cursor to the item data in the database
         Cursor cursor = myDB.readAllItemsData();
 
-        // In case database if empty
+        // Check if the database is empty
         if (cursor.getCount() == 0){
+            // If the database is empty, hide the item grid view and show the no data message
             itemGridview.setVisibility(View.GONE);
             noDataImage.setVisibility(View.VISIBLE);
             noDataText.setVisibility(View.VISIBLE);
 
         } else{
-            // Retrieve item data from the database
+            // If the database is not empty, populate the arrays with the item data
             while (cursor.moveToNext()){
-                noDataImage.setVisibility(View.GONE);
-                noDataText.setVisibility(View.GONE);
-                itemGridview.setVisibility(View.VISIBLE);
-
-                // get item image
+                // Retrieve item image as byte array
                 byte[] imageData = cursor.getBlob(1);
 
                 // Convert the image byte array to a Bitmap
                 Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
 
                 // Convert the Bitmap to a Drawable if needed
-                Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
+                Drawable itemImageDrawable = new BitmapDrawable(resources, itemImageBitmap);
 
-                image.add(itemImageDrawable);
+                Items item = new Items(
+                        cursor.getLong(0),    // id
+                        cursor.getString(2),    // name
+                        itemImageDrawable,                 // imageData
+                        cursor.getDouble(3),    // price
+                        cursor.getString(6),    // unitType
+                        // TODO: Default Background Color
+                        R.color.white                      // backgroundColor
+                );
 
-                // Add the ID and item name to the map
+                items_for_display.add(item); // Add the item to the ArrayList
+
+                // TODO: to be remove
+//                itemId_and_name.put(items_for_display.get().getId(), items_for_display.get().getName());
                 itemId_and_name.put(cursor.getInt(0), cursor.getString(2));
 
-                itemName.add(cursor.getString(2));
-                itemPrice.add(cursor.getString(3));
-                itemUnitType.add(cursor.getString(6));
-                backgroundColor.add(R.color.white); // Default Background Color
             }
+
+            // Show the item grid view and hide the no data message
+            itemGridview.setVisibility(View.VISIBLE);
+            noDataImage.setVisibility(View.GONE);
+            noDataText.setVisibility(View.GONE);
         }
     }
 
@@ -397,6 +392,5 @@ public class HomeFragment extends Fragment {
 
         return frequencies;
     }
-
 
 }
