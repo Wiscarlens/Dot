@@ -19,7 +19,7 @@ public class Items {
     private String description;
 
     private Long id;
-    private Integer frequency;
+    private Integer frequency = 0;
     private  Integer backgroundColor;
 
 
@@ -41,21 +41,29 @@ public class Items {
     }
 
     // Use for display item in the gridview
-    public Items(Long id, String name, Drawable imageData, Double price, String unitType, Integer background) {
+    public Items(Long id, String name, Drawable imageData, Double price, String unitType, Integer backgroundColor) {
         this.id = id;
         this.name = name;
         this.image = imageData;
         this.price = price;
         this.unitType = unitType;
-        this.backgroundColor = background;
+        this.backgroundColor = backgroundColor;
     }
 
-    public Items(String name, Integer frequency, Double price) {
+    public Items(String name, Double price, Integer frequency) {
         this.name = name;
+        this.price = price;
         this.frequency = frequency;
+    }
+
+    public Items(String name, Double price) {
+        this.name = name;
         this.price = price;
     }
 
+    public void incrementFrequency() {
+        frequency++;
+    }
 
     public String getName() {
         return name;

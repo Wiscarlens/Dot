@@ -68,7 +68,7 @@ public class SelectedProductUtils {
             Map.Entry<String, Double> priceEntry = priceIterator.next();
             Double price = priceEntry.getValue();
 
-            productArray[i] = new Items(name, frequency, price);
+            productArray[i] = new Items(name, price, frequency);
         }
 
         return productArray;

@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment {
     private Button chargeButton;
 
     private ArrayList<Items> items_for_display = new ArrayList<>();
-    private ArrayList<Drawable> image = new ArrayList<>();
+    private ArrayList<Items> selectedItems =  new ArrayList<>();
 
     private Map<Integer, String> itemId_and_name = new HashMap<>();
 
@@ -116,6 +116,11 @@ public class HomeFragment extends Fragment {
             selectProductName.add(items_for_display.get(position).getName());
             selectProductPrice.add(items_for_display.get(position).getPrice());
 
+            Items selectedItem = new Items(items_for_display.get(position).getName(),
+                    items_for_display.get(position).getPrice());
+
+            selectedItems.add(selectedItem);
+
         });
 
         // When user click on charge button
@@ -154,7 +159,7 @@ public class HomeFragment extends Fragment {
             bottomSheetDialog.dismiss();
 
             // Check if recycle view is empty before check out
-            if (!selectProductName.isEmpty()) {
+            if (!selectedItems.isEmpty()) {
                 // Sending data to next fragment
                 Bundle result = new Bundle();
                 result.putString("price", currentCharge);

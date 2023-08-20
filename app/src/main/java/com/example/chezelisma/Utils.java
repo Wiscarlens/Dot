@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility class containing methods that are use in different classes.
@@ -76,5 +78,23 @@ public class Utils {
             noDataImage.setVisibility(View.GONE);
             noDataText.setVisibility(View.GONE);
         }
+    }
+
+    public static ArrayList<Items> processItems(ArrayList<Items> selectedItems) {
+        Map<String, Items> itemMap = new HashMap<>();
+
+        for (Items item : selectedItems) {
+            String itemName = item.getName();
+            if (itemMap.containsKey(itemName)) {
+                Items existingItem = itemMap.get(itemName);
+                existingItem.incrementFrequency();
+            } else {
+                itemMap.put(itemName, item);
+            }
+        }
+
+        ArrayList<Items> resultItems = new ArrayList<>(itemMap.values());
+
+        return resultItems;
     }
 }

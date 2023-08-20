@@ -40,6 +40,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String USERS_COLUMN_PROFILE_IMAGE = "profile_picture";
     private static final String USERS_COLUMN_POSITION = "position";
     private static final String USERS_COLUMN_PASSWORD = "password";
+    // TODO: new database column to be added
+    private static final String USERS_COLUMN_DATE_REGISTERED = "date_registered";
 
     // Items Table
     private static final String ITEMS_TABLE = "items";
@@ -47,10 +49,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String ITEMS_COLUMN_IMAGE = "image";
     private static final String ITEMS_COLUMN_NAME = "name";
     private static final String ITEMS_COLUMN_PRICE = "price";
-    private static final String ITEMS_COLUMN_CATEGORY = "category";
+    private static final String ITEMS_COLUMN_CATEGORY_ID = "category_id";
     private static final String ITEMS_COLUMN_SKU = "sku";
     private static final String ITEMS_COLUMN_TYPE = "unit_type";
-    private static final String ITEMS_COLUMN_STOCK = "stock";
+    private static final String ITEMS_COLUMN_STOCK_QUANTITY = "stock_quantity";
     private static final String ITEMS_COLUMN_WS_PRICE = "wholesales_price";
     private static final String ITEMS_COLUMN_TAX = "tax";
     private static final String ITEMS_COLUMN_DESCRIPTION = "description";
@@ -114,10 +116,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 // Need to be a unique value
                 ITEMS_COLUMN_NAME + " TEXT NOT NULL, " +
                 ITEMS_COLUMN_PRICE + " REAL NOT NULL, " +
-                ITEMS_COLUMN_CATEGORY + " TEXT, " +
+                ITEMS_COLUMN_CATEGORY_ID + " TEXT, " +  // TODO: Foreign key to a future table call category
                 ITEMS_COLUMN_SKU + " TEXT, " +
                 ITEMS_COLUMN_TYPE + " TEXT, " +
-                ITEMS_COLUMN_STOCK + " INTEGER, " +
+                ITEMS_COLUMN_STOCK_QUANTITY + " INTEGER, " +
                 ITEMS_COLUMN_WS_PRICE + " REAL, " +
                 ITEMS_COLUMN_TAX + " REAL, " +
                 ITEMS_COLUMN_DESCRIPTION + " TEXT, " +
@@ -189,10 +191,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             cv.put(ITEMS_COLUMN_IMAGE, imageData);
             cv.put(ITEMS_COLUMN_NAME, name);
             cv.put(ITEMS_COLUMN_PRICE, price);
-            cv.put(ITEMS_COLUMN_CATEGORY, category);
+            cv.put(ITEMS_COLUMN_CATEGORY_ID, category);
             cv.put(ITEMS_COLUMN_SKU, sku);
             cv.put(ITEMS_COLUMN_TYPE, unitType);
-            cv.put(ITEMS_COLUMN_STOCK, stock);
+            cv.put(ITEMS_COLUMN_STOCK_QUANTITY, stock);
             cv.put(ITEMS_COLUMN_WS_PRICE, wsPrice);
             cv.put(ITEMS_COLUMN_TAX, tax);
             cv.put(ITEMS_COLUMN_DESCRIPTION, description);
@@ -399,10 +401,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         cv.put(ITEMS_COLUMN_IMAGE, imageData);
         cv.put(ITEMS_COLUMN_NAME, name);
         cv.put(ITEMS_COLUMN_PRICE, price);
-        cv.put(ITEMS_COLUMN_CATEGORY, category);
+        cv.put(ITEMS_COLUMN_CATEGORY_ID, category);
         cv.put(ITEMS_COLUMN_SKU, sku);
         cv.put(ITEMS_COLUMN_TYPE, unitType);
-        cv.put(ITEMS_COLUMN_STOCK, stock);
+        cv.put(ITEMS_COLUMN_STOCK_QUANTITY, stock);
         cv.put(ITEMS_COLUMN_WS_PRICE, wsPrice);
         cv.put(ITEMS_COLUMN_TAX, tax);
         cv.put(ITEMS_COLUMN_DESCRIPTION, description);
