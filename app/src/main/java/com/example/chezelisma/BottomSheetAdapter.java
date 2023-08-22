@@ -16,19 +16,13 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.BottomViewHolder>{
-    private ArrayList<String> productName;
-    private ArrayList<Double> productPrice;
-    private Items[] product;
-    Map<String, Integer> name_and_frequency;
+    private final ArrayList<Items> items;
+    private final Context context;
 
-    private Context context;
-
-    public BottomSheetAdapter(ArrayList<String> name, ArrayList<Double> price, Context context) {
-        this.productName = name;
-        this.productPrice = price;
+    public BottomSheetAdapter(ArrayList<Items> items, Context context) {
+        this.items = items;
         this.context = context;
     }
 
@@ -41,33 +35,21 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
     @Override
     public int getItemCount() {
-        name_and_frequency = SelectedProductUtils.getProductFrequency(productName);
-        return name_and_frequency.size();
+        return items.size();
     }
 
     @Override
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
-        // ******************Need to optimize
-        name_and_frequency = SelectedProductUtils.getProductFrequency(productName);
-        Map<String, Double> name_and_price = SelectedProductUtils.combinePriceName(productName, productPrice);
-
-        product = SelectedProductUtils.getItemsAsArray(name_and_frequency, name_and_price);
-
-        // Convert to String
-        String tempFrequency =  String.valueOf(product[position].getFrequency());
-        String tempPrice = CurrencyFormat.getCurrencyFormat(product[position].getPrice());
-
-        holder.productNameTextView.setText(product[position].getName());
-        holder.frequencyTextView.setText(tempFrequency);
-        holder.priceTextView.setText(tempPrice);
+        holder.itemNameTextView.setText(items.get(position).getName());
+        holder.priceTextView.setText(String.valueOf(items.get(position).getPrice()));
+        holder.frequencyTextView.setText(String.valueOf(items.get(position).getFrequency()));
 
         // When User click in a product in bottom sheet
-        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + product[position].getName(), Toast.LENGTH_SHORT).show());
+        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + items.get(position).getName(), Toast.LENGTH_SHORT).show());
     }
 
-
-    public class BottomViewHolder extends RecyclerView.ViewHolder {
-        private final TextView productNameTextView;
+    public static class BottomViewHolder extends RecyclerView.ViewHolder {
+        private final TextView itemNameTextView;
         private final TextView frequencyTextView;
         private final TextView priceTextView;
         private final CardView cardView;
@@ -75,7 +57,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
         public BottomViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            productNameTextView = itemView.findViewById(R.id.productName_design);
+            itemNameTextView = itemView.findViewById(R.id.productName_design);
             frequencyTextView = itemView.findViewById(R.id.unitTotal_design);
             priceTextView = itemView.findViewById(R.id.unitPrice_design);
             cardView = itemView.findViewById(R.id.bottomSheetDesignCardView);

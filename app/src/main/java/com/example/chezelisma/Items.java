@@ -8,8 +8,8 @@ import android.graphics.drawable.Drawable;
 
 public class Items {
     private Drawable image;
-    private String name;
-    private Double price;
+    private final String name;
+    private final Double price;
     private String category;
     private String sku;
     private String unitType;
@@ -18,8 +18,8 @@ public class Items {
     private String tax;
     private String description;
 
-    private Long id;
-    private Integer frequency = 0;
+    private final Long id;
+    private Integer frequency = 1;
     private  Integer backgroundColor;
 
 
@@ -41,22 +41,27 @@ public class Items {
     }
 
     // Use for display item in the gridview
-    public Items(Long id, String name, Drawable imageData, Double price, String unitType, Integer backgroundColor) {
+    public Items(Long id, String name, Drawable image, Double price, String unitType, Integer backgroundColor) {
         this.id = id;
         this.name = name;
-        this.image = imageData;
+        this.image = image;
         this.price = price;
         this.unitType = unitType;
         this.backgroundColor = backgroundColor;
     }
 
-    public Items(String name, Double price, Integer frequency) {
+    public Items(Long id, Drawable image, String name, Double price, String sku, String unitType, Integer backgroundColor) {
+        this.id = id;
+        this.image = image;
         this.name = name;
         this.price = price;
-        this.frequency = frequency;
+        this.sku = sku;
+        this.unitType = unitType;
+        this.backgroundColor = backgroundColor;
     }
 
-    public Items(String name, Double price) {
+    public Items(Long id, String name, Double price) {
+        this.id = id;
         this.name = name;
         this.price = price;
     }

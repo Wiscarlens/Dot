@@ -4,6 +4,9 @@ package com.example.chezelisma;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
+import static com.example.chezelisma.Utils.processItems;
+import static com.example.chezelisma.Utils.storeItemsDataInArrays;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -55,16 +58,12 @@ public class HomeFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     private Button chargeButton;
 
-    private ArrayList<Items> items_for_display = new ArrayList<>();
-    private ArrayList<Items> selectedItems =  new ArrayList<>();
-
-    private Map<Integer, String> itemId_and_name = new HashMap<>();
-
-    private ArrayList<String> selectProductName =  new ArrayList<>();
-    private ArrayList<Double> selectProductPrice = new ArrayList<>();
+    private final ArrayList<Items> items_for_display = new ArrayList<>();
+    private final ArrayList<Items> selectedItems =  new ArrayList<>();
+    private ArrayList<Items> processItems =  new ArrayList<>();
 
     // Select item total
-    private AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
+    private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
     private String currentCharge;
 
     private MyDatabaseHelper myDB;
@@ -99,7 +98,6 @@ public class HomeFragment extends Fragment {
         ItemGridAdapter itemGridAdapter = new ItemGridAdapter(items_for_display);
         itemGridview.setAdapter(itemGridAdapter);
 
-
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
             Double itemSelected = items_for_display.get(position).getPrice();
@@ -113,13 +111,14 @@ public class HomeFragment extends Fragment {
             // Set the button text to the current value of price
             chargeButton.setText(currentCharge);
 
-            selectProductName.add(items_for_display.get(position).getName());
-            selectProductPrice.add(items_for_display.get(position).getPrice());
-
-            Items selectedItem = new Items(items_for_display.get(position).getName(),
+            Items selectedItem = new Items(items_for_display.get(position).getId(),
+                    items_for_display.get(position).getName(),
                     items_for_display.get(position).getPrice());
 
             selectedItems.add(selectedItem);
+
+            // Remove duplicate item and increase there frequency
+            processItems = processItems(selectedItems);
 
         });
 
@@ -152,7 +151,7 @@ public class HomeFragment extends Fragment {
         bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Create the adapter and set it to the RecyclerView
-        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(selectProductName, selectProductPrice, getContext());
+        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(processItems, getContext());
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
 
         checkoutButton.setOnClickListener(v -> {
@@ -176,20 +175,13 @@ public class HomeFragment extends Fragment {
                            // If user click on yes
                             int creatorId = 1;
                             double totalAmount = totalPrice.get();
-                            String paymentMethod = "Visa";
+                            String paymentMethod = "Cash";
                             String paymentStatus = "Completed";
                             // TODO: update to long datatype
                             int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
 
-                            // Find selectProductName ID in the database
-                            // Remove duplicates from the itemNamesToFind ArrayList
-//                            ArrayList<Items> uniqueItemNamesToFind = new ArrayList<>(new LinkedHashSet<>(items_for_display));
-
-                            Integer[] itemID = getItemIdsFromNames(selectProductName);
-                            Integer[] itemFrequency = getFrequencies(selectProductName);
-
-                            for(int i = 0; i < itemID.length; i++){
-                                myDB.addOrderItem(newOrderID, itemID[i], itemFrequency[i]);
+                            for (Items item : processItems) {
+                                myDB.addOrderItem(newOrderID, item.getId(), item.getFrequency());
                             }
 
                             // TODO: Find how to read data from the database using terminal
@@ -281,121 +273,5 @@ public class HomeFragment extends Fragment {
             Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
         }
     });
-
-    /**
-     * Stores the item data from the database into arrays.
-     *
-     * @param myDB The database object.
-     * @param itemGridview item grid view
-     * @param noDataImage  Data message image
-     * @param noDataText Data message text
-     */
-    private void storeItemsDataInArrays(MyDatabaseHelper myDB, ArrayList<Items> items_for_display,
-                                        GridView itemGridview, ImageView noDataImage,
-                                        TextView noDataText, Resources resources) {
-        // Get a cursor to the item data in the database
-        Cursor cursor = myDB.readAllItemsData();
-
-        // Check if the database is empty
-        if (cursor.getCount() == 0){
-            // If the database is empty, hide the item grid view and show the no data message
-            itemGridview.setVisibility(View.GONE);
-            noDataImage.setVisibility(View.VISIBLE);
-            noDataText.setVisibility(View.VISIBLE);
-
-        } else{
-            // If the database is not empty, populate the arrays with the item data
-            while (cursor.moveToNext()){
-                // Retrieve item image as byte array
-                byte[] imageData = cursor.getBlob(1);
-
-                // Convert the image byte array to a Bitmap
-                Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-
-                // Convert the Bitmap to a Drawable if needed
-                Drawable itemImageDrawable = new BitmapDrawable(resources, itemImageBitmap);
-
-                Items item = new Items(
-                        cursor.getLong(0),    // id
-                        cursor.getString(2),    // name
-                        itemImageDrawable,                 // imageData
-                        cursor.getDouble(3),    // price
-                        cursor.getString(6),    // unitType
-                        // TODO: Default Background Color
-                        R.color.white                      // backgroundColor
-                );
-
-                items_for_display.add(item); // Add the item to the ArrayList
-
-                // TODO: to be remove
-//                itemId_and_name.put(items_for_display.get().getId(), items_for_display.get().getName());
-                itemId_and_name.put(cursor.getInt(0), cursor.getString(2));
-
-            }
-
-            // Show the item grid view and hide the no data message
-            itemGridview.setVisibility(View.VISIBLE);
-            noDataImage.setVisibility(View.GONE);
-            noDataText.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Retrieves the item IDs associated with given unique item names from the itemId_and_name map.
-     *
-     * @param itemNamesToFind The list of unique item names for which the corresponding item IDs are to be retrieved.
-     * @return An array of item IDs corresponding to the provided unique item names. If an item name is not found, the corresponding array element will be null.
-     */
-    private Integer[] getItemIdsFromNames(ArrayList<String> itemNamesToFind) {
-        // Remove duplicates from the itemNamesToFind ArrayList
-        ArrayList<String> uniqueItemNamesToFind = new ArrayList<>(
-                new LinkedHashSet<>(itemNamesToFind)); // Do not copy a value twice
-
-        Integer[] itemIds = new Integer[uniqueItemNamesToFind.size()];
-
-        for (int i = 0; i < uniqueItemNamesToFind.size(); i++) {
-            String itemNameToFind = uniqueItemNamesToFind.get(i);
-
-            for (Map.Entry<Integer, String> entry : itemId_and_name.entrySet()) {
-                if (entry.getValue().equals(itemNameToFind)) {
-                    itemIds[i] = entry.getKey();
-                    break; // Move to the next item name
-                }
-            }
-
-            // Log if an item name is not found in the map
-            if (itemIds[i] == null) {
-                Log.d("error", "HomeFragment: Item name '" + itemNameToFind + "' is not found in the map");
-            }
-        }
-
-        return itemIds;
-    }
-
-    /**
-     * Calculates the frequency of each name in the input ArrayList and returns an array of frequencies.
-     *
-     * @param selectProductName The ArrayList of strings containing the names to calculate frequencies for.
-     * @return An array of integers representing the frequency of each name in the input ArrayList.
-     */
-    public static Integer[] getFrequencies(ArrayList<String> selectProductName) {
-        // Create a HashMap to store the frequency of each name
-        Map<String, Integer> nameFrequencyMap = new HashMap<>();
-
-        // Count the frequency of each name
-        for (String name : selectProductName) {
-            nameFrequencyMap.put(name, nameFrequencyMap.getOrDefault(name, 0) + 1);
-        }
-
-        // Create an array to store the frequencies
-        Integer[] frequencies = new Integer[selectProductName.size()];
-
-        // Populate the array with frequencies
-        for (int i = 0; i < selectProductName.size(); i++) {
-            frequencies[i] = nameFrequencyMap.get(selectProductName.get(i));
-        }
-
-        return frequencies;
-    }
 
 }

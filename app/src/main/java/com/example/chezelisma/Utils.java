@@ -80,21 +80,33 @@ public class Utils {
         }
     }
 
+    /**
+     * Processes a list of selected items to remove duplicates and increment the frequency of each unique item.
+     * This method takes a list of selected items and processes it to remove duplicates based on the item name.
+     * It increments the frequency of each unique item in the list and returns a new ArrayList containing the processed items.
+     *
+     * @param selectedItems The list of selected items to be processed.
+     * @return A new ArrayList containing the processed items with duplicates removed and frequencies incremented.
+     */
     public static ArrayList<Items> processItems(ArrayList<Items> selectedItems) {
+        // Create a map to store items by name and their frequencies
         Map<String, Items> itemMap = new HashMap<>();
 
+        // Process each selected item
         for (Items item : selectedItems) {
             String itemName = item.getName();
+
+            // Check if the item is already in the map
             if (itemMap.containsKey(itemName)) {
                 Items existingItem = itemMap.get(itemName);
+                assert existingItem != null;
                 existingItem.incrementFrequency();
             } else {
-                itemMap.put(itemName, item);
+                itemMap.put(itemName, item); // If item is not in the map, add it
             }
         }
 
-        ArrayList<Items> resultItems = new ArrayList<>(itemMap.values());
-
-        return resultItems;
+        // Create a new ArrayList from the values of the map (processed items)
+        return new ArrayList<>(itemMap.values());
     }
 }

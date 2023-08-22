@@ -1,7 +1,5 @@
 package com.example.chezelisma;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +12,7 @@ import androidx.cardview.widget.CardView;
 import java.util.ArrayList;
 
 public class ItemGridAdapter extends BaseAdapter {
-    private ArrayList<Items> items;
-
-
+    private final ArrayList<Items> items;
     public ItemGridAdapter(ArrayList<Items> items) {
         this.items = items;
     }

@@ -321,7 +321,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param quantity  The quantity of the item being added to the order.
      * @throws SQLiteException If there is an error while interacting with the SQLite database.
      */
-    public void addOrderItem(int orderId, int itemId, int quantity)
+    public void addOrderItem(int orderId, long itemId, int quantity)
             throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
