@@ -18,10 +18,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdapter.DesignViewHolder> {
-    ArrayList<SelectedItems> selectedItems;
+    ArrayList<Items> selectedItems;
     Context context;
 
-    public SelectedItemsAdapter(ArrayList<SelectedItems> selectedItem, Context context) {
+    public SelectedItemsAdapter(ArrayList<Items> selectedItem, Context context) {
         this.selectedItems = selectedItem;
         this.context = context;
     }
@@ -37,7 +37,7 @@ public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdap
 
     @Override
     public void onBindViewHolder(@NonNull DesignViewHolder holder, int position) {
-        holder.selectedItem_ImageView.setImageResource(selectedItems.get(position).itemImage);
+        holder.selectedItem_ImageView.setImageDrawable(selectedItems.get(position).getImage());
     }
 
     @Override

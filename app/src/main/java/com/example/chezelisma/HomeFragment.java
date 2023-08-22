@@ -173,6 +173,7 @@ public class HomeFragment extends Fragment {
                              // Complete with the value 'false'
                         }).setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
                            // If user click on yes
+                            // Create Order
                             int creatorId = 1;
                             double totalAmount = totalPrice.get();
                             String paymentMethod = "Cash";

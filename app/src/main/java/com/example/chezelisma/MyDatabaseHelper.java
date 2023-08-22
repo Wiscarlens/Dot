@@ -392,6 +392,18 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    Cursor readAllOrdersData(){
+        String query = "SELECT * FROM " + ORDERS_TABLE_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = null;
+
+        if(db != null){
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
+    }
+
     public void updateItemData(String row_id, byte[] imageData, String name, double price,
                                String category, String sku, String unitType, int stock,
                                double wsPrice, double tax, String description){

@@ -10,11 +10,11 @@ public class Orders {
     int orderTotalItems;
     double orderTotalAmount;
 
-    ArrayList<SelectedItems> selectedItem;
+    ArrayList<Items> selectedItem;
 
     public Orders(String orderNumber, String orderDate, String orderTime,
                   String orderStatus, int orderTotalItems, double orderTotalAmount,
-                  ArrayList<SelectedItems> selectedItem) {
+                  ArrayList<Items> selectedItem) {
         this.orderNumber = orderNumber;
         this.orderDate = orderDate;
         this.orderTime = orderTime;

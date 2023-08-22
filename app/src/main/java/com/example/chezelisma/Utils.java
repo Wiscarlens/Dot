@@ -11,6 +11,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,6 +81,61 @@ public class Utils {
             noDataText.setVisibility(View.GONE);
         }
     }
+
+    protected static void storeOrdersDataInArrays(MyDatabaseHelper myDB, ArrayList<Orders> ordersArrayList,
+                                                  RecyclerView recyclerView, ImageView noDataImage, TextView noDataText,
+                                                  Resources resources) {
+        // Get a cursor to the order data in the database
+        Cursor cursor = myDB.readAllOrdersData();
+
+        // Check if the database is empty
+        if (cursor.getCount() == 0){
+            // If the database is empty, hide the item grid view and show the no data message
+            recyclerView.setVisibility(View.GONE);
+            noDataImage.setVisibility(View.VISIBLE);
+            noDataText.setVisibility(View.VISIBLE);
+
+        } else {
+            // If the database is not empty, populate the ArrayList with order data
+            while (cursor.moveToNext()) {
+                String orderNumber = cursor.getString(0);
+
+                // Retrieve order's selected items data as JSON string
+                String selectedItemsJson = cursor.getString(6);
+
+//                // Deserialize the JSON string into an ArrayList of selected items
+//                ArrayList<Items> selectedItemsArrayList = storeItemOrdersDataInArrays(orderNumber);
+
+//
+//                String orderDate = cursor.getString(1);
+//                String orderTime = cursor.getString(1);
+//                String orderStatus = cursor.getString(4);
+//                int itemCount = selectedItemsArrayList.size();
+//                double totalAmount = cursor.getDouble(2);
+//
+//                Orders order = new Orders(
+//                        orderNumber,
+//                        orderDate,
+//                        orderTime,
+//                        orderStatus,
+//                        itemCount,
+//                        totalAmount,
+//                        selectedItemsArrayList
+//                );
+
+//                ordersArrayList.add(order); // Add the order to the ArrayList
+            }
+            // Show the item grid view and hide the no data message
+            recyclerView.setVisibility(View.VISIBLE);
+            noDataImage.setVisibility(View.GONE);
+            noDataText.setVisibility(View.GONE);
+        }
+    }
+
+//    private static ArrayList<Items> storeItemOrdersDataInArrays(String orderNumber){
+//
+//    }
+
 
     /**
      * Processes a list of selected items to remove duplicates and increment the frequency of each unique item.

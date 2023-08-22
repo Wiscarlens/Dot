@@ -8,8 +8,8 @@ import android.graphics.drawable.Drawable;
 
 public class Items {
     private Drawable image;
-    private final String name;
-    private final Double price;
+    private String name;
+    private Double price;
     private String category;
     private String sku;
     private String unitType;
@@ -64,6 +64,11 @@ public class Items {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public Items(Long id, Drawable image) {
+        this.id = id;
+        this.image = image;
     }
 
     public void incrementFrequency() {
