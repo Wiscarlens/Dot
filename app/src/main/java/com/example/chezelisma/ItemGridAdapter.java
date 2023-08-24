@@ -44,7 +44,7 @@ public class ItemGridAdapter extends BaseAdapter {
 
         ItemImageView.setImageDrawable(items.get(position).getImage()); // Set the Drawable object
         ItemNameTextView.setText(items.get(position).getName());
-        priceTextView.setText(CurrencyFormat.getCurrencyFormat(items.get(position).getPrice()));
+        priceTextView.setText(LocalFormat.getCurrencyFormat(items.get(position).getPrice()));
         unitTypeTextView.setText((items.get(position).getUnitType()));
         backgroundColor.setBackgroundColor((items.get(position).getBackgroundColor()));
 

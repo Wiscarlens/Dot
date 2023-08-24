@@ -1,6 +1,6 @@
 package com.example.chezelisma;
 
-import static com.example.chezelisma.CurrencyFormat.getCurrencyFormat;
+import static com.example.chezelisma.LocalFormat.getCurrencyFormat;
 
 import android.content.Context;
 import android.view.View;
@@ -38,14 +38,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
 
     @Override
     public void onBindViewHolder(@NonNull OrdersAdapter.DesignViewHolder holder, int position) {
-        holder.order_number.setText(ordersArrayList.get(position).orderNumber);
-        holder.order_date.setText(ordersArrayList.get(position).orderDate);
-        holder.order_time.setText(ordersArrayList.get(position).orderTime);
-        holder.order_status.setText(ordersArrayList.get(position).orderStatus);
-        holder.order_total_items.setText(String.valueOf(ordersArrayList.get(position).orderTotalItems));
-        holder.order_total_amount.setText(getCurrencyFormat(ordersArrayList.get(position).orderTotalAmount));
+        holder.order_number.setText(String.valueOf(ordersArrayList.get(position).getOrderNumber()));
+        holder.order_date.setText(ordersArrayList.get(position).getOrderDate());
+        holder.order_time.setText(ordersArrayList.get(position).getOrderTime());
+        holder.order_status.setText(ordersArrayList.get(position).getOrderStatus());
+        holder.order_total_items.setText(String.valueOf(ordersArrayList.get(position).getOrderTotalItems()));
+        holder.order_total_amount.setText(getCurrencyFormat(ordersArrayList.get(position).getOrderTotalAmount()));
 
-        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(ordersArrayList.get(position).selectedItem, context);
+        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(ordersArrayList.get(position).getSelectedItem(), context);
+
         holder.selectedItemRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.selectedItemRecyclerView.setAdapter(selectedItemsAdapter);
 

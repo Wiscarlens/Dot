@@ -10,14 +10,8 @@ import static com.example.chezelisma.Utils.storeItemsDataInArrays;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -48,10 +42,6 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class HomeFragment extends Fragment {
@@ -106,7 +96,7 @@ public class HomeFragment extends Fragment {
             totalPrice.set(totalPrice.get() + itemSelected);
 
             // Format the double value into currency format
-            currentCharge = CurrencyFormat.getCurrencyFormat(totalPrice.get());
+            currentCharge = LocalFormat.getCurrencyFormat(totalPrice.get());
 
             // Set the button text to the current value of price
             chargeButton.setText(currentCharge);
@@ -174,6 +164,7 @@ public class HomeFragment extends Fragment {
                         }).setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
                            // If user click on yes
                             // Create Order
+
                             int creatorId = 1;
                             double totalAmount = totalPrice.get();
                             String paymentMethod = "Cash";

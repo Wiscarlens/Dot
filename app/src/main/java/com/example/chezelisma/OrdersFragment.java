@@ -1,11 +1,13 @@
 package com.example.chezelisma;
 
 
+import static com.example.chezelisma.Utils.storeItemsDataInArrays;
+import static com.example.chezelisma.Utils.storeOrdersDataInArrays;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,11 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class OrdersFragment extends Fragment {
-    private final ArrayList<Orders> ordersArrayList = new ArrayList<>();
+    private final ArrayList<Orders> orders_for_display = new ArrayList<>();
     private final ArrayList<Items> selectedItemsArrayList = new ArrayList<>();
 
     @Override
@@ -30,26 +34,16 @@ public class OrdersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Connect to Recyclerview in fragment_orders
-        RecyclerView OrderList_RecyclerView = view.findViewById(R.id.ordersList);
+        ImageView noDataImage = view.findViewById(R.id.no_orders_imageview); // When Database is empty
+        TextView noDataText = view.findViewById(R.id.no_orders_textview); // When Database is empty
+        RecyclerView OrderList_RecyclerView = view.findViewById(R.id.ordersList);  // Connect to Recyclerview in fragment_orders
 
+        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        selectedItemsArrayList.add(new Items(1L, ContextCompat.getDrawable(getContext(), R.drawable.coke)));
-        selectedItemsArrayList.add(new Items(2L, ContextCompat.getDrawable(getContext(), R.drawable.fiji)));
-        selectedItemsArrayList.add(new Items(3L, ContextCompat.getDrawable(getContext(), R.drawable.redbull)));
-        selectedItemsArrayList.add(new Items(4L, ContextCompat.getDrawable(getContext(), R.drawable.gatorade)));
+        Utils.storeOrdersDataInArrays(myDB, orders_for_display, OrderList_RecyclerView, noDataImage,
+                noDataText, getResources());
 
-        ordersArrayList.add(new Orders(
-                "55555", "8-13-2023", "5:14:20 PM",
-                "Refund", 6, 27.23,
-                selectedItemsArrayList));
-
-        ordersArrayList.add(new Orders(
-                "12346", "7-28-2023", "11:28:10 AM",
-                "Competed", 25, 147.33,
-                selectedItemsArrayList));
-
-        OrdersAdapter ordersAdapter = new OrdersAdapter(ordersArrayList, getContext());
+        OrdersAdapter ordersAdapter = new OrdersAdapter(orders_for_display, getContext());
         OrderList_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         OrderList_RecyclerView.setAdapter(ordersAdapter);
     }

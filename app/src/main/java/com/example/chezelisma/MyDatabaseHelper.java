@@ -4,19 +4,28 @@ package com.example.chezelisma;
  Created by Wiscarlens Lucius on 1 August 2023.
  */
 
+import static com.example.chezelisma.LocalFormat.getCurrentDateTime;
 import static com.example.chezelisma.PasswordUtils.hashPassword;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.Toast;
 
 
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
     private final Context context;
@@ -39,7 +48,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String USERS_COLUMN_ZIP_CODE = "zip_code";
     private static final String USERS_COLUMN_PROFILE_IMAGE = "profile_picture";
     private static final String USERS_COLUMN_POSITION = "position";
-    private static final String USERS_COLUMN_PASSWORD = "password";
+    private static final String USERS_COLUMN_PASSWORD = "password_hash";
     // TODO: new database column to be added
     private static final String USERS_COLUMN_DATE_REGISTERED = "date_registered";
 
@@ -63,6 +72,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String ORDER_COLUMN_ID = "_id";
     private static final String ORDER_COLUMN_CREATOR_ID = "order_creator";
     private static final String ORDER_COLUMN_ORDER_DATE = "order_date";
+    private static final String ORDER_COLUMN_ORDER_TIME = "order_time";
     private static final String ORDER_COLUMN_TOTAL_AMOUNT = "total_amount";
     private static final String ORDER_COLUMN_PAYMENT_METHOD = "payment_method";
     private static final String ORDER_COLUMN_PAYMENT_STATUS = "payment_status";
@@ -107,7 +117,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 USERS_COLUMN_ZIP_CODE + " TEXT, " +
                 USERS_COLUMN_PROFILE_IMAGE + " BLOB, " +
                 USERS_COLUMN_POSITION + " TEXT, " +
-                USERS_COLUMN_PASSWORD + " TEXT NOT NULL);";
+                USERS_COLUMN_PASSWORD + " TEXT NOT NULL, " +
+                USERS_COLUMN_DATE_REGISTERED + " TIME DEFAULT CURRENT_TIMESTAMP);";
 
         // SQL query to create the "items" table
         String query_items = "CREATE TABLE " + ITEMS_TABLE +
@@ -130,7 +141,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 // TODO: Make not null in the future
                 ORDER_COLUMN_CREATOR_ID + " INTEGER, " +
-                ORDER_COLUMN_ORDER_DATE + " DATE DEFAULT CURRENT_TIMESTAMP, " +
+                ORDER_COLUMN_ORDER_DATE + " DATE, " +
+                ORDER_COLUMN_ORDER_TIME + " TIME, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +
                 ORDER_COLUMN_PAYMENT_METHOD + " TEXT NOT NULL, " +
                 // not null in the future
@@ -293,11 +305,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             ContentValues cv = new ContentValues();
 
+            String[] dateTime = getCurrentDateTime(); // Get the current date and time
+
             cv.put(ORDER_COLUMN_CREATOR_ID, creatorId);
             cv.put(ORDER_COLUMN_TOTAL_AMOUNT, totalAmount);
             cv.put(ORDER_COLUMN_PAYMENT_METHOD, paymentMethod);
             cv.put(ORDER_COLUMN_PAYMENT_STATUS, paymentStatus);
+            cv.put(ORDER_COLUMN_ORDER_DATE, dateTime[0]);
+            cv.put(ORDER_COLUMN_ORDER_TIME, dateTime[1]);
 
+            // Insert the order into the database
             newOrderId = db.insertOrThrow(ORDERS_TABLE_NAME, null, cv);
 
             if (newOrderId != -1) {
@@ -331,7 +348,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             cv.put(ORDER_ITEM_COLUMN_ITEM_ID, itemId); // Make sure to provide the correct item ID
             cv.put(ORDER_ITEM_COLUMN_QUANTITY, quantity);
 
-            long result = result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
+            long result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
 
             if (result != -1) {
                 Toast.makeText(context, "Added Order Item Successfully!", Toast.LENGTH_SHORT).show();
@@ -340,6 +357,47 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             Toast.makeText(context, "Failed to add order item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             throw e;
         }
+    }
+
+
+
+    // Method to retrieve order items and add them to an array
+    public ArrayList<Items> getOrderItems(long orderId, Resources resources) {
+        ArrayList<Items> orderItemsList = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT i.*, oi." + ORDER_ITEM_COLUMN_QUANTITY +
+                " FROM " + ORDER_ITEMS_TABLE_NAME + " oi" +
+                " INNER JOIN " + ITEMS_TABLE + " i" +
+                " ON oi." + ORDER_ITEM_COLUMN_ITEM_ID + " = i." + ITEMS_COLUMN_ID +
+                " WHERE oi." + ORDER_ITEM_COLUMN_ORDER_ID + " = " + orderId;
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                long itemId = cursor.getLong(0);
+                byte[] itemImage = cursor.getBlob(1);
+                String itemName = cursor.getString(2);
+                double itemPrice = cursor.getDouble(3);
+                int quantity = cursor.getInt(4);
+
+                // Convert the image byte array to a Bitmap
+                Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(itemImage, 0, itemImage.length);
+
+                // Convert the Bitmap to a Drawable if needed
+                Drawable itemImageDrawable = new BitmapDrawable(resources, itemImageBitmap);
+
+                Items items = new Items(itemId, itemImageDrawable, itemName, itemPrice, quantity);
+                orderItemsList.add(items);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return orderItemsList;
     }
 
 

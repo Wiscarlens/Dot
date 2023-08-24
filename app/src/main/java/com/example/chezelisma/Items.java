@@ -71,6 +71,14 @@ public class Items {
         this.image = image;
     }
 
+    public Items(Long id, Drawable image, String name, Double price, Integer frequency) {
+        this.id = id;
+        this.image = image;
+        this.name = name;
+        this.price = price;
+        this.frequency = frequency;
+    }
+
     public void incrementFrequency() {
         frequency++;
     }

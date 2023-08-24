@@ -1,16 +1,21 @@
 package com.example.chezelisma;
 
+import static java.security.AccessController.getContext;
+
+import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -98,32 +103,33 @@ public class Utils {
         } else {
             // If the database is not empty, populate the ArrayList with order data
             while (cursor.moveToNext()) {
-                String orderNumber = cursor.getString(0);
+                long orderNumber = cursor.getLong(0);
+                String orderDate = cursor.getString(2);
+                String orderTime = cursor.getString(3);
+                String orderStatus = cursor.getString(6);
+                double totalAmount = cursor.getDouble(4);
 
-                // Retrieve order's selected items data as JSON string
-                String selectedItemsJson = cursor.getString(6);
+                // Deserialize the JSON string into an ArrayList of selected items
+                ArrayList<Items> selectedItemsArrayList = myDB.getOrderItems(orderNumber, resources);
 
-//                // Deserialize the JSON string into an ArrayList of selected items
-//                ArrayList<Items> selectedItemsArrayList = storeItemOrdersDataInArrays(orderNumber);
+                int totalItems = 0 ;
 
-//
-//                String orderDate = cursor.getString(1);
-//                String orderTime = cursor.getString(1);
-//                String orderStatus = cursor.getString(4);
-//                int itemCount = selectedItemsArrayList.size();
-//                double totalAmount = cursor.getDouble(2);
-//
-//                Orders order = new Orders(
-//                        orderNumber,
-//                        orderDate,
-//                        orderTime,
-//                        orderStatus,
-//                        itemCount,
-//                        totalAmount,
-//                        selectedItemsArrayList
-//                );
+                for (int i= 0; i < selectedItemsArrayList.size(); i++) {
+                    totalItems += selectedItemsArrayList.get(i).getFrequency();
 
-//                ordersArrayList.add(order); // Add the order to the ArrayList
+                }
+
+                Orders order = new Orders(
+                        orderNumber,
+                        orderDate,
+                        orderTime,
+                        orderStatus,
+                        totalItems,
+                        totalAmount,
+                        selectedItemsArrayList
+                );
+
+                ordersArrayList.add(order); // Add the order to the ArrayList
             }
             // Show the item grid view and hide the no data message
             recyclerView.setVisibility(View.VISIBLE);
@@ -131,10 +137,6 @@ public class Utils {
             noDataText.setVisibility(View.GONE);
         }
     }
-
-//    private static ArrayList<Items> storeItemOrdersDataInArrays(String orderNumber){
-//
-//    }
 
 
     /**
@@ -166,4 +168,6 @@ public class Utils {
         // Create a new ArrayList from the values of the map (processed items)
         return new ArrayList<>(itemMap.values());
     }
+
+
 }
