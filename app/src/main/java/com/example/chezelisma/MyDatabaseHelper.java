@@ -6,6 +6,7 @@ package com.example.chezelisma;
 
 import static com.example.chezelisma.LocalFormat.getCurrentDateTime;
 import static com.example.chezelisma.PasswordUtils.hashPassword;
+import static com.example.chezelisma.Utils.byteArrayToDrawable;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -361,11 +362,18 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    // Method to retrieve order items and add them to an array
+    /**
+     * Retrieves a list of order items for the specified order ID.
+     *
+     * @param orderId The order ID.
+     * @param resources The resources object.
+     * @return An ArrayList of order items.
+     */
     public ArrayList<Items> getOrderItems(long orderId, Resources resources) {
+        // Create an empty list to store the order items.
         ArrayList<Items> orderItemsList = new ArrayList<>();
 
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase(); // Get the database.
 
         String query = "SELECT i.*, oi." + ORDER_ITEM_COLUMN_QUANTITY +
                 " FROM " + ORDER_ITEMS_TABLE_NAME + " oi" +
@@ -373,7 +381,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 " ON oi." + ORDER_ITEM_COLUMN_ITEM_ID + " = i." + ITEMS_COLUMN_ID +
                 " WHERE oi." + ORDER_ITEM_COLUMN_ORDER_ID + " = " + orderId;
 
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(query, null);   // Execute the query.
 
         if (cursor.moveToFirst()) {
             do {
@@ -383,17 +391,15 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 double itemPrice = cursor.getDouble(3);
                 int quantity = cursor.getInt(4);
 
-                // Convert the image byte array to a Bitmap
-                Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(itemImage, 0, itemImage.length);
-
                 // Convert the Bitmap to a Drawable if needed
-                Drawable itemImageDrawable = new BitmapDrawable(resources, itemImageBitmap);
+                Drawable itemImageDrawable =  byteArrayToDrawable(itemImage, resources);
 
                 Items items = new Items(itemId, itemImageDrawable, itemName, itemPrice, quantity);
                 orderItemsList.add(items);
             } while (cursor.moveToNext());
         }
 
+        // Close the cursor and database.
         cursor.close();
         db.close();
 

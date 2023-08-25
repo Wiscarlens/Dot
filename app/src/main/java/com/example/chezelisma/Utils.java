@@ -26,8 +26,6 @@ import java.util.Map;
  * Utility class containing methods that are use in different classes.
  */
 public class Utils {
-
-
     /**
      * Populates an ArrayList with item data from the database and updates the UI accordingly.
      *
@@ -109,14 +107,12 @@ public class Utils {
                 String orderStatus = cursor.getString(6);
                 double totalAmount = cursor.getDouble(4);
 
-                // Deserialize the JSON string into an ArrayList of selected items
                 ArrayList<Items> selectedItemsArrayList = myDB.getOrderItems(orderNumber, resources);
 
-                int totalItems = 0 ;
+                int totalItems = 1 ;
 
                 for (int i= 0; i < selectedItemsArrayList.size(); i++) {
                     totalItems += selectedItemsArrayList.get(i).getFrequency();
-
                 }
 
                 Orders order = new Orders(
@@ -167,6 +163,23 @@ public class Utils {
 
         // Create a new ArrayList from the values of the map (processed items)
         return new ArrayList<>(itemMap.values());
+    }
+
+    /**
+     * Converts a byte array to a Drawable.
+     *
+     * @param imageData The image data in byte array format.
+     * @param resources The resources object.
+     * @return The Drawable object.
+     */
+    public static Drawable byteArrayToDrawable(byte[] imageData, Resources resources) {
+        // Convert the image byte array to a Bitmap
+        Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
+        // Convert the Bitmap to a Drawable if needed
+        Drawable itemImageDrawable = new BitmapDrawable(resources, itemImageBitmap);
+
+        return itemImageDrawable;
     }
 
 

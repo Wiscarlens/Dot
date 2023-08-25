@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
 
     private final ArrayList<Items> items_for_display = new ArrayList<>();
     private final ArrayList<Items> selectedItems =  new ArrayList<>();
-    private ArrayList<Items> processItems =  new ArrayList<>();
+    private ArrayList<Items> processItemsArrayList =  new ArrayList<>();
 
     // Select item total
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
@@ -101,14 +101,35 @@ public class HomeFragment extends Fragment {
             // Set the button text to the current value of price
             chargeButton.setText(currentCharge);
 
-            Items selectedItem = new Items(items_for_display.get(position).getId(),
+            // Find the selected item
+            Items selectedItem = new Items(
+                    items_for_display.get(position).getId(),
                     items_for_display.get(position).getName(),
-                    items_for_display.get(position).getPrice());
+                    items_for_display.get(position).getPrice()
+            );
 
             selectedItems.add(selectedItem);
 
+
+
+//            // Check if the item already exists in selectedItems
+//            if (selectedItems.contains(selectedItem)) {
+//                // If it exists, increment its frequency
+//                int index = selectedItems.indexOf(selectedItem);
+//                selectedItems.get(index).incrementFrequency();
+//            } else {
+//                // If it doesn't exist, add it to the list
+//                selectedItems.add(selectedItem);
+//            }
+
+
             // Remove duplicate item and increase there frequency
-            processItems = processItems(selectedItems);
+            processItemsArrayList = processItems(selectedItems);
+
+            // Print out the processed items to verify frequency
+            for (Items item : processItemsArrayList) {
+                Log.d("ProcessedItem", "Item: " + item.getName() + ", Frequency: " + item.getFrequency());
+            }
 
         });
 
@@ -141,7 +162,7 @@ public class HomeFragment extends Fragment {
         bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Create the adapter and set it to the RecyclerView
-        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(processItems, getContext());
+        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(processItemsArrayList, getContext());
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
 
         checkoutButton.setOnClickListener(v -> {
@@ -172,7 +193,7 @@ public class HomeFragment extends Fragment {
                             // TODO: update to long datatype
                             int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
 
-                            for (Items item : processItems) {
+                            for (Items item : processItemsArrayList) {
                                 myDB.addOrderItem(newOrderID, item.getId(), item.getFrequency());
                             }
 
