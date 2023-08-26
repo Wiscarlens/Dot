@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/pink_gold"
+    android:background="@color/gray"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".LoginActivity">
@@ -96,7 +96,7 @@
         android:id="@+id/loginButton"
         android:layout_width="290dp"
         android:layout_height="wrap_content"
-        android:hapticFeedbackEnabled="@color/dark_yellow"
+        android:backgroundTint="@color/black"
         android:text="@string/login"
         android:textColor="#FFFFFF"
         tools:ignore="TextContrastCheck" />
@@ -111,7 +111,8 @@
         android:linksClickable="true"
         android:minHeight="48dp"
         android:text="@string/forgot_your_password"
-        android:textColor="@color/gray"
-        android:textSize="11sp" />
+        android:textColor="@color/gold"
+        android:textSize="11sp"
+        tools:ignore="TextContrastCheck" />
 
 </LinearLayout>

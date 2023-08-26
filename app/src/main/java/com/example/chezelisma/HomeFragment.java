@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
 
     private final ArrayList<Items> items_for_display = new ArrayList<>();
     private final ArrayList<Items> selectedItems =  new ArrayList<>();
-    private ArrayList<Items> processItemsArrayList =  new ArrayList<>();
+//    private ArrayList<Items> processItemsArrayList =  new ArrayList<>();
 
     // Select item total
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
@@ -110,33 +110,16 @@ public class HomeFragment extends Fragment {
 
             selectedItems.add(selectedItem);
 
-
-
-//            // Check if the item already exists in selectedItems
-//            if (selectedItems.contains(selectedItem)) {
-//                // If it exists, increment its frequency
-//                int index = selectedItems.indexOf(selectedItem);
-//                selectedItems.get(index).incrementFrequency();
-//            } else {
-//                // If it doesn't exist, add it to the list
-//                selectedItems.add(selectedItem);
-//            }
-
-
-            // Remove duplicate item and increase there frequency
-            processItemsArrayList = processItems(selectedItems);
-
-            // Print out the processed items to verify frequency
-            for (Items item : processItemsArrayList) {
-                Log.d("ProcessedItem", "Item: " + item.getName() + ", Frequency: " + item.getFrequency());
-            }
-
         });
 
         // When user click on charge button
         chargeButton.setOnClickListener(v -> {
+            // Remove duplicate item and increase there frequency
+            ArrayList<Items>  processItemsArrayList = processItems(selectedItems);
+
             // Open bottom sheet layout
-            Dialog dialog = showButtonDialog();
+            Dialog dialog = showButtonDialog(processItemsArrayList);
+
             final double bottomSheetHeight = 0.56; // Initialize to 56% of the screen height
             setBottomSheetHeight(dialog, bottomSheetHeight);
         });
@@ -145,7 +128,7 @@ public class HomeFragment extends Fragment {
         scanButton.setOnClickListener(v -> scanCode());
     }
 
-    public Dialog showButtonDialog(){
+    public Dialog showButtonDialog(ArrayList<Items> processItemsArrayList){
         final Dialog bottomSheetDialog = new Dialog(getContext());
 
         bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
