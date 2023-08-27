@@ -1,8 +1,6 @@
 package com.example.chezelisma;
 
-import static java.security.AccessController.getContext;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,8 +12,8 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -66,6 +64,7 @@ public class Utils {
                         cursor.getString(2),    // name
                         itemImageDrawable,                 // imageData
                         cursor.getDouble(3),    // price
+                        cursor.getString(5),    // SKU
                         cursor.getString(6),    // unitType
                         // TODO: Default Background Color
                         R.color.white                      // backgroundColor
@@ -108,11 +107,14 @@ public class Utils {
                 double totalAmount = cursor.getDouble(4);
 
                 ArrayList<Items> selectedItemsArrayList = myDB.getOrderItems(orderNumber, resources);
+                //Log.d("Selected Items", selectedItemsArrayList.get(0).getFrequency().toString());
 
                 int totalItems = 1 ;
 
                 for (int i= 0; i < selectedItemsArrayList.size(); i++) {
-                    totalItems += selectedItemsArrayList.get(i).getFrequency();
+                    totalItems = totalItems + selectedItemsArrayList.get(i).getFrequency();
+                    // Log total items
+                    //Log.d("Total Items", String.valueOf(i));
                 }
 
                 Orders order = new Orders(
@@ -134,37 +136,6 @@ public class Utils {
         }
     }
 
-
-    /**
-     * Processes a list of selected items to remove duplicates and increment the frequency of each unique item.
-     * This method takes a list of selected items and processes it to remove duplicates based on the item name.
-     * It increments the frequency of each unique item in the list and returns a new ArrayList containing the processed items.
-     *
-     * @param selectedItems The list of selected items to be processed.
-     * @return A new ArrayList containing the processed items with duplicates removed and frequencies incremented.
-     */
-    public static ArrayList<Items> processItems(ArrayList<Items> selectedItems) {
-        // Create a map to store items by name and their frequencies
-        Map<String, Items> itemMap = new HashMap<>();
-
-        // Process each selected item
-        for (Items item : selectedItems) {
-            String itemName = item.getName();
-
-            // Check if the item is already in the map
-            if (itemMap.containsKey(itemName)) {
-                Items existingItem = itemMap.get(itemName);
-                assert existingItem != null;
-                existingItem.incrementFrequency();
-            } else {
-                itemMap.put(itemName, item); // If item is not in the map, add it
-            }
-        }
-
-        // Create a new ArrayList from the values of the map (processed items)
-        return new ArrayList<>(itemMap.values());
-    }
-
     /**
      * Converts a byte array to a Drawable.
      *
@@ -177,9 +148,7 @@ public class Utils {
         Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
 
         // Convert the Bitmap to a Drawable if needed
-        Drawable itemImageDrawable = new BitmapDrawable(resources, itemImageBitmap);
-
-        return itemImageDrawable;
+        return new BitmapDrawable(resources, itemImageBitmap);
     }
 
 

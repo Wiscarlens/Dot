@@ -1,9 +1,5 @@
 package com.example.chezelisma;
 
-
-import static com.example.chezelisma.Utils.storeItemsDataInArrays;
-import static com.example.chezelisma.Utils.storeOrdersDataInArrays;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,7 +18,6 @@ import java.util.ArrayList;
 
 public class OrdersFragment extends Fragment {
     private final ArrayList<Orders> orders_for_display = new ArrayList<>();
-    private final ArrayList<Items> selectedItemsArrayList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

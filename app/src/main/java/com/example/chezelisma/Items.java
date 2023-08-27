@@ -41,11 +41,12 @@ public class Items {
     }
 
     // Use for display item in the gridview
-    public Items(Long id, String name, Drawable image, Double price, String unitType, Integer backgroundColor) {
+    public Items(Long id, String name, Drawable image, Double price, String SKU, String unitType, Integer backgroundColor) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.price = price;
+        this.sku = SKU;
         this.unitType = unitType;
         this.backgroundColor = backgroundColor;
     }
@@ -60,10 +61,13 @@ public class Items {
         this.backgroundColor = backgroundColor;
     }
 
-    public Items(Long id, String name, Double price) {
+    // Selected Items
+    public Items(Long id, String name, Double price, String SKU, Integer frequency) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.sku = SKU;
+        this.frequency = frequency;
     }
 
     public Items(Long id, Drawable image) {
@@ -79,8 +83,8 @@ public class Items {
         this.frequency = frequency;
     }
 
-    public void incrementFrequency() {
-        frequency++;
+    public void setFrequency(Integer frequency) {
+        this.frequency = frequency;
     }
 
     public String getName() {

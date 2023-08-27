@@ -4,8 +4,9 @@ package com.example.chezelisma;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
+import static com.example.chezelisma.LocalFormat.getCurrencyFormat;
+
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @NonNull
     @Override
     public BottomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_design_bottom_sheet, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.transaction_design_bottom_sheet, parent, false);
         return new BottomViewHolder(view);
     }
 
@@ -42,7 +44,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @Override
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
         holder.itemNameTextView.setText(items.get(position).getName());
-        holder.priceTextView.setText(String.valueOf(items.get(position).getPrice()));
+        holder.priceTextView.setText(getCurrencyFormat(items.get(position).getPrice()));
         holder.frequencyTextView.setText(String.valueOf(items.get(position).getFrequency()));
 
         // When User click in a product in bottom sheet

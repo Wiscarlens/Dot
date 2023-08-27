@@ -4,7 +4,6 @@ package com.example.chezelisma;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
-import static com.example.chezelisma.Utils.processItems;
 import static com.example.chezelisma.Utils.storeItemsDataInArrays;
 
 import android.app.AlertDialog;
@@ -50,7 +49,6 @@ public class HomeFragment extends Fragment {
 
     private final ArrayList<Items> items_for_display = new ArrayList<>();
     private final ArrayList<Items> selectedItems =  new ArrayList<>();
-//    private ArrayList<Items> processItemsArrayList =  new ArrayList<>();
 
     // Select item total
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
@@ -90,10 +88,19 @@ public class HomeFragment extends Fragment {
 
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
-            Double itemSelected = items_for_display.get(position).getPrice();
+            // Find the selected item
+            Items selectedItem = new Items(
+                    items_for_display.get(position).getId(),
+                    items_for_display.get(position).getName(),
+                    items_for_display.get(position).getPrice(),
+                    items_for_display.get(position).getSku(),
+                    1
+            );
+
+            Double itemSelectedPrice = items_for_display.get(position).getPrice();
 
             // Add selected item price together
-            totalPrice.set(totalPrice.get() + itemSelected);
+            totalPrice.set(totalPrice.get() + itemSelectedPrice);
 
             // Format the double value into currency format
             currentCharge = LocalFormat.getCurrencyFormat(totalPrice.get());
@@ -101,24 +108,14 @@ public class HomeFragment extends Fragment {
             // Set the button text to the current value of price
             chargeButton.setText(currentCharge);
 
-            // Find the selected item
-            Items selectedItem = new Items(
-                    items_for_display.get(position).getId(),
-                    items_for_display.get(position).getName(),
-                    items_for_display.get(position).getPrice()
-            );
-
-            selectedItems.add(selectedItem);
+            addToSelectedItems(selectedItem);
 
         });
 
         // When user click on charge button
         chargeButton.setOnClickListener(v -> {
-            // Remove duplicate item and increase there frequency
-            ArrayList<Items>  processItemsArrayList = processItems(selectedItems);
-
             // Open bottom sheet layout
-            Dialog dialog = showButtonDialog(processItemsArrayList);
+            Dialog dialog = showButtonDialog();
 
             final double bottomSheetHeight = 0.56; // Initialize to 56% of the screen height
             setBottomSheetHeight(dialog, bottomSheetHeight);
@@ -128,7 +125,7 @@ public class HomeFragment extends Fragment {
         scanButton.setOnClickListener(v -> scanCode());
     }
 
-    public Dialog showButtonDialog(ArrayList<Items> processItemsArrayList){
+    public Dialog showButtonDialog(){
         final Dialog bottomSheetDialog = new Dialog(getContext());
 
         bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -136,7 +133,6 @@ public class HomeFragment extends Fragment {
 
         TextView transactionTotal = bottomSheetDialog.findViewById(R.id.transactionTotal);
         Button checkoutButton = bottomSheetDialog.findViewById(R.id.checkoutButton);
-        // Variable to test bottom sheet
         RecyclerView bottomSheetRecyclerView = bottomSheetDialog.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
 
         transactionTotal.setText(currentCharge);
@@ -145,7 +141,7 @@ public class HomeFragment extends Fragment {
         bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Create the adapter and set it to the RecyclerView
-        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(processItemsArrayList, getContext());
+        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(selectedItems, getContext());
         bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
 
         checkoutButton.setOnClickListener(v -> {
@@ -176,7 +172,7 @@ public class HomeFragment extends Fragment {
                             // TODO: update to long datatype
                             int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
 
-                            for (Items item : processItemsArrayList) {
+                            for (Items item : selectedItems) {
                                 myDB.addOrderItem(newOrderID, item.getId(), item.getFrequency());
                             }
 
@@ -258,16 +254,45 @@ public class HomeFragment extends Fragment {
          *
          * @param result The scanning result containing the scanned contents.
          */
-        String res = result.getContents();
+        String scanItem = result.getContents();
 
-        // Check if the scanned code corresponds to a specific item
-        if(res.equals("096619756803")){
-            Toast.makeText(fragmentActivity, "Water added", Toast.LENGTH_SHORT).show();
-            // TODO: Additional logic for processing the scanned item, e.g., updating prices
-            // TODO: price.set(price.get() + 1.99);
-        } else{
-            Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
+        for (Items item : items_for_display) {
+             if(scanItem.equals(item.getSku())) {
+                 addToSelectedItems(item); // Add the item to the selectedItems list
+                 // Add selected item price together
+                 totalPrice.set(totalPrice.get() + item.getPrice()); // Add the item price to the total price
+
+                 // Format the double value into currency format
+                 currentCharge = LocalFormat.getCurrencyFormat(totalPrice.get());
+
+                 // Set the button text to the current value of price
+                 chargeButton.setText(currentCharge);
+
+                 Toast.makeText(fragmentActivity, item.getName() + " added", Toast.LENGTH_SHORT).show();
+                 break;
+             } else{
+                 Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
+             }
         }
     });
+
+    /**
+     * Adds an item to the selectedItems list or increases its frequency if it already exists.
+     *
+     * @param newItem The item to be added or whose frequency should be increased.
+     */
+    private void addToSelectedItems(Items newItem) {
+        // Check if the item is already in selectedItems
+        for (Items item : selectedItems) {
+            if (item.getId() == newItem.getId()) {
+                // Item already exists, increase frequency
+                item.setFrequency(item.getFrequency() + 1);
+                return; // Exit the method since the item was found
+            }
+        }
+
+        // Item not found, add it to selectedItems
+        selectedItems.add(newItem);
+    }
 
 }

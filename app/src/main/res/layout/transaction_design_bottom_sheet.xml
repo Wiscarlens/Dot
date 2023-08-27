@@ -39,7 +39,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/total_unit"
                 android:textAlignment="viewEnd"
-                android:textColor="@color/gray"
+                android:textColor="@color/black"
                 android:textSize="11sp" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/One"
                 android:textAlignment="textEnd"
-                android:textColor="@color/gray"
+                android:textColor="@color/black"
                 android:textSize="11sp" />
 
             <TextView
@@ -63,7 +63,7 @@
                 android:layout_weight="1"
                 android:text="@string/zero_dollar"
                 android:textAlignment="viewEnd"
-                android:textColor="@color/gray"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
