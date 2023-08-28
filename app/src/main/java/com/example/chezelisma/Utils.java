@@ -12,13 +12,10 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utility class containing methods that are use in different classes.
@@ -109,12 +106,10 @@ public class Utils {
                 ArrayList<Items> selectedItemsArrayList = myDB.getOrderItems(orderNumber, resources);
                 //Log.d("Selected Items", selectedItemsArrayList.get(0).getFrequency().toString());
 
-                int totalItems = 1 ;
+                int totalItems = 0 ;
 
                 for (int i= 0; i < selectedItemsArrayList.size(); i++) {
-                    totalItems = totalItems + selectedItemsArrayList.get(i).getFrequency();
-                    // Log total items
-                    //Log.d("Total Items", String.valueOf(i));
+                    totalItems += selectedItemsArrayList.get(i).getFrequency();
                 }
 
                 Orders order = new Orders(
@@ -128,6 +123,49 @@ public class Utils {
                 );
 
                 ordersArrayList.add(order); // Add the order to the ArrayList
+            }
+            // Show the item grid view and hide the no data message
+            recyclerView.setVisibility(View.VISIBLE);
+            noDataImage.setVisibility(View.GONE);
+            noDataText.setVisibility(View.GONE);
+        }
+    }
+
+    protected static void storeTransactionsDataInArrays(MyDatabaseHelper myDB, ArrayList<Transactions> transactionsArrayList,
+                                                  RecyclerView recyclerView, ImageView noDataImage, TextView noDataText,
+                                                  Resources resources) {
+        // Get a cursor to the order data in the database
+        Cursor cursor = myDB.readAllData("transactions");
+
+        // Check if the database is empty
+        if (cursor.getCount() == 0){
+            // If the database is empty, hide the item grid view and show the no data message
+            recyclerView.setVisibility(View.GONE);
+            noDataImage.setVisibility(View.VISIBLE);
+            noDataText.setVisibility(View.VISIBLE);
+
+        } else {
+            // If the database is not empty, populate the ArrayList with order data
+            while (cursor.moveToNext()) {
+                String transactionDate = cursor.getString(1);
+                String transactionTime = cursor.getString(2);
+                String orderNumber = cursor.getString(3);
+                String transactionID = cursor.getString(4);
+                String transactionStatus = cursor.getString(5);
+                double transactionTotal = cursor.getDouble(6);
+                int paymentType = cursor.getInt(7);
+
+                Transactions transaction = new Transactions(
+                        transactionDate,
+                        transactionTime,
+                        orderNumber,
+                        transactionID,
+                        transactionStatus,
+                        transactionTotal,
+                        paymentType
+                );
+
+                transactionsArrayList.add(transaction); // Add the order to the ArrayList
             }
             // Show the item grid view and hide the no data message
             recyclerView.setVisibility(View.VISIBLE);

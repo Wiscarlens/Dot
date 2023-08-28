@@ -8,8 +8,8 @@ import android.graphics.drawable.Drawable;
 
 public class Items {
     private Drawable image;
-    private String name;
-    private Double price;
+    private final String name;
+    private final Double price;
     private String category;
     private String sku;
     private String unitType;
@@ -22,24 +22,6 @@ public class Items {
     private Integer frequency = 1;
     private  Integer backgroundColor;
 
-
-    public Items(Drawable image, String name, Double price, String category, String sku,
-                 String type, Integer stock, Double wholesalePrice, String tax,
-                 String description, Long id, Integer frequency) {
-        this.image = image;
-        this.name = name;
-        this.price = price;
-        this.category = category;
-        this.sku = sku;
-        this.unitType = type;
-        this.stock = stock;
-        this.wholesalePrice = wholesalePrice;
-        this.tax = tax;
-        this.description = description;
-        this.id = id;
-        this.frequency = frequency;
-    }
-
     // Use for display item in the gridview
     public Items(Long id, String name, Drawable image, Double price, String SKU, String unitType, Integer backgroundColor) {
         this.id = id;
@@ -47,16 +29,6 @@ public class Items {
         this.image = image;
         this.price = price;
         this.sku = SKU;
-        this.unitType = unitType;
-        this.backgroundColor = backgroundColor;
-    }
-
-    public Items(Long id, Drawable image, String name, Double price, String sku, String unitType, Integer backgroundColor) {
-        this.id = id;
-        this.image = image;
-        this.name = name;
-        this.price = price;
-        this.sku = sku;
         this.unitType = unitType;
         this.backgroundColor = backgroundColor;
     }
@@ -70,11 +42,7 @@ public class Items {
         this.frequency = frequency;
     }
 
-    public Items(Long id, Drawable image) {
-        this.id = id;
-        this.image = image;
-    }
-
+    // Use for display order item
     public Items(Long id, Drawable image, String name, Double price, Integer frequency) {
         this.id = id;
         this.image = image;

@@ -13,18 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class TransactionsFragment extends Fragment {
 
-    private ArrayList<String> transactionDate = new ArrayList<>();
-    private ArrayList<String> transactionTime = new ArrayList<>();
-    private ArrayList<String> orderNumber = new ArrayList<>();
-    private ArrayList<String> transactionID = new ArrayList<>();
-    private ArrayList<String> transactionStatus = new ArrayList<>();
-    private ArrayList<String> transactionTotal = new ArrayList<>();
-    private ArrayList<Integer> paymentType = new ArrayList<>();
+    private ArrayList<Transactions> transactions = new ArrayList<>();
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -41,54 +37,25 @@ public class TransactionsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Connect to Recyclerview in fragment_users
+        ImageView noUserImage = view.findViewById(R.id.no_transaction_imageview); // When users Database is empty
+        TextView noUserText = view.findViewById(R.id.no_transaction_textview); // When users Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.transactionList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Add transaction
-        transactionDate.add("04/27/2023");
-        transactionTime.add("9:52:12 PM");
-        orderNumber.add("# 67387");
-        transactionID.add("ZAC19945678912334567");
-        transactionStatus.add("APPROVE");
-        transactionTotal.add("$ 15.23");
-        paymentType.add(R.drawable.baseline_money_24);
+        Transactions transaction = new Transactions(
+                "04/27/2023",
+                "9:52:12 PM",
+                "# 67387",
+                "ZAC19945678912334567",
+                "APPROVE",
+                15.23,
+                R.drawable.baseline_money_24
+        );
 
-        transactionDate.add("03/07/2022");
-        transactionTime.add("10:32:14 AM");
-        orderNumber.add("# 97487");
-        transactionID.add("XXC19945678912334567");
-        transactionStatus.add("PENDING");
-        transactionTotal.add("$ 5.53");
-        paymentType.add(R.drawable.amex);
+        transactions.add(transaction);
 
-        transactionDate.add("03/07/2022");
-        transactionTime.add("10:32:14 AM");
-        orderNumber.add("# 97487");
-        transactionID.add("AAC19945678912334567");
-        transactionStatus.add("REFUNDED");
-        transactionTotal.add("$ 3.45");
-        paymentType.add(R.drawable.visa);
-
-        transactionDate.add("03/07/2022");
-        transactionTime.add("10:32:14 AM");
-        orderNumber.add("# 97487");
-        transactionID.add("MMC19945678912334567");
-        transactionStatus.add("FAILED");
-        transactionTotal.add("$ 35.89");
-        paymentType.add(R.drawable.mastercard);
-
-        transactionDate.add("03/07/2022");
-        transactionTime.add("10:32:14 AM");
-        orderNumber.add("# 97487");
-        transactionID.add("DDC19945678912334567");
-        transactionStatus.add("DECLINED");
-        transactionTotal.add("$ 69.99");
-        paymentType.add(R.drawable.discover);
-
-        TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactionDate, transactionTime, orderNumber,
-                transactionID, transactionStatus, transactionTotal, paymentType, getContext());
+        TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactions, getContext());
 
         recyclerView.setAdapter(adapter);
 

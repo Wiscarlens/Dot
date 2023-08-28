@@ -14,27 +14,11 @@ import java.util.ArrayList;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.DesignViewHolder> {
 
-    private ArrayList<String> transactionDate;
-    private ArrayList<String> transactionTime;
-    private ArrayList<String> orderNumber;
-    private ArrayList<String> transactionID;
-    private ArrayList<String> transactionStatus;
-    private ArrayList<String> transactionTotal;
-    private ArrayList<Integer> paymentType;
-
+    private ArrayList<Transactions> transactions = new ArrayList<>();
     private Context context;
 
-    public TransactionRecyclerAdapter(ArrayList<String> transactionDate, ArrayList<String> transactionTime,
-                                      ArrayList<String> orderNumber, ArrayList<String> transactionID,
-                                      ArrayList<String> transactionStatus, ArrayList<String> transactionTotal,
-                                      ArrayList<Integer> paymentType, Context context) {
-        this.transactionDate = transactionDate;
-        this.transactionTime = transactionTime;
-        this.orderNumber = orderNumber;
-        this.transactionID = transactionID;
-        this.transactionStatus = transactionStatus;
-        this.transactionTotal = transactionTotal;
-        this.paymentType = paymentType;
+    public TransactionRecyclerAdapter(ArrayList<Transactions> transactions, Context context) {
+        this.transactions = transactions;
         this.context = context;
     }
 
@@ -47,27 +31,27 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
     @Override
     public int getItemCount() {
-        return transactionID.size();
+        return transactions.size();
     }
 
     public void onBindViewHolder(@NonNull DesignViewHolder holder, int position) {
-        holder.dateTextView.setText(transactionDate.get(position));
-        holder.timeTextView.setText(transactionTime.get(position));
-        holder.orderNumberTextView.setText(orderNumber.get(position));
-        holder.ID_TextView.setText(transactionID.get(position));
-        holder.statusTextView.setText(transactionStatus.get(position));
-        holder.totalTextView.setText(transactionTotal.get(position));
-        holder.paymentTypeImageView.setImageResource(paymentType.get(position));
+        holder.dateTextView.setText(transactions.get(position).getTransactionDate());
+        holder.timeTextView.setText(transactions.get(position).getTransactionTime());
+        holder.orderNumberTextView.setText(transactions.get(position).getOrderNumber());
+        holder.ID_TextView.setText(transactions.get(position).getTransactionID());
+        holder.statusTextView.setText(transactions.get(position).getTransactionStatus());
+        holder.totalTextView.setText(String.valueOf(transactions.get(position).getTransactionTotal()));
+        holder.paymentTypeImageView.setImageResource(transactions.get(position).getPaymentType());
     }
 
     public class DesignViewHolder extends RecyclerView.ViewHolder {
-        private TextView dateTextView;
-        private TextView timeTextView;
-        private TextView orderNumberTextView;
-        private TextView ID_TextView;
-        private TextView statusTextView;
-        private TextView totalTextView;
-        private ImageView paymentTypeImageView;
+        private final TextView dateTextView;
+        private final TextView timeTextView;
+        private final TextView orderNumberTextView;
+        private final TextView ID_TextView;
+        private final TextView statusTextView;
+        private final TextView totalTextView;
+        private final ImageView paymentTypeImageView;
 
         public DesignViewHolder(@NonNull View itemView) {
             super(itemView);

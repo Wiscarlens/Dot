@@ -118,6 +118,7 @@ public class HomeFragment extends Fragment {
             Dialog dialog = showButtonDialog();
 
             final double bottomSheetHeight = 0.56; // Initialize to 56% of the screen height
+
             setBottomSheetHeight(dialog, bottomSheetHeight);
         });
 
@@ -169,14 +170,12 @@ public class HomeFragment extends Fragment {
                             double totalAmount = totalPrice.get();
                             String paymentMethod = "Cash";
                             String paymentStatus = "Completed";
-                            // TODO: update to long datatype
-                            int newOrderID = (int) myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
+
+                            long newOrderID = myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
 
                             for (Items item : selectedItems) {
                                 myDB.addOrderItem(newOrderID, item.getId(), item.getFrequency());
                             }
-
-                            // TODO: Find how to read data from the database using terminal
 
                             // Open Confirmation fragment
                             FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
@@ -249,11 +248,6 @@ public class HomeFragment extends Fragment {
      * Result launcher for initiating barcode scanning and handling the scanning result.
      */
     ActivityResultLauncher<ScanOptions>  scannerLauncher = registerForActivityResult(new ScanContract(), result -> {
-        /**
-         * Handles the result of a barcode scanning operation.
-         *
-         * @param result The scanning result containing the scanned contents.
-         */
         String scanItem = result.getContents();
 
         for (Items item : items_for_display) {

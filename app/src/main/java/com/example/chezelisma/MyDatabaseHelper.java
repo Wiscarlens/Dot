@@ -15,11 +15,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.widget.Toast;
 
 
@@ -90,6 +86,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TRANSACTION_COLUMN_ID = "_id";
     private static final String TRANSACTION_COLUMN_ORDER_ID = "order_id";
     private static final String TRANSACTION_COLUMN_PAYMENT_DATE = "payment_date";
+    private static final String TRANSACTION_COLUMN_PAYMENT_TIME = "payment_time";
     private static final String TRANSACTION_COLUMN_AMOUNT = "amount";
     private static final String TRANSACTION_COLUMN_STATUS = "status";
     private static final String TRANSACTION_COLUMN_PAYMENT_METHOD = "payment_method";
@@ -166,7 +163,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE +
                 " (" + TRANSACTION_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TRANSACTION_COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
-                TRANSACTION_COLUMN_PAYMENT_DATE + " DATE DEFAULT CURRENT_TIMESTAMP, " +
+                TRANSACTION_COLUMN_PAYMENT_DATE + " DATE, " +
+                TRANSACTION_COLUMN_PAYMENT_TIME + " TIME, " +
                 TRANSACTION_COLUMN_AMOUNT + " REAL NOT NULL, " +
                 TRANSACTION_COLUMN_STATUS + " TEXT NOT NULL, " +
                 TRANSACTION_COLUMN_PAYMENT_METHOD + " TEXT, " +
@@ -339,7 +337,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param quantity  The quantity of the item being added to the order.
      * @throws SQLiteException If there is an error while interacting with the SQLite database.
      */
-    public void addOrderItem(int orderId, long itemId, int quantity)
+    public void addOrderItem(long orderId, long itemId, int quantity)
             throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
@@ -389,7 +387,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 byte[] itemImage = cursor.getBlob(1);
                 String itemName = cursor.getString(2);
                 double itemPrice = cursor.getDouble(3);
-                int quantity = cursor.getInt(4);
+                int quantity = cursor.getInt(12);
 
                 // Convert the Bitmap to a Drawable if needed
                 Drawable itemImageDrawable =  byteArrayToDrawable(itemImage, resources);
@@ -458,6 +456,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     Cursor readAllOrdersData(){
         String query = "SELECT * FROM " + ORDERS_TABLE_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = null;
+
+        if(db != null){
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
+    }
+
+    /**
+     * Retrieves all data from the specified database table.
+     *
+     * @param TABLE_NAME The name of the table from which to retrieve data.
+     * @return A Cursor object containing the result set of the query, or null if an error occurs.
+     */
+    Cursor readAllData(String TABLE_NAME){
+        String query = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = null;
