@@ -132,8 +132,7 @@ public class Utils {
     }
 
     protected static void storeTransactionsDataInArrays(MyDatabaseHelper myDB, ArrayList<Transactions> transactionsArrayList,
-                                                  RecyclerView recyclerView, ImageView noDataImage, TextView noDataText,
-                                                  Resources resources) {
+                                                  RecyclerView recyclerView, ImageView noDataImage, TextView noDataText) {
         // Get a cursor to the order data in the database
         Cursor cursor = myDB.readAllData("transactions");
 
