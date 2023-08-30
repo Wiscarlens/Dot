@@ -4,7 +4,6 @@ package com.example.chezelisma;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
-import static com.example.chezelisma.Utils.getItems;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -80,7 +79,14 @@ public class HomeFragment extends Fragment {
         myDB = new MyDatabaseHelper(getContext());
 
         // Save item data from database to the arraylist
-        getItems(myDB, items_for_display, itemGridview, noDataImage, noDataText, getResources());
+        MyDatabaseHelper.getItems(
+                myDB, // Local database
+                items_for_display, // ArrayList to store Items objects for display
+                itemGridview, // GridView UI element to display items
+                noDataImage, // ImageView UI element to show when no data is available
+                noDataText, // TextView UI element to show when no data is available
+                getResources() // Resources instance to access app resources
+        );
 
         ItemGridAdapter itemGridAdapter = new ItemGridAdapter(items_for_display);
         itemGridview.setAdapter(itemGridAdapter);

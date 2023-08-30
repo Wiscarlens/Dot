@@ -20,16 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder> {
-    private ArrayList<String> fullName;
-    private ArrayList<String> positionList;
-    private ArrayList<Drawable> image;
+    private final ArrayList<Users> users_for_display;
+    private final Context context;
 
-    private Context context;
-
-    public UserRecyclerAdapter(ArrayList<String> fullName, ArrayList<String> position, ArrayList<Drawable> image, Context context) {
-        this.fullName = fullName;
-        this.positionList = position;
-        this.image = image;
+    public UserRecyclerAdapter(ArrayList<Users> users_for_display, Context context) {
+        this.users_for_display = users_for_display;
         this.context = context;
     }
 
@@ -42,23 +37,22 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return fullName.size();
+        return users_for_display.size();
     }
 
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        holder.fullNameTextView.setText(fullName.get(position));
-        holder.positionTextView.setText(positionList.get(position));
-        holder.photoProfile.setImageDrawable(image.get(position)); // Set the Drawable object
+        holder.photoProfile.setImageDrawable(users_for_display.get(position).getProfileImage());
+        holder.fullNameTextView.setText(users_for_display.get(position).getFullName());
+        holder.positionTextView.setText(users_for_display.get(position).getPosition());
 
-        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + fullName.get(position), Toast.LENGTH_SHORT).show());
+        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + users_for_display.get(position).getFullName(), Toast.LENGTH_SHORT).show());
     }
 
-    public class UserViewHolder extends RecyclerView.ViewHolder {
-        private TextView fullNameTextView;
-        private TextView positionTextView;
-        private ImageView photoProfile;
-
-        private CardView cardView;
+    public static class UserViewHolder extends RecyclerView.ViewHolder {
+        private final TextView fullNameTextView;
+        private final TextView positionTextView;
+        private final ImageView photoProfile;
+        private final CardView cardView;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);

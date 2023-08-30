@@ -1,5 +1,6 @@
 package com.example.chezelisma;
 
+// TODO: delete this class when firebase is fully functional
 public class NewItemData {
     private String name;
     private double price;

@@ -29,11 +29,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -213,7 +211,7 @@ public class New_Item_Fragment extends Fragment {
         });
 
         saveButton.setOnClickListener(v -> {
-            saveToDatabase(); // Save data locally
+            setItems(); // Save data locally
             //uploadData();
 
             // Replace Add item fragment with Home Fragment
@@ -353,7 +351,7 @@ public class New_Item_Fragment extends Fragment {
         }
 
     }
-    private void saveToDatabase() {
+    private void setItems() {
         Items newItem = new Items(
                 itemImage.getDrawable(),
                 String.valueOf(itemName.getText()).trim(),
@@ -372,28 +370,29 @@ public class New_Item_Fragment extends Fragment {
         }
     }
 
-    public void uploadData(){
-        String Name = String.valueOf(itemName.getText()).trim();
-        double Price = Double.parseDouble(String.valueOf(unitPrice.getText()));
-        String Category = category.getSelectedItem().toString();
-
-        String SKU = String.valueOf(sku.getText()).trim();
-        String UnitType = unitType.getSelectedItem().toString();
-        int stock = Integer.parseInt(String.valueOf(itemStock.getText()));
-
-        double wholesalesPrice = Double.parseDouble(String.valueOf(wholesalePrice.getText()));
-        double tax = Double.parseDouble(String.valueOf(itemTax.getText()));
-        String description = String.valueOf(itemDescription.getText());
-
-        NewItemData newItemData = new NewItemData(Name, Price, Category, SKU, UnitType, stock, wholesalesPrice, tax, description);
-
-        FirebaseDatabase.getInstance().getReference("Items").child(Name)
-                .setValue(newItemData).addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        String message = getResources().getString(R.string.save);
-                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
+//    TODO: Upload data to firebase
+//    public void uploadData(){
+//        String Name = String.valueOf(itemName.getText()).trim();
+//        double Price = Double.parseDouble(String.valueOf(unitPrice.getText()));
+//        String Category = category.getSelectedItem().toString();
+//
+//        String SKU = String.valueOf(sku.getText()).trim();
+//        String UnitType = unitType.getSelectedItem().toString();
+//        int stock = Integer.parseInt(String.valueOf(itemStock.getText()));
+//
+//        double wholesalesPrice = Double.parseDouble(String.valueOf(wholesalePrice.getText()));
+//        double tax = Double.parseDouble(String.valueOf(itemTax.getText()));
+//        String description = String.valueOf(itemDescription.getText());
+//
+//        NewItemData newItemData = new NewItemData(Name, Price, Category, SKU, UnitType, stock, wholesalesPrice, tax, description);
+//
+//        FirebaseDatabase.getInstance().getReference("Items").child(Name)
+//                .setValue(newItemData).addOnCompleteListener(task -> {
+//                    if(task.isSuccessful()){
+//                        String message = getResources().getString(R.string.save);
+//                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+//                    }
+//                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
+//    }
 
 }

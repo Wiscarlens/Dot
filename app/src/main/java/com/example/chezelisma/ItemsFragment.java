@@ -54,7 +54,7 @@ public class ItemsFragment extends Fragment {
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
         // Save item data from database to the arraylist
-        Utils.getItems(myDB, items_for_display, itemGridview, noDataImage,
+        MyDatabaseHelper.getItems(myDB, items_for_display, itemGridview, noDataImage,
                 noDataText, getResources());
 
          // Initialize adapter with the arrays

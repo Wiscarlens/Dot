@@ -1,11 +1,6 @@
 package com.example.chezelisma;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,15 +24,7 @@ import java.util.ArrayList;
 
 public class UsersFragment extends Fragment {
     private FragmentActivity fragmentActivity;
-    private ImageView noUserImage;
-    private TextView noUserText;
-    private RecyclerView recyclerView;
-    private ArrayList<String> fullName = new ArrayList<>();
-    private ArrayList<String> position = new ArrayList<>();
-    private ArrayList<Drawable> image = new ArrayList<>();
-    private UserRecyclerAdapter adapter;
-
-    private MyDatabaseHelper myDB;
+    private final ArrayList<Users> users_for_display = new ArrayList<>();
 
 
     public void onAttach(@NonNull Context context) {
@@ -56,18 +43,26 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        noUserImage = view.findViewById(R.id.no_user_imageview); // When users Database is empty
-        noUserText = view.findViewById(R.id.no_user_textview); // When users Database is empty
-        recyclerView = view.findViewById(R.id.userList);
+        ImageView noUserImage = view.findViewById(R.id.no_user_imageview); // When users Database is empty
+        TextView noUserText = view.findViewById(R.id.no_user_textview); // When users Database is empty
+        RecyclerView recyclerView = view.findViewById(R.id.userList);
         FloatingActionButton addUser = view.findViewById(R.id.addUserButton); // Add User button
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        myDB = new MyDatabaseHelper(getContext()); // Local database
+        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        storeUsersDataInArrays(); // Save item data from database to the arraylist
+        // Save item data from database to the arraylist
+        MyDatabaseHelper.getUsers(
+                myDB, // Local database
+                users_for_display, // ArrayList to store Users objects for display
+                recyclerView, // RecyclerView UI element to display users
+                noUserImage, // ImageView UI element to show when no data is available
+                noUserText, // TextView UI element to show when no data is available
+                getResources() // Resources instance to access app resources
+        );
 
-        adapter = new UserRecyclerAdapter(fullName, position, image, getContext());
+        UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -76,42 +71,10 @@ public class UsersFragment extends Fragment {
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            SignUpFragment signUpActivity = new SignUpFragment();
+            newUsersFragment signUpActivity = new newUsersFragment();
             fragmentTransaction.replace(R.id.fragment_container, signUpActivity);
             fragmentTransaction.commit();
         });
     }
 
-    private void storeUsersDataInArrays(){
-        Cursor cursor = myDB.readAllUsersData();
-
-        if (cursor.getCount() == 0){
-            recyclerView.setVisibility(View.GONE);
-            noUserImage.setVisibility(View.VISIBLE);
-            noUserText.setVisibility(View.VISIBLE);
-
-        } else {
-            // Retrieve item data from the database
-            while (cursor.moveToNext()){
-                noUserImage.setVisibility(View.GONE);
-                noUserText.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-
-                byte[] imageData = cursor.getBlob(12);
-
-                // Convert the image byte array to a Bitmap
-                Bitmap itemImageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-
-                // Convert the Bitmap to a Drawable if needed
-                Drawable itemImageDrawable = new BitmapDrawable(getResources(), itemImageBitmap);
-
-                // Concatenate first and last name
-                String FullName = cursor.getString(1) + " " + cursor.getString(3);
-
-                fullName.add(FullName);
-                position.add(cursor.getString(13));
-                image.add(itemImageDrawable);
-            }
-        }
-    }
 }

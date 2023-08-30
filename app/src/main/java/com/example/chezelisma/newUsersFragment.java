@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class SignUpFragment extends Fragment {
+public class newUsersFragment extends Fragment {
     private FirebaseAuth auth;
 
     private ImageButton step1Button;

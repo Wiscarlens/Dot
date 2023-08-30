@@ -1,6 +1,5 @@
 package com.example.chezelisma;
 
-import static com.example.chezelisma.Utils.getTransactions;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -46,7 +45,7 @@ public class TransactionsFragment extends Fragment {
 
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        getTransactions(
+        MyDatabaseHelper.getTransactions(
                 myDB,
                 transactions_for_display,
                 recyclerView,
@@ -54,18 +53,6 @@ public class TransactionsFragment extends Fragment {
                 noUserText
         );
 
-
-//        Transactions transaction = new Transactions(
-//                "04/27/2023",
-//                "9:52:12 PM",
-//                "# 67387",
-//                "ZAC19945678912334567",
-//                "APPROVE",
-//                15.23,
-//                R.drawable.baseline_money_24
-//        );
-//
-//        transactions_for_display.add(transaction);
 
         TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactions_for_display);
 
