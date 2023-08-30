@@ -1,5 +1,7 @@
 package com.example.chezelisma;
 
+import static com.example.chezelisma.Utils.getTransactions;
+
 import android.content.Context;
 import android.os.Bundle;
 
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 
 public class TransactionsFragment extends Fragment {
 
-    private ArrayList<Transactions> transactions = new ArrayList<>();
+    private final ArrayList<Transactions> transactions_for_display = new ArrayList<>();
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -41,21 +43,33 @@ public class TransactionsFragment extends Fragment {
         TextView noUserText = view.findViewById(R.id.no_transaction_textview); // When users Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.transactionList);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Transactions transaction = new Transactions(
-                "04/27/2023",
-                "9:52:12 PM",
-                "# 67387",
-                "ZAC19945678912334567",
-                "APPROVE",
-                15.23,
-                R.drawable.baseline_money_24
+        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
+
+        getTransactions(
+                myDB,
+                transactions_for_display,
+                recyclerView,
+                noUserImage,
+                noUserText
         );
 
-        transactions.add(transaction);
 
-        TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactions, getContext());
+//        Transactions transaction = new Transactions(
+//                "04/27/2023",
+//                "9:52:12 PM",
+//                "# 67387",
+//                "ZAC19945678912334567",
+//                "APPROVE",
+//                15.23,
+//                R.drawable.baseline_money_24
+//        );
+//
+//        transactions_for_display.add(transaction);
+
+        TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactions_for_display);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         recyclerView.setAdapter(adapter);
 

@@ -35,8 +35,14 @@ public class OrdersFragment extends Fragment {
 
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        Utils.storeOrdersDataInArrays(myDB, orders_for_display, OrderList_RecyclerView, noDataImage,
-                noDataText, getResources());
+        Utils.getOrders(
+                myDB, // Local database
+                orders_for_display, // ArrayList to store Orders objects for display
+                OrderList_RecyclerView, // RecyclerView UI element to display orders
+                noDataImage, // ImageView UI element to show when no data is available
+                noDataText, // TextView UI element to show when no data is available
+                getResources() // Resources instance to access app resources
+        );
 
         OrdersAdapter ordersAdapter = new OrdersAdapter(orders_for_display, getContext());
         OrderList_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

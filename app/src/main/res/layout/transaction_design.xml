@@ -36,7 +36,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/transactionTime"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:ignore="SmallSp,TextSizeCheck" />
 
             <TextView
                 android:id="@+id/transactionTime"
@@ -47,20 +48,35 @@
                 android:text="@string/time_sample"
                 android:textSize="8sp"
                 app:layout_constraintStart_toEndOf="@+id/transactionDate"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SmallSp,TextSizeCheck" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="12dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/pound"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transactionDate"
+                tools:ignore="TextSizeCheck" />
 
             <TextView
                 android:id="@+id/transactionOrderNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="12dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="2dp"
                 android:text="@string/order_number"
                 android:textColor="@color/black"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/transactionDate" />
+                app:layout_constraintTop_toBottomOf="@+id/transactionDate"
+                tools:ignore="TextSizeCheck" />
 
             <TextView
                 android:id="@+id/transactionID"
@@ -73,7 +89,7 @@
                 android:textSize="9sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/transactionOrderNumber"
-                tools:ignore="SmallSp" />
+                tools:ignore="SmallSp,TextSizeCheck" />
 
             <TextView
                 android:id="@+id/transactionStatus"
@@ -89,7 +105,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/transactionID"
                 app:layout_constraintVertical_bias="0.0"
-                tools:ignore="SmallSp" />
+                tools:ignore="SmallSp,TextContrastCheck,TextSizeCheck" />
 
             <TextView
                 android:id="@+id/transactionTotal"
@@ -103,7 +119,8 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TextSizeCheck" />
 
             <ImageView
                 android:id="@+id/PaymentType"
@@ -114,7 +131,8 @@
                 android:contentDescription="@string/payment_type"
                 android:src="@drawable/baseline_money_24"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/transactionTotal" />
+                app:layout_constraintEnd_toStartOf="@+id/transactionTotal"
+                tools:ignore="ImageContrastCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

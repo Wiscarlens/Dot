@@ -5,9 +5,6 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -38,7 +35,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -358,20 +354,21 @@ public class New_Item_Fragment extends Fragment {
 
     }
     private void saveToDatabase() {
-        // Convert the selected image to a byte array (Blob)
-        byte[] imageData = getByteArrayFromDrawable(itemImage.getDrawable());
-        String Name = String.valueOf(itemName.getText());
-        double Price = Double.parseDouble(String.valueOf(unitPrice.getText()));
-        String Category = category.getSelectedItem().toString();
-        String SKU = String.valueOf(sku.getText()).trim();
-        String UnitType = unitType.getSelectedItem().toString();
-        int stock = Integer.parseInt(String.valueOf(itemStock.getText()));
-        double wholesalesPrice = Double.parseDouble(String.valueOf(wholesalePrice.getText()));
-        double tax = Double.parseDouble(String.valueOf(itemTax.getText()));
-        String description = String.valueOf(itemDescription.getText());
+        Items newItem = new Items(
+                itemImage.getDrawable(),
+                String.valueOf(itemName.getText()).trim(),
+                Double.parseDouble(String.valueOf(unitPrice.getText()).trim()),
+                category.getSelectedItem().toString(),
+                String.valueOf(sku.getText()).trim(),
+                unitType.getSelectedItem().toString(),
+                Integer.parseInt(String.valueOf(itemStock.getText()).trim()),
+                Double.parseDouble(String.valueOf(wholesalePrice.getText()).trim()),
+                Double.parseDouble(String.valueOf(itemTax.getText()).trim()),
+                String.valueOf(itemDescription.getText())
+        );
 
         try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-            myDB.addItem(imageData, Name, Price, Category, SKU, UnitType, stock, wholesalesPrice, tax, description);
+            myDB.setItem(newItem);
         }
     }
 
@@ -399,10 +396,4 @@ public class New_Item_Fragment extends Fragment {
                 }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    private byte[] getByteArrayFromDrawable(Drawable drawable) {
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-        return outputStream.toByteArray();
-    }
 }

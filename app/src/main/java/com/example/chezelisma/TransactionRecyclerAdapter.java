@@ -1,6 +1,7 @@
 package com.example.chezelisma;
 
-import android.content.Context;
+import static com.example.chezelisma.LocalFormat.getCurrencyFormat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.DesignViewHolder> {
+    private final ArrayList<Transactions> transactions;
 
-    private ArrayList<Transactions> transactions = new ArrayList<>();
-    private Context context;
-
-    public TransactionRecyclerAdapter(ArrayList<Transactions> transactions, Context context) {
+    public TransactionRecyclerAdapter(ArrayList<Transactions> transactions) {
         this.transactions = transactions;
-        this.context = context;
     }
 
     @NonNull
     @Override
     public DesignViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_design, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.transaction_design, parent, false);
         return new DesignViewHolder(view);
     }
 
@@ -40,11 +39,11 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.orderNumberTextView.setText(transactions.get(position).getOrderNumber());
         holder.ID_TextView.setText(transactions.get(position).getTransactionID());
         holder.statusTextView.setText(transactions.get(position).getTransactionStatus());
-        holder.totalTextView.setText(String.valueOf(transactions.get(position).getTransactionTotal()));
-        holder.paymentTypeImageView.setImageResource(transactions.get(position).getPaymentType());
+        holder.totalTextView.setText(getCurrencyFormat(transactions.get(position).getTransactionTotal()));
+        holder.paymentTypeImageView.setImageResource(transactions.get(position).getPaymentMethod());
     }
 
-    public class DesignViewHolder extends RecyclerView.ViewHolder {
+    public static class DesignViewHolder extends RecyclerView.ViewHolder {
         private final TextView dateTextView;
         private final TextView timeTextView;
         private final TextView orderNumberTextView;
@@ -55,6 +54,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
         public DesignViewHolder(@NonNull View itemView) {
             super(itemView);
+
             dateTextView = itemView.findViewById(R.id.transactionDate);
             timeTextView = itemView.findViewById(R.id.transactionTime);
             orderNumberTextView = itemView.findViewById(R.id.transactionOrderNumber);

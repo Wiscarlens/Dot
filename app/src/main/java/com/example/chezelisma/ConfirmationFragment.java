@@ -45,6 +45,7 @@ public class ConfirmationFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 String data = result.getString("price");
                 price.setText(data);
+                status.setText("Payment Successful");
             }
         });
 

@@ -36,11 +36,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.ByteArrayOutputStream;
@@ -461,7 +458,7 @@ public class SignUpFragment extends Fragment {
 
 
         try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-            myDB.addUser(Firstname, MiddleName, Lastname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
+            myDB.setUser(Firstname, MiddleName, Lastname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
                     City, State, ZipCode, ProfileImage, Position, Password);
         }
     }

@@ -4,7 +4,7 @@ package com.example.chezelisma;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
-import static com.example.chezelisma.Utils.storeItemsDataInArrays;
+import static com.example.chezelisma.Utils.getItems;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,7 +80,7 @@ public class HomeFragment extends Fragment {
         myDB = new MyDatabaseHelper(getContext());
 
         // Save item data from database to the arraylist
-        storeItemsDataInArrays(myDB, items_for_display, itemGridview, noDataImage, noDataText, getResources());
+        getItems(myDB, items_for_display, itemGridview, noDataImage, noDataText, getResources());
 
         ItemGridAdapter itemGridAdapter = new ItemGridAdapter(items_for_display);
         itemGridview.setAdapter(itemGridAdapter);
@@ -164,18 +163,29 @@ public class HomeFragment extends Fragment {
                              // Complete with the value 'false'
                         }).setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
                            // If user click on yes
-                            // Create Order
+                            // Create New Order
 
-                            int creatorId = 1;
-                            double totalAmount = totalPrice.get();
-                            String paymentMethod = "Cash";
-                            String paymentStatus = "Completed";
+                            Orders newOrder = new Orders(
+                                    "1", // TODO: Replace with the actual user ID
+                                    totalPrice.get(), // Total amount
+                                    "Completed" // TODO: replace with the actual Order status
+                            );
 
-                            long newOrderID = myDB.addOrder(creatorId, totalAmount, paymentMethod, paymentStatus);
+                            long newOrderID = myDB.setOrder(newOrder);
 
                             for (Items item : selectedItems) {
-                                myDB.addOrderItem(newOrderID, item.getId(), item.getFrequency());
+                                myDB.setOrderItem(newOrderID, item.getId(), item.getFrequency());
                             }
+
+                            // TODO: Create a new transaction
+                            Transactions newTransaction = new Transactions(
+                                    String.valueOf(newOrderID),
+                                    "APPROVE", // TODO: replace with the actual transaction status
+                                    totalPrice.get(),
+                                    R.drawable.baseline_money_24
+                            );
+
+                            myDB.setTransaction(newTransaction);
 
                             // Open Confirmation fragment
                             FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();

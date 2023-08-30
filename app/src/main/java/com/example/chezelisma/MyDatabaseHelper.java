@@ -7,6 +7,7 @@ package com.example.chezelisma;
 import static com.example.chezelisma.LocalFormat.getCurrentDateTime;
 import static com.example.chezelisma.PasswordUtils.hashPassword;
 import static com.example.chezelisma.Utils.byteArrayToDrawable;
+import static com.example.chezelisma.Utils.getByteArrayFromDrawable;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -68,11 +70,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String ORDERS_TABLE_NAME = "orders";
     private static final String ORDER_COLUMN_ID = "_id";
     private static final String ORDER_COLUMN_CREATOR_ID = "order_creator";
-    private static final String ORDER_COLUMN_ORDER_DATE = "order_date";
-    private static final String ORDER_COLUMN_ORDER_TIME = "order_time";
+    private static final String ORDER_COLUMN_DATE = "order_date";
+    private static final String ORDER_COLUMN_TIME = "order_time";
     private static final String ORDER_COLUMN_TOTAL_AMOUNT = "total_amount";
-    private static final String ORDER_COLUMN_PAYMENT_METHOD = "payment_method";
-    private static final String ORDER_COLUMN_PAYMENT_STATUS = "payment_status";
+    private static final String ORDER_COLUMN_STATUS = "order_status";
 
     // Order Items Table
     private static final String ORDER_ITEMS_TABLE_NAME = "order_items";
@@ -84,7 +85,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     // Transaction Table
     private static final String TRANSACTION_TABLE = "transactions";
     private static final String TRANSACTION_COLUMN_ID = "_id";
-    private static final String TRANSACTION_COLUMN_ORDER_ID = "order_id";
+    // TODO: change it to order number
+    private static final String TRANSACTION_COLUMN_ORDER_NUMBER = "order_id";
     private static final String TRANSACTION_COLUMN_PAYMENT_DATE = "payment_date";
     private static final String TRANSACTION_COLUMN_PAYMENT_TIME = "payment_time";
     private static final String TRANSACTION_COLUMN_AMOUNT = "amount";
@@ -139,12 +141,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 // TODO: Make not null in the future
                 ORDER_COLUMN_CREATOR_ID + " INTEGER, " +
-                ORDER_COLUMN_ORDER_DATE + " DATE, " +
-                ORDER_COLUMN_ORDER_TIME + " TIME, " +
+                ORDER_COLUMN_DATE + " DATE, " +
+                ORDER_COLUMN_TIME + " TIME, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +
-                ORDER_COLUMN_PAYMENT_METHOD + " TEXT NOT NULL, " +
-                // not null in the future
-                ORDER_COLUMN_PAYMENT_STATUS + " TEXT, " +
+                // TODO: not null in the future
+                ORDER_COLUMN_STATUS + " TEXT, " +
                 " FOREIGN KEY (" + ORDER_COLUMN_CREATOR_ID
                 + ") REFERENCES " + USERS_TABLE_NAME + " (" + USERS_COLUMN_ID + "));";
 
@@ -162,13 +163,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // SQL query to create the "transactions" table
         String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE +
                 " (" + TRANSACTION_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TRANSACTION_COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
+                TRANSACTION_COLUMN_ORDER_NUMBER + " INTEGER NOT NULL, " +
                 TRANSACTION_COLUMN_PAYMENT_DATE + " DATE, " +
                 TRANSACTION_COLUMN_PAYMENT_TIME + " TIME, " +
                 TRANSACTION_COLUMN_AMOUNT + " REAL NOT NULL, " +
                 TRANSACTION_COLUMN_STATUS + " TEXT NOT NULL, " +
                 TRANSACTION_COLUMN_PAYMENT_METHOD + " TEXT, " +
-                " FOREIGN KEY (" + TRANSACTION_COLUMN_ORDER_ID +
+                " FOREIGN KEY (" + TRANSACTION_COLUMN_ORDER_NUMBER +
                 ") REFERENCES " + ORDERS_TABLE_NAME + " (" + ORDER_COLUMN_ID + "));";
 
         db.execSQL(query_users);
@@ -178,46 +179,38 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(query_transactions);
     }
 
+
     /**
-     * Adds an item to the "items" table in the database with the provided information.
+     * Inserts a new item into the database.
      *
-     * @param imageData   The byte array representing the image data of the item.
-     * @param name        The name of the item.
-     * @param price       The price of the item.
-     * @param category    The category of the item.
-     * @param sku         The SKU (stock keeping unit) of the item.
-     * @param unitType    The unit type of the item (e.g., "unit", "kg", "lb").
-     * @param stock       The available stock quantity of the item.
-     * @param wsPrice     The wholesale price of the item.
-     * @param tax         The tax rate applied to the item.
-     * @param description A description of the item.
-     *
-     * @throws SQLiteException if there is an error while accessing the database or inserting the item.
+     * @param newItem The item object containing information to be added.
+     * @throws SQLiteException If there is an issue with the SQLite database operations.
      */
-    public void addItem(byte[] imageData, String name, double price, String category, String sku, String unitType,
-                        int stock, double wsPrice, double tax, String description) throws SQLiteException {
+    public void setItem(Items newItem)
+            throws SQLiteException {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues cv = new ContentValues();
-            cv.put(ITEMS_COLUMN_IMAGE, imageData);
-            cv.put(ITEMS_COLUMN_NAME, name);
-            cv.put(ITEMS_COLUMN_PRICE, price);
-            cv.put(ITEMS_COLUMN_CATEGORY_ID, category);
-            cv.put(ITEMS_COLUMN_SKU, sku);
-            cv.put(ITEMS_COLUMN_TYPE, unitType);
-            cv.put(ITEMS_COLUMN_STOCK_QUANTITY, stock);
-            cv.put(ITEMS_COLUMN_WS_PRICE, wsPrice);
-            cv.put(ITEMS_COLUMN_TAX, tax);
-            cv.put(ITEMS_COLUMN_DESCRIPTION, description);
+            cv.put(ITEMS_COLUMN_IMAGE, getByteArrayFromDrawable(newItem.getImage())); // Convert the selected image to a byte array (Blob)
+            cv.put(ITEMS_COLUMN_NAME, newItem.getName());
+            cv.put(ITEMS_COLUMN_PRICE, newItem.getPrice());
+            cv.put(ITEMS_COLUMN_CATEGORY_ID, newItem.getCategory());
+            cv.put(ITEMS_COLUMN_SKU, newItem.getSku());
+            cv.put(ITEMS_COLUMN_TYPE, newItem.getUnitType());
+            cv.put(ITEMS_COLUMN_STOCK_QUANTITY, newItem.getStock());
+            cv.put(ITEMS_COLUMN_WS_PRICE, newItem.getWholesalePrice());
+            cv.put(ITEMS_COLUMN_TAX, newItem.getTax());
+            cv.put(ITEMS_COLUMN_DESCRIPTION, newItem.getDescription());
 
-            long result;
+            long result = db.insertOrThrow(ITEMS_TABLE, null, cv);
 
-            result = db.insertOrThrow(ITEMS_TABLE, null, cv);
             if (result != -1) {
-                Toast.makeText(context, "Added Successfully!", Toast.LENGTH_SHORT).show();
+                Log.i("MyDatabaseHelper", "Item Added Successfully!");
+                // Toast.makeText(context, "Added Successfully!", Toast.LENGTH_SHORT).show();
             }
         } catch (SQLiteException e) {
-            Toast.makeText(context, "Failed to add item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("MyDatabaseHelper", "Failed to add item: " + e.getMessage());
+            // Toast.makeText(context, "Failed to add item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             throw e;
         }
     }
@@ -242,7 +235,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      *
      * @throws SQLiteException if there is an error while accessing the database or inserting the user.
      */
-    public void addUser(String firstName, String middleName, String lastName, String dob, String gender,
+    public void setUser(String firstName, String middleName, String lastName, String dob, String gender,
                         String email, String phoneNumber, String streetName, String city, String state,
                         int zipCode, byte[] profileImage, String position, String password)
             throws SQLiteException {
@@ -277,26 +270,25 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             long result = db.insertOrThrow(USERS_TABLE_NAME, null, cv);
 
             if (result != -1) {
-                Toast.makeText(context, "User added successfully!", Toast.LENGTH_SHORT).show();
+                Log.i("MyDatabaseHelper", "User Added Successfully!");
+                //Toast.makeText(context, "User added successfully!", Toast.LENGTH_SHORT).show();
             }
         } catch (SQLiteException e) {
             e.printStackTrace(); // Log the error stack trace for debugging
+            Log.e("MyDatabaseHelper", "Failed to add user: " + e.getMessage());
             Toast.makeText(context, "Failed to add user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             throw e;
         }
     }
 
     /**
-     * Adds an order to the database and returns the ID of the newly inserted order.
+     * Inserts a new order into the database.
      *
-     * @param creatorId       The ID of the user who created the order.
-     * @param totalAmount     The total amount of the order.
-     * @param paymentMethod   The payment method used for the order.
-     * @param paymentStatus   The payment status of the order.
+     * @param newOrder The order object containing information to be added.
      * @return The ID of the newly inserted order, or -1 if insertion failed.
-     * @throws SQLiteException If there is an error while interacting with the SQLite database.
+     * @throws SQLiteException If there is an issue with the SQLite database operations.
      */
-    public long addOrder(Integer creatorId, double totalAmount, String paymentMethod, String paymentStatus)
+    public long setOrder(Orders newOrder)
             throws SQLiteException {
         long newOrderId = -1;
 
@@ -306,26 +298,26 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
-            cv.put(ORDER_COLUMN_CREATOR_ID, creatorId);
-            cv.put(ORDER_COLUMN_TOTAL_AMOUNT, totalAmount);
-            cv.put(ORDER_COLUMN_PAYMENT_METHOD, paymentMethod);
-            cv.put(ORDER_COLUMN_PAYMENT_STATUS, paymentStatus);
-            cv.put(ORDER_COLUMN_ORDER_DATE, dateTime[0]);
-            cv.put(ORDER_COLUMN_ORDER_TIME, dateTime[1]);
+            cv.put(ORDER_COLUMN_CREATOR_ID, newOrder.getCreatorID());
+            cv.put(ORDER_COLUMN_TOTAL_AMOUNT, newOrder.getOrderTotalAmount());
+            cv.put(ORDER_COLUMN_STATUS, newOrder.getOrderStatus());
+            cv.put(ORDER_COLUMN_DATE, dateTime[0]);
+            cv.put(ORDER_COLUMN_TIME, dateTime[1]);
 
             // Insert the order into the database
             newOrderId = db.insertOrThrow(ORDERS_TABLE_NAME, null, cv);
 
             if (newOrderId != -1) {
-                Toast.makeText(context, "Added Order Successfully!", Toast.LENGTH_SHORT).show();
+                Log.i("MyDatabaseHelper", "Order Added Successfully!");
             }
         } catch (SQLiteException e) {
-            Toast.makeText(context, "Failed to add order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("MyDatabaseHelper", "Failed to add order: " + e.getMessage());
             throw e;
         }
 
         return newOrderId;
     }
+
 
 
 
@@ -337,7 +329,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param quantity  The quantity of the item being added to the order.
      * @throws SQLiteException If there is an error while interacting with the SQLite database.
      */
-    public void addOrderItem(long orderId, long itemId, int quantity)
+    public void setOrderItem(long orderId, long itemId, int quantity)
             throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
@@ -350,10 +342,42 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             long result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
 
             if (result != -1) {
-                Toast.makeText(context, "Added Order Item Successfully!", Toast.LENGTH_SHORT).show();
+                Log.i("MyDatabaseHelper", "Order Item Added Successfully!");
             }
         } catch (SQLiteException e) {
-            Toast.makeText(context, "Failed to add order item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("MyDatabaseHelper", "Failed to add order item: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Inserts a new transaction record into the database.
+     *
+     * @param newTransaction The transaction object containing information to be added.
+     * @throws SQLiteException If there is an issue with the SQLite database operations.
+     */
+    public void setTransaction(Transactions newTransaction)
+            throws SQLiteException {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+
+            ContentValues cv = new ContentValues();
+
+            String[] dateTime = getCurrentDateTime(); // Get the current date and time
+
+            cv.put(TRANSACTION_COLUMN_PAYMENT_DATE, dateTime[0]);
+            cv.put(TRANSACTION_COLUMN_PAYMENT_TIME, dateTime[1]);
+            cv.put(TRANSACTION_COLUMN_ORDER_NUMBER, newTransaction.getOrderNumber());
+            cv.put(TRANSACTION_COLUMN_STATUS, newTransaction.getTransactionStatus());
+            cv.put(TRANSACTION_COLUMN_AMOUNT, newTransaction.getTransactionTotal());
+            cv.put(TRANSACTION_COLUMN_PAYMENT_METHOD, newTransaction.getPaymentMethod());
+
+            long result = db.insertOrThrow(TRANSACTION_TABLE, null, cv);
+
+            if (result != -1) {
+                Log.i("MyDatabaseHelper", "Transaction Added Successfully!");
+            }
+        } catch (SQLiteException e) {
+            Log.e("MyDatabaseHelper", "Failed to add transaction: " + e.getMessage());
             throw e;
         }
     }

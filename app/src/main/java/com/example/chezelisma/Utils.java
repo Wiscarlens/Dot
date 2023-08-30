@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -31,9 +31,9 @@ public class Utils {
      * @param noDataText The TextView UI element to show when no data is available.
      * @param resources The Resources instance to access app resources.
      */
-    protected static void storeItemsDataInArrays(MyDatabaseHelper myDB, ArrayList<Items> items_for_display,
-                                                 GridView itemGridview, ImageView noDataImage,
-                                                 TextView noDataText, Resources resources) {
+    protected static void getItems(MyDatabaseHelper myDB, ArrayList<Items> items_for_display,
+                                   GridView itemGridview, ImageView noDataImage,
+                                   TextView noDataText, Resources resources) {
         // Get a cursor to the item data in the database
         Cursor cursor = myDB.readAllItemsData();
 
@@ -57,7 +57,7 @@ public class Utils {
                 Drawable itemImageDrawable = new BitmapDrawable(resources, itemImageBitmap);
 
                 Items item = new Items(
-                        cursor.getLong(0),    // id
+                        cursor.getLong(0),      // id
                         cursor.getString(2),    // name
                         itemImageDrawable,                 // imageData
                         cursor.getDouble(3),    // price
@@ -68,10 +68,6 @@ public class Utils {
                 );
 
                 items_for_display.add(item); // Add the item to the ArrayList
-
-                // TODO: to be remove
-                //itemId_and_name.put(cursor.getInt(0), cursor.getString(2));
-
             }
 
             // Show the item grid view and hide the no data message
@@ -81,9 +77,19 @@ public class Utils {
         }
     }
 
-    protected static void storeOrdersDataInArrays(MyDatabaseHelper myDB, ArrayList<Orders> ordersArrayList,
-                                                  RecyclerView recyclerView, ImageView noDataImage, TextView noDataText,
-                                                  Resources resources) {
+    /**
+     * Retrieves order data from the provided database and populates an ArrayList with Orders objects.
+     *
+     * @param myDB The instance of MyDatabaseHelper to access the database.
+     * @param ordersArrayList The ArrayList to populate with Orders objects.
+     * @param recyclerView The RecyclerView to display the populated data.
+     * @param noDataImage The ImageView to display when there is no data available.
+     * @param noDataText The TextView to display when there is no data available.
+     * @param resources The Resources object to retrieve app resources.
+     */
+    protected static void getOrders(MyDatabaseHelper myDB, ArrayList<Orders> ordersArrayList,
+                                    RecyclerView recyclerView, ImageView noDataImage, TextView noDataText,
+                                    Resources resources) {
         // Get a cursor to the order data in the database
         Cursor cursor = myDB.readAllOrdersData();
 
@@ -98,32 +104,29 @@ public class Utils {
             // If the database is not empty, populate the ArrayList with order data
             while (cursor.moveToNext()) {
                 long orderNumber = cursor.getLong(0);
-                String orderDate = cursor.getString(2);
-                String orderTime = cursor.getString(3);
-                String orderStatus = cursor.getString(6);
-                double totalAmount = cursor.getDouble(4);
 
                 ArrayList<Items> selectedItemsArrayList = myDB.getOrderItems(orderNumber, resources);
-                //Log.d("Selected Items", selectedItemsArrayList.get(0).getFrequency().toString());
 
                 int totalItems = 0 ;
 
-                for (int i= 0; i < selectedItemsArrayList.size(); i++) {
-                    totalItems += selectedItemsArrayList.get(i).getFrequency();
+                // Find the total number of items in the order
+                for(Items item : selectedItemsArrayList){
+                    totalItems += item.getFrequency();
                 }
 
                 Orders order = new Orders(
-                        orderNumber,
-                        orderDate,
-                        orderTime,
-                        orderStatus,
-                        totalItems,
-                        totalAmount,
-                        selectedItemsArrayList
+                        orderNumber, // Order Number
+                        cursor.getString(2), // Order Date
+                        cursor.getString(3), // Order Time
+                        cursor.getString(5), // Order Status
+                        totalItems,                     // Total Items
+                        cursor.getDouble(4), // Total Amount
+                        selectedItemsArrayList // Selected Items
                 );
 
                 ordersArrayList.add(order); // Add the order to the ArrayList
             }
+
             // Show the item grid view and hide the no data message
             recyclerView.setVisibility(View.VISIBLE);
             noDataImage.setVisibility(View.GONE);
@@ -131,8 +134,18 @@ public class Utils {
         }
     }
 
-    protected static void storeTransactionsDataInArrays(MyDatabaseHelper myDB, ArrayList<Transactions> transactionsArrayList,
-                                                  RecyclerView recyclerView, ImageView noDataImage, TextView noDataText) {
+
+    /**
+     * Retrieves transaction data from the provided database and populates an ArrayList with Transactions objects.
+     *
+     * @param myDB The instance of MyDatabaseHelper to access the database.
+     * @param transactions_for_display The ArrayList to populate with Transactions objects.
+     * @param recyclerView The RecyclerView to display the populated data.
+     * @param noDataImage The ImageView to display when there is no data available.
+     * @param noDataText The TextView to display when there is no data available.
+     */
+    protected static void getTransactions(MyDatabaseHelper myDB, ArrayList<Transactions> transactions_for_display,
+                                          RecyclerView recyclerView, ImageView noDataImage, TextView noDataText) {
         // Get a cursor to the order data in the database
         Cursor cursor = myDB.readAllData("transactions");
 
@@ -146,25 +159,17 @@ public class Utils {
         } else {
             // If the database is not empty, populate the ArrayList with order data
             while (cursor.moveToNext()) {
-                String transactionDate = cursor.getString(1);
-                String transactionTime = cursor.getString(2);
-                String orderNumber = cursor.getString(3);
-                String transactionID = cursor.getString(4);
-                String transactionStatus = cursor.getString(5);
-                double transactionTotal = cursor.getDouble(6);
-                int paymentType = cursor.getInt(7);
-
                 Transactions transaction = new Transactions(
-                        transactionDate,
-                        transactionTime,
-                        orderNumber,
-                        transactionID,
-                        transactionStatus,
-                        transactionTotal,
-                        paymentType
+                        cursor.getString(2), // Transaction Date
+                        cursor.getString(3), // Transaction Time
+                        cursor.getString(1), // Order Number
+                        cursor.getString(0), // Transaction ID
+                        cursor.getString(5), // Transaction Status
+                        cursor.getDouble(4), // Transaction Total
+                        cursor.getInt(6) // Payment Method
                 );
 
-                transactionsArrayList.add(transaction); // Add the order to the ArrayList
+                transactions_for_display.add(transaction); // Add the order to the ArrayList
             }
             // Show the item grid view and hide the no data message
             recyclerView.setVisibility(View.VISIBLE);
@@ -188,5 +193,23 @@ public class Utils {
         return new BitmapDrawable(resources, itemImageBitmap);
     }
 
+    /**
+     * Converts a Drawable object to a byte array.
+     *
+     * @param drawable The Drawable object to convert.
+     * @return The byte array representation of the Drawable object.
+     */
+    public static byte[] getByteArrayFromDrawable(Drawable drawable) {
+        // Get the bitmap from the drawable.
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
+        // Create a byte array output stream.
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Compress the bitmap to PNG format and write it to the output stream.
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+
+        // Get the byte array from the output stream.
+        return outputStream.toByteArray();
+    }
 }

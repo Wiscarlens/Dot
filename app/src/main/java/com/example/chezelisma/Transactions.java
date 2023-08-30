@@ -1,24 +1,35 @@
 package com.example.chezelisma;
 
-import android.graphics.drawable.Drawable;
 
 public class Transactions {
-    private final String transactionID;
-    private final String transactionDate;
-    private final String transactionTime;
+    private String transactionID;
+    private String transactionDate;
+    private String transactionTime;
     private final String orderNumber;
     private final String transactionStatus;
     private final double transactionTotal;
-    private final int paymentType;
+    private final int paymentMethod;
 
-    public Transactions(String transactionDate, String transactionTime, String orderNumber, String transactionID, String transactionStatus, double transactionTotal, int paymentType) {
+    // Constructor for displaying transactions
+    public Transactions(String transactionDate, String transactionTime, String orderNumber,
+                        String transactionID, String transactionStatus,
+                        double transactionTotal, int paymentMethod) {
         this.transactionDate = transactionDate;
         this.transactionTime = transactionTime;
         this.orderNumber = orderNumber;
         this.transactionID = transactionID;
         this.transactionStatus = transactionStatus;
         this.transactionTotal = transactionTotal;
-        this.paymentType = paymentType;
+        this.paymentMethod = paymentMethod;
+    }
+
+    // Constructor for creating a new transaction
+    public Transactions(String orderNumber, String transactionStatus,
+                        double transactionTotal, int paymentMethod) {
+        this.orderNumber = orderNumber;
+        this.transactionStatus = transactionStatus;
+        this.transactionTotal = transactionTotal;
+        this.paymentMethod = paymentMethod;
     }
 
     public String getTransactionDate() {
@@ -45,7 +56,7 @@ public class Transactions {
         return transactionTotal;
     }
 
-    public int getPaymentType() {
-        return paymentType;
+    public int getPaymentMethod() {
+        return paymentMethod;
     }
 }

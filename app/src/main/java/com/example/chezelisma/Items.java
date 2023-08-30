@@ -15,12 +15,28 @@ public class Items {
     private String unitType;
     private Integer stock;
     private Double wholesalePrice;
-    private String tax;
+    private double tax;
     private String description;
 
-    private final Long id;
+    private Long id;
     private Integer frequency = 1;
     private  Integer backgroundColor;
+
+    // Use for add item to database
+    public Items(Drawable image, String name, Double price, String category, String sku,
+                 String unitType, Integer stock, Double wholesalePrice, double tax,
+                 String description) {
+        this.image = image;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.sku = sku;
+        this.unitType = unitType;
+        this.stock = stock;
+        this.wholesalePrice = wholesalePrice;
+        this.tax = tax;
+        this.description = description;
+    }
 
     // Use for display item in the gridview
     public Items(Long id, String name, Drawable image, Double price, String SKU, String unitType, Integer backgroundColor) {
@@ -91,7 +107,7 @@ public class Items {
         return wholesalePrice;
     }
 
-    public String getTax() {
+    public double getTax() {
         return tax;
     }
 
