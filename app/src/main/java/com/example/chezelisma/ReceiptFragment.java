@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class ReceiptFragment extends Fragment {
@@ -52,6 +53,31 @@ public class ReceiptFragment extends Fragment {
         TextView emailButton = view.findViewById(R.id.receiptEmailButton);
         TextView printButton = view.findViewById(R.id.receiptPrintButton);
         TextView shareButton = view.findViewById(R.id.receiptShareButton);
+
+        // When user clicks on email button, send email to user with receipt
+        emailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Email Button Works", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // When user clicks on print button, print receipt
+        printButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Print Button Works", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // When user clicks on share button, share receipt
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Share Button Works", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
     }
 

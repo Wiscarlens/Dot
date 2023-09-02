@@ -12,9 +12,9 @@
     <ImageView
         android:id="@+id/logo"
         android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_height="90dp"
         android:contentDescription="@string/logo"
-        app:srcCompat="@drawable/logo_closeup"
+        app:srcCompat="@drawable/logo"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
