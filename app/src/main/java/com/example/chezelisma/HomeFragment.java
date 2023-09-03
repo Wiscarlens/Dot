@@ -102,6 +102,7 @@ public class HomeFragment extends Fragment {
                     1
             );
 
+            // TODO: Optimize - All the line below can be part of addToSElectedITems method
             Double itemSelectedPrice = items_for_display.get(position).getPrice();
 
             // Add selected item price together

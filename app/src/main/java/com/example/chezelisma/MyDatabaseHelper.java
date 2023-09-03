@@ -676,6 +676,47 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+//    protected static ArrayList<Orders> getOrdersDetails(MyDatabaseHelper myDB, long orderNumber) {
+//        // Get a cursor to the order data in the database
+//        Cursor cursor = myDB.readOrdersData(orderNumber);
+//
+//        // Check if the order number is not in the database
+//        if (cursor.getCount() == 0) {
+//            // If the order number is not in the database, toast and log an error message
+//            Toast.makeText(context, "Order number not found", Toast.LENGTH_SHORT).show();
+//            Log.e("getOrders", "Order number not found");
+//            return null;
+//        } else {
+//            // If the order number is in the database, populate the ArrayList with order data
+//            ArrayList<Orders> ordersArrayList = new ArrayList<>();
+//            while (cursor.moveToNext()) {
+//                long orderId = cursor.getLong(0);
+//
+//                ArrayList<Items> selectedItemsArrayList = myDB.getOrderItems(orderNumber, resources);
+//
+//                int totalItems = 0 ;
+//
+//                // Find the total number of items in the order
+//                for(Items item : selectedItemsArrayList){
+//                    totalItems += item.getFrequency();
+//                }
+//
+//                Orders order = new Orders(
+//                        orderId, // Order Number
+//                        cursor.getString(2), // Order Date
+//                        cursor.getString(3), // Order Time
+//                        cursor.getString(5), // Order Status
+//                        totalItems,                     // Total Items
+//                        cursor.getDouble(4), // Total Amount
+//                        selectedItemsArrayList // Selected Items
+//                );
+//
+//                ordersArrayList.add(order); // Add the order to the ArrayList
+//            }
+//            return ordersArrayList;
+//        }
+//    }
+
     /**
      * Retrieves transaction data from the provided database and populates an ArrayList with Transactions objects.
      *

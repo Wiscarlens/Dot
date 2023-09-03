@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -15,8 +16,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 
 public class ReceiptFragment extends Fragment {
+    private final ArrayList<Items> selectedItems =  new ArrayList<>();
 
 
     @Override
@@ -48,11 +52,41 @@ public class ReceiptFragment extends Fragment {
         TextView total = view.findViewById(R.id.receiptTotal);
 
         ImageView barcode = view.findViewById(R.id.receiptBarcode);
-        TextView transactionID = view.findViewById(R.id.receiptTransactionId);
+        TextView orderNumber = view.findViewById(R.id.receiptOrderNumber);
 
         TextView emailButton = view.findViewById(R.id.receiptEmailButton);
         TextView printButton = view.findViewById(R.id.receiptPrintButton);
         TextView shareButton = view.findViewById(R.id.receiptShareButton);
+
+        receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        //
+
+        selectedItems.add(
+                new Items(
+                1L,
+                "Water",
+                2.99,
+                "2343454348888",
+                1
+        ));
+
+        selectedItems.add(
+                new Items(
+                        2L,
+                        "Evian",
+                        5.77,
+                        "988345434888",
+                        3
+                ));
+
+
+
+        //selectedItems.add(selectedItem);
+
+        // Create the adapter and set it to the RecyclerView
+        BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());
+        receiptItems.setAdapter(receiptAdapter);
 
         // When user clicks on email button, send email to user with receipt
         emailButton.setOnClickListener(new View.OnClickListener() {
