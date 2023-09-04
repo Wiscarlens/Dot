@@ -24,7 +24,7 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="end|bottom"
             android:layout_margin="20dp"
-            android:backgroundTint="@color/dark_yellow"
+            android:backgroundTint="@color/black"
             android:contentDescription="@string/scanner_barcode"
             android:src="@drawable/barcode"
             app:tint="@color/white"

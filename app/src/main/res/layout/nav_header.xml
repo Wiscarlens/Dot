@@ -8,12 +8,12 @@
     android:background="@drawable/headerbkg"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:layout_width="85dp"
         android:layout_height="80dp"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:layout_marginTop="10dp"
-        android:src="@drawable/logo_closeup" />
+        android:src="@drawable/logo" />
 
     <TextView
         android:layout_width="wrap_content"
