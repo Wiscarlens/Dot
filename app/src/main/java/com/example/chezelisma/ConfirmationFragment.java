@@ -40,13 +40,14 @@ public class ConfirmationFragment extends Fragment {
         Button newSales = view.findViewById(R.id.startNewSalesButton);
 
         // Receiving confirmation price from HomeFragment
-        getParentFragmentManager().setFragmentResultListener("priceData", this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                String data = result.getString("price");
-                price.setText(data);
-                status.setText("Payment Successful");
-            }
+        getParentFragmentManager().setFragmentResultListener(
+                "priceData",
+                this,
+                (requestKey, result) -> {
+            String data = result.getString("price");
+            price.setText(data);
+            // TODO: get text from string.xml
+            status.setText("Payment Successful");
         });
 
 

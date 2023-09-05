@@ -134,5 +134,6 @@
     <string name="bar">|</string>
     <string name="item"> Items</string>
     <string name="zero">0</string>
+    <string name="no_transactions">No Transactions</string>
 
 </resources>

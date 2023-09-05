@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +52,7 @@ public class HomeFragment extends Fragment {
     // Select item total
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
     private String currentCharge;
+    private long newOrderID;
 
     private MyDatabaseHelper myDB;
 
@@ -60,10 +62,18 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
+
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -102,7 +112,7 @@ public class HomeFragment extends Fragment {
                     1
             );
 
-            // TODO: Optimize - All the line below can be part of addToSElectedITems method
+            // TODO: Optimize - All the line below can be part of addToSElected Items method
             Double itemSelectedPrice = items_for_display.get(position).getPrice();
 
             // Add selected item price together
@@ -129,7 +139,14 @@ public class HomeFragment extends Fragment {
         });
 
         //When user click on scanner button
-        scanButton.setOnClickListener(v -> scanCode());
+        scanButton.setOnClickListener(v -> {
+                if(items_for_display.isEmpty()) {
+                    Toast.makeText(fragmentActivity, "No item in database", Toast.LENGTH_SHORT).show();
+                } else {
+                    scanCode();  // Scan barcode to add item to cart
+                }
+            }
+        );
     }
 
     public Dialog showButtonDialog(){
@@ -156,7 +173,7 @@ public class HomeFragment extends Fragment {
 
             // Check if recycle view is empty before check out
             if (!selectedItems.isEmpty()) {
-                // Sending data to next fragment
+                // Sending total price to confirmationFragment
                 Bundle result = new Bundle();
                 result.putString("price", currentCharge);
                 getParentFragmentManager().setFragmentResult("priceData", result);
@@ -178,7 +195,7 @@ public class HomeFragment extends Fragment {
                                     "Completed" // TODO: replace with the actual Order status
                             );
 
-                            long newOrderID = myDB.setOrder(newOrder);
+                            newOrderID = myDB.setOrder(newOrder);
 
                             for (Items item : selectedItems) {
                                 myDB.setOrderItem(newOrderID, item.getId(), item.getFrequency());
@@ -193,6 +210,11 @@ public class HomeFragment extends Fragment {
                             );
 
                             myDB.setTransaction(newTransaction);
+
+                            // Sending order number to receipt fragment
+                            Bundle orderNumberBundle = new Bundle();
+                            orderNumberBundle.putLong("orderNumber", newOrderID);
+                            getParentFragmentManager().setFragmentResult("orderNumberData", orderNumberBundle);
 
                             // Open Confirmation fragment
                             FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
@@ -305,5 +327,6 @@ public class HomeFragment extends Fragment {
         // Item not found, add it to selectedItems
         selectedItems.add(newItem);
     }
+
 
 }
