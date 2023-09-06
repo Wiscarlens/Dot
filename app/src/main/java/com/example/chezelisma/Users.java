@@ -15,17 +15,39 @@ public class Users {
     private String streetName;
     private String city;
     private String state;
-    private String zipCode;
+    private int zipCode;
     private String position;
     private String password_hash;
     private String dateRegistered;
 
+    // Constructor for showing the user's profile.
     public Users(Drawable profileImage, String firstName, String middleName, String lastName, String position) {
         this.profileImage = profileImage;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.position = position;
+    }
+
+    // Constructor for the User class.
+    public Users(Drawable profileImage, String firstName, String middleName, String lastName,
+                 String dateOfBirth, String gender, String email, String phoneNumber,
+                 String streetName, String city, String state, int zipCode, String position,
+                 String password_hash) {
+        this.profileImage = profileImage;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.streetName = streetName;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+        this.position = position;
+        this.password_hash = password_hash;
     }
 
     public String getFullName() {
@@ -91,7 +113,7 @@ public class Users {
         return state;
     }
 
-    public String getZipCode() {
+    public int getZipCode() {
         return zipCode;
     }
 

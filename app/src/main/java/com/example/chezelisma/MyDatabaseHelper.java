@@ -688,7 +688,17 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // TODO: **************************************
+    /**
+     * Retrieves details of orders with a specific order number from a database and populates
+     * them into an ArrayList of Orders objects. This method queries the provided database
+     * for orders matching the given orderNumber. The retrieved order details are encapsulated
+     * into an Orders object, and all matching orders are added to the provided ArrayList.
+     *
+     * @param myDB The MyDatabaseHelper instance responsible for database operations.
+     * @param ordersArrayList The ArrayList where the retrieved order details will be stored.
+     * @param resources A Resources object used for retrieving localized strings, if needed.
+     * @param orderNumber The specific order number for which details are to be retrieved.
+     */
     protected static void getOrdersDetails(MyDatabaseHelper myDB, ArrayList<Orders> ordersArrayList,
                                     Resources resources, long orderNumber) {
         // Get a cursor to the order data in the database
@@ -722,8 +732,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
 
     }
-
-    // TODO: **************************************
 
 
     /**

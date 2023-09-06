@@ -48,6 +48,8 @@ import java.util.Locale;
 public class newUsersFragment extends Fragment {
     private FirebaseAuth auth;
 
+    private ArrayList<Users> usersArrayList = new ArrayList<>();
+
     private ImageButton step1Button;
     private ImageButton step2Button;
     private ImageButton step3Button;
@@ -437,6 +439,24 @@ public class newUsersFragment extends Fragment {
     }
 
     private void saveToDatabase() {
+        usersArrayList.add(new Users(
+                profileImage.getDrawable(),
+                String.valueOf(firstName.getText()),
+                String.valueOf(middleName.getText()),
+                String.valueOf(lastName.getText()),
+                String.valueOf(DOB.getText()),
+                String.valueOf(gender.getSelectedItem()),
+                String.valueOf(email.getText()),
+                String.valueOf(phoneNumber.getText()),
+                String.valueOf(streetName.getText()),
+                String.valueOf(city.getText()),
+                String.valueOf(state.getText()),
+                Integer.parseInt(String.valueOf(zipCode.getText())),
+                String.valueOf(position.getSelectedItem()),
+                String.valueOf(password.getText())
+        ));
+
+
         // Convert the selected image to a byte array (Blob)
         String Firstname = String.valueOf(firstName.getText());
         String MiddleName = String.valueOf(middleName.getText());
@@ -452,7 +472,7 @@ public class newUsersFragment extends Fragment {
         int ZipCode = Integer.parseInt(String.valueOf(zipCode.getText()));
 
         // Convert the selected image to a byte array (Blob)
-        byte[] ProfileImage = getByteArrayFromDrawable(profileImage.getDrawable());
+        byte[] ProfileImage = Utils.getByteArrayFromDrawable(profileImage.getDrawable());
         String Position = String.valueOf(position.getSelectedItem());
         String Password = String.valueOf(password.getText());
 
@@ -463,11 +483,11 @@ public class newUsersFragment extends Fragment {
         }
     }
 
-    private byte[] getByteArrayFromDrawable(Drawable drawable) {
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-        return outputStream.toByteArray();
-    }
+//    private byte[] getByteArrayFromDrawable(Drawable drawable) {
+//        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+//        return outputStream.toByteArray();
+//    }
 
 }
