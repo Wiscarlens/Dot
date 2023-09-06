@@ -221,68 +221,52 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+
     /**
-     * Adds a new user to the "users" table in the database.
+     * Inserts or updates user information in the database.
+     * This method allows you to set or update user details in the database.
+     * It first checks if the email already exists in the database to prevent duplicate entries.
+     * If the email already exists, it displays a toast message and does not perform the insertion.
      *
-     * @param firstName     The first name of the user.
-     * @param middleName    The middle name of the user (can be null if not available).
-     * @param lastName      The last name of the user.
-     * @param dob           The date of birth of the user (in format "yyyy-MM-dd") or null if not available.
-     * @param gender        The gender of the user (e.g., "Male", "Female", "Other") or null if not available.
-     * @param email         The email address of the user (must be unique and not null).
-     * @param phoneNumber   The phone number of the user or null if not available.
-     * @param streetName    The street name/address of the user or null if not available.
-     * @param city          The city of the user or null if not available.
-     * @param state         The state/province of the user or null if not available.
-     * @param zipCode       The zip code or postal code of the user or null if not available.
-     * @param profileImage  The profile image data as a byte array or null if not available.
-     * @param position      The position or job title of the user or null if not available.
-     * @param password      The password of the user (must not be null).
-     *
-     * @throws SQLiteException if there is an error while accessing the database or inserting the user.
+     * @param newUsers The Users object containing the user's information to be added or updated.
+     * @throws SQLiteException If there is an error with the SQLite database operations, an exception is thrown.
      */
-    public void setUser(String firstName, String middleName, String lastName, String dob, String gender,
-                        String email, String phoneNumber, String streetName, String city, String state,
-                        int zipCode, byte[] profileImage, String position, String password)
+    public void setUser(Users newUsers)
             throws SQLiteException {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             // Check if the email already exists in the database
-            if (emailExists(db, email)) {
+            if (emailExists(db, newUsers.getEmail())) {
+                Log.i("MyDatabaseHelper", "Email already exists.");
                 Toast.makeText(context, "Email already exists. Please use a different email.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             ContentValues cv = new ContentValues();
 
-            // Hash the plain text password using bcrypt
-            String hashedPassword = hashPassword(password);
-
-            cv.put(USERS_COLUMN_FIRST_NAME, firstName);
-            cv.put(USERS_COLUMN_MIDDLE_NAME, middleName);
-            cv.put(USERS_COLUMN_LAST_NAME, lastName);
-            cv.put(USERS_COLUMN_DOB, dob);
-            cv.put(USERS_COLUMN_GENDER, gender);
-            cv.put(USERS_COLUMN_EMAIL, email);
-            cv.put(USERS_COLUMN_PHONE_NUMBER, phoneNumber);
-            cv.put(USERS_COLUMN_STREET_NAME, streetName);
-            cv.put(USERS_COLUMN_CITY, city);
-            cv.put(USERS_COLUMN_STATE, state);
-            cv.put(USERS_COLUMN_ZIP_CODE, zipCode);
-            cv.put(USERS_COLUMN_PROFILE_IMAGE, profileImage);
-            cv.put(USERS_COLUMN_POSITION, position);
-            cv.put(USERS_COLUMN_PASSWORD, hashedPassword); // Add the hashed password to database
+            cv.put(USERS_COLUMN_FIRST_NAME, newUsers.getFirstName());
+            cv.put(USERS_COLUMN_MIDDLE_NAME, newUsers.getMiddleName());
+            cv.put(USERS_COLUMN_LAST_NAME, newUsers.getLastName());
+            cv.put(USERS_COLUMN_DOB, newUsers.getDateOfBirth());
+            cv.put(USERS_COLUMN_GENDER, newUsers.getGender());
+            cv.put(USERS_COLUMN_EMAIL, newUsers.getEmail());
+            cv.put(USERS_COLUMN_PHONE_NUMBER, newUsers.getPhoneNumber());
+            cv.put(USERS_COLUMN_STREET_NAME, newUsers.getStreetName());
+            cv.put(USERS_COLUMN_CITY, newUsers.getCity());
+            cv.put(USERS_COLUMN_STATE, newUsers.getState());
+            cv.put(USERS_COLUMN_ZIP_CODE, newUsers.getZipCode());
+            cv.put(USERS_COLUMN_PROFILE_IMAGE, getByteArrayFromDrawable(newUsers.getProfileImage()));
+            cv.put(USERS_COLUMN_POSITION, newUsers.getPosition());
+            cv.put(USERS_COLUMN_PASSWORD, hashPassword(newUsers.getPassword()));
 
             long result = db.insertOrThrow(USERS_TABLE_NAME, null, cv);
 
             if (result != -1) {
                 Log.i("MyDatabaseHelper", "User Added Successfully!");
-                //Toast.makeText(context, "User added successfully!", Toast.LENGTH_SHORT).show();
             }
         } catch (SQLiteException e) {
             e.printStackTrace(); // Log the error stack trace for debugging
             Log.e("MyDatabaseHelper", "Failed to add user: " + e.getMessage());
-            Toast.makeText(context, "Failed to add user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             throw e;
         }
     }

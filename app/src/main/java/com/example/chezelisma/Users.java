@@ -3,11 +3,11 @@ package com.example.chezelisma;
 import android.graphics.drawable.Drawable;
 
 public class Users {
-    private Drawable profileImage;
+    private final Drawable profileImage;
     private String userID;
-    private String firstName;
-    private String middleName;
-    private String lastName;
+    private final String firstName;
+    private final String middleName;
+    private final String lastName;
     private String dateOfBirth;
     private String gender;
     private String email;
@@ -16,8 +16,8 @@ public class Users {
     private String city;
     private String state;
     private int zipCode;
-    private String position;
-    private String password_hash;
+    private final String position;
+    private String password;
     private String dateRegistered;
 
     // Constructor for showing the user's profile.
@@ -47,11 +47,12 @@ public class Users {
         this.state = state;
         this.zipCode = zipCode;
         this.position = position;
-        this.password_hash = password_hash;
+        this.password = password_hash;
     }
 
     public String getFullName() {
-        String fullName = "";
+        String fullName;
+
         if(!middleName.isEmpty()){
             fullName = firstName + " " + middleName.charAt(0) + ". " + lastName;
         } else {
@@ -121,8 +122,8 @@ public class Users {
         return position;
     }
 
-    public String getPassword_hash() {
-        return password_hash;
+    public String getPassword() {
+        return password;
     }
 
     public String getDateRegistered() {

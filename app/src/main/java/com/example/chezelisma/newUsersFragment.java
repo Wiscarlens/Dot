@@ -17,9 +17,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,15 +37,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class newUsersFragment extends Fragment {
-    private FirebaseAuth auth;
-
-    private ArrayList<Users> usersArrayList = new ArrayList<>();
 
     private ImageButton step1Button;
     private ImageButton step2Button;
@@ -72,8 +65,6 @@ public class newUsersFragment extends Fragment {
     private TextInputEditText middleName;
     private TextInputEditText lastName;
     private TextInputEditText DOB;
-    private TextInputLayout DOB_layout;
-    //private TextInputEditText gender;
     private Spinner gender;
 
     // Declare Form part two field
@@ -88,13 +79,10 @@ public class newUsersFragment extends Fragment {
     private ImageView profileImage;
     private Spinner position;
     private TextInputEditText password;
-    private TextInputLayout passwordLayout;
     private TextInputEditText confirmedPassword;
     private TextInputLayout confirmedPasswordLayout;
 
     private Button saveButton;
-
-    private String message;
 
     private FragmentActivity fragmentActivity;
 
@@ -115,7 +103,7 @@ public class newUsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
 
         progressBar = view.findViewById(R.id.progress_horizontal);
 
@@ -145,13 +133,13 @@ public class newUsersFragment extends Fragment {
         firstName = stepOneLayout.findViewById(R.id.signupFirstNameText);
         middleName = stepOneLayout.findViewById(R.id.signupMiddleNameText);
         lastName = stepOneLayout.findViewById(R.id.signupLastNameText);
-        DOB_layout = stepOneLayout.findViewById(R.id.signupDOBLayout);
+        TextInputLayout DOB_layout = stepOneLayout.findViewById(R.id.signupDOBLayout);
         DOB = stepOneLayout.findViewById(R.id.signupDOBText);
         gender = stepOneLayout.findViewById(R.id.signupGenderText);
 
         // Step two form field
         email = stepTwoLayout.findViewById(R.id.signupEmailText);
-        phoneNumber = stepTwoLayout.findViewById(R.id.signupPhoneNumberText);;
+        phoneNumber = stepTwoLayout.findViewById(R.id.signupPhoneNumberText);
         streetName = stepTwoLayout.findViewById(R.id.signupStreetNameText);
         city = stepTwoLayout.findViewById(R.id.signupCityText);
         state = stepTwoLayout.findViewById(R.id.signupStateText);
@@ -161,7 +149,7 @@ public class newUsersFragment extends Fragment {
         profileImage = stepThreeLayout.findViewById(R.id.newProfileImage);
         position = stepThreeLayout.findViewById(R.id.signupPositionText);
         password = stepThreeLayout.findViewById(R.id.signupPasswordText);
-        passwordLayout = stepThreeLayout.findViewById(R.id.signupPasswordLayout);
+        TextInputLayout passwordLayout = stepThreeLayout.findViewById(R.id.signupPasswordLayout);
         confirmedPassword = stepThreeLayout.findViewById(R.id.signupConfirmPasswordText);
 
         // Have data from the database
@@ -169,15 +157,10 @@ public class newUsersFragment extends Fragment {
         ArrayList<String> positionOptions = new ArrayList<>(); // Category Option Spinner
 
         // This field a copy of the error message from the String resources file.
-        message = getResources().getString(R.string.field_empty);
+        String message = getResources().getString(R.string.field_empty);
 
         // When user click Calendar icon
-        DOB_layout.setEndIconOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectDate();
-            }
-        });
+        DOB_layout.setEndIconOnClickListener(v -> selectDate());
 
         // Selected Image
         ActivityResultLauncher<Intent> imagePickerLauncher =
@@ -191,15 +174,12 @@ public class newUsersFragment extends Fragment {
                         });
 
         // Click on Image Item
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                imagePickerLauncher.launch(intent);
+        profileImage.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            imagePickerLauncher.launch(intent);
 
-            }
         });
 
         // Load data to Gender Option Spinner
@@ -439,7 +419,7 @@ public class newUsersFragment extends Fragment {
     }
 
     private void saveToDatabase() {
-        usersArrayList.add(new Users(
+        Users newUsers = new Users(
                 profileImage.getDrawable(),
                 String.valueOf(firstName.getText()),
                 String.valueOf(middleName.getText()),
@@ -454,40 +434,12 @@ public class newUsersFragment extends Fragment {
                 Integer.parseInt(String.valueOf(zipCode.getText())),
                 String.valueOf(position.getSelectedItem()),
                 String.valueOf(password.getText())
-        ));
-
-
-        // Convert the selected image to a byte array (Blob)
-        String Firstname = String.valueOf(firstName.getText());
-        String MiddleName = String.valueOf(middleName.getText());
-        String Lastname = String.valueOf(lastName.getText());
-        String DateOfBirth = String.valueOf(DOB.getText());
-        String Gender = String.valueOf(gender.getSelectedItem());
-        String Email = String.valueOf(email.getText());
-
-        String PhoneNumber = String.valueOf(phoneNumber.getText());
-        String StreetName = String.valueOf(streetName.getText());
-        String City = String.valueOf(city.getText());
-        String State = String.valueOf(state.getText());
-        int ZipCode = Integer.parseInt(String.valueOf(zipCode.getText()));
-
-        // Convert the selected image to a byte array (Blob)
-        byte[] ProfileImage = Utils.getByteArrayFromDrawable(profileImage.getDrawable());
-        String Position = String.valueOf(position.getSelectedItem());
-        String Password = String.valueOf(password.getText());
-
+        );
 
         try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-            myDB.setUser(Firstname, MiddleName, Lastname, DateOfBirth, Gender, Email, PhoneNumber, StreetName,
-                    City, State, ZipCode, ProfileImage, Position, Password);
+            myDB.setUser(newUsers);
         }
     }
 
-//    private byte[] getByteArrayFromDrawable(Drawable drawable) {
-//        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-//        return outputStream.toByteArray();
-//    }
 
 }
