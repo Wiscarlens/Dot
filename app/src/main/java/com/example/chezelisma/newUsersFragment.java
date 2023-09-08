@@ -252,9 +252,9 @@ public class newUsersFragment extends Fragment {
 
     private void showStepContent(int step) {
         // Default Color
-        int colorYellow = ContextCompat.getColor(getContext(), R.color.dark_yellow);
+        int colorYellow = ContextCompat.getColor(getContext(), R.color.black);
         int colorGray = ContextCompat.getColor(getContext(), R.color.light_gray);
-        int colorWhite = ContextCompat.getColor(getContext(), R.color.black);
+        int colorWhite = ContextCompat.getColor(getContext(), R.color.white);
 
         if (step < 1) {
             step = 1;

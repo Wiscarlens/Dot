@@ -384,7 +384,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     protected static void getUsers(MyDatabaseHelper myDB, ArrayList<Users> users_for_display,
                          RecyclerView recyclerView, ImageView noUserImage,
                          TextView noUserText, Resources resources){
-        Cursor cursor = myDB.readAllUsersData();
+        Cursor cursor = myDB.readAllData(USERS_TABLE_NAME);
 
         if (cursor.getCount() == 0){
             // If no users are found, hide the RecyclerView and show the no user message
@@ -434,7 +434,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                                    GridView itemGridview, ImageView noDataImage,
                                    TextView noDataText, Resources resources) {
         // Get a cursor to the item data in the database
-        Cursor cursor = myDB.readAllItemsData();
+        Cursor cursor = myDB.readAllData(ITEMS_TABLE);
 
         // Check if the database is empty
         if (cursor.getCount() == 0){
@@ -546,45 +546,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    Cursor readAllItemsData(){
-        String query = "SELECT * FROM " + ITEMS_TABLE;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = null;
-
-        if(db != null){
-            cursor = db.rawQuery(query, null);
-        }
-        return cursor;
-    }
-
-    Cursor readAllUsersData(){
-        String query = "SELECT * FROM " + USERS_TABLE_NAME;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = null;
-
-        if(db != null){
-            cursor = db.rawQuery(query, null);
-        }
-        return cursor;
-    }
-
-    Cursor readAllOrdersData(){
-        String query = "SELECT * FROM " + ORDERS_TABLE_NAME;
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = null;
-
-        if(db != null){
-            cursor = db.rawQuery(query, null);
-        }
-        return cursor;
-    }
-
     // TODO: Add a method to retrieve a single order from the database
     Cursor readAllOrdersData(long orderNumber){
-        //String query = "SELECT * FROM " + ORDERS_TABLE_NAME;
         String query = "SELECT * FROM " + ORDERS_TABLE_NAME + " WHERE ORDER_COLUMN_ID = " + orderNumber;
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -629,7 +592,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                                     RecyclerView recyclerView, ImageView noDataImage, TextView noDataText,
                                     Resources resources) {
         // Get a cursor to the order data in the database
-        Cursor cursor = myDB.readAllOrdersData();
+        Cursor cursor = myDB.readAllData(ORDERS_TABLE_NAME);
 
         // Check if the database is empty
         if (cursor.getCount() == 0){
@@ -686,7 +649,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     protected static void getOrdersDetails(MyDatabaseHelper myDB, ArrayList<Orders> ordersArrayList,
                                     Resources resources, long orderNumber) {
         // Get a cursor to the order data in the database
-        Cursor cursor = myDB.readAllOrdersData();
+        Cursor cursor = myDB.readAllData(ORDERS_TABLE_NAME);
 
         while (cursor.moveToNext()) {
             long currentOrderNumber = cursor.getLong(0);
@@ -730,7 +693,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     protected static void getTransactions(MyDatabaseHelper myDB, ArrayList<Transactions> transactions_for_display,
                                           RecyclerView recyclerView, ImageView noDataImage, TextView noDataText) {
         // Get a cursor to the order data in the database
-        Cursor cursor = myDB.readAllData("transactions");
+        Cursor cursor = myDB.readAllData(TRANSACTION_TABLE);
 
         // Check if the database is empty
         if (cursor.getCount() == 0){

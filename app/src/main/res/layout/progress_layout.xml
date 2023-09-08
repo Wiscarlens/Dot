@@ -9,15 +9,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:indeterminateTint="@color/dark_yellow"/>
+        android:indeterminateTint="@color/black"/>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4"
         android:text="@string/saving"
-        android:textSize="18dp"
-        android:textColor="@color/dark_yellow"
+        android:textSize="18sp"
+        android:textColor="@color/black"
         android:gravity="start|center_vertical" />
 
 </LinearLayout>
