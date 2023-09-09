@@ -82,7 +82,7 @@ public class ReceiptFragment extends Fragment {
                         time.setText(orders.get(0).getOrderTime());
                         // TODO: Make total a string and format it to local currency in order class
                         total.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount()));
-                        orderNumber.setText(String.valueOf(orders.get(0).getOrderNumber()));
+                        orderNumber.setText(Utils.formatNumber(orders.get(0).getOrderNumber()));
 
                         ArrayList<Items> selectedItems = orders.get(0).getSelectedItem();
 

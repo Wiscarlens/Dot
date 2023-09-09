@@ -49,4 +49,28 @@ public class Utils {
         // Get the byte array from the output stream.
         return outputStream.toByteArray();
     }
+
+    /**
+     * Formats an integer as a string with at least 5 digits by adding leading zeros if necessary.
+     *
+     * @param num The integer to be formatted.
+     * @return A string representation of the integer with at least 5 digits, including leading zeros.
+     */
+    public static String formatNumber(long num) {
+        // Convert the integer to a string
+        String numStr = Long.toString(num);
+
+        // Calculate the number of leading zeros needed
+        int numZeros = Math.max(0, 5 - numStr.length());
+
+        // Add the leading zeros to the string
+        StringBuilder formattedNum = new StringBuilder();
+        for (int i = 0; i < numZeros; i++) {
+            formattedNum.append('0');
+        }
+        formattedNum.append(numStr);
+
+        return formattedNum.toString();
+    }
+
 }
