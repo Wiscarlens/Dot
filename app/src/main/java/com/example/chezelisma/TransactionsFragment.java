@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,11 +21,6 @@ import java.util.ArrayList;
 public class TransactionsFragment extends Fragment {
 
     private final ArrayList<Transactions> transactions_for_display = new ArrayList<>();
-
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        FragmentActivity fragmentActivity = (FragmentActivity) context;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

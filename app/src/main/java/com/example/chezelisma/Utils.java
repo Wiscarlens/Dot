@@ -7,8 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-
 import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
 
 
 /**
@@ -56,7 +56,7 @@ public class Utils {
      * @param num The integer to be formatted.
      * @return A string representation of the integer with at least 5 digits, including leading zeros.
      */
-    public static String formatNumber(long num) {
+    public static String formatOrderNumber(long num) {
         // Convert the integer to a string
         String numStr = Long.toString(num);
 
@@ -72,5 +72,28 @@ public class Utils {
 
         return formattedNum.toString();
     }
+
+    /**
+     * Generates a random 16-character transaction number consisting of uppercase letters (A-Z) and digits (0-9).
+     *
+     * @return A randomly generated 16-character transaction number.
+     */
+
+    public static String generateTransactionNumber() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder transactionNumber = new StringBuilder();
+
+        final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        final int TRANSACTION_NUMBER_LENGTH = 20;
+
+        for (int i = 0; i < TRANSACTION_NUMBER_LENGTH; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            char randomChar = CHARACTERS.charAt(randomIndex);
+            transactionNumber.append(randomChar);
+        }
+
+        return transactionNumber.toString();
+    }
+
 
 }

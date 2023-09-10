@@ -203,10 +203,10 @@ public class HomeFragment extends Fragment {
 
                             // TODO: Create a new transaction
                             Transactions newTransaction = new Transactions(
-                                    String.valueOf(newOrderID),
+                                    newOrderID, // Order ID
                                     "APPROVE", // TODO: replace with the actual transaction status
                                     totalPrice.get(),
-                                    R.drawable.baseline_money_24
+                                    R.drawable.visa // TODO: replace with the actual payment method
                             );
 
                             myDB.setTransaction(newTransaction);

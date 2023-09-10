@@ -5,13 +5,13 @@ public class Transactions {
     private String transactionID;
     private String transactionDate;
     private String transactionTime;
-    private final String orderNumber;
+    private final long orderNumber;
     private final String transactionStatus;
     private final double transactionTotal;
     private final int paymentMethod;
 
     // Constructor for displaying transactions
-    public Transactions(String transactionDate, String transactionTime, String orderNumber,
+    public Transactions(String transactionDate, String transactionTime, long orderNumber,
                         String transactionID, String transactionStatus,
                         double transactionTotal, int paymentMethod) {
         this.transactionDate = transactionDate;
@@ -24,7 +24,7 @@ public class Transactions {
     }
 
     // Constructor for creating a new transaction
-    public Transactions(String orderNumber, String transactionStatus,
+    public Transactions(long orderNumber, String transactionStatus,
                         double transactionTotal, int paymentMethod) {
         this.orderNumber = orderNumber;
         this.transactionStatus = transactionStatus;
@@ -40,7 +40,7 @@ public class Transactions {
         return transactionTime;
     }
 
-    public String getOrderNumber() {
+    public long getOrderNumber() {
         return orderNumber;
     }
 

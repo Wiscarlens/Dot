@@ -170,7 +170,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         // SQL query to create the "transactions" table
         String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE +
-                " (" + TRANSACTION_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                " (" + TRANSACTION_COLUMN_ID + " TEXT PRIMARY KEY, " +
                 TRANSACTION_COLUMN_ORDER_NUMBER + " INTEGER NOT NULL, " +
                 TRANSACTION_COLUMN_PAYMENT_DATE + " DATE, " +
                 TRANSACTION_COLUMN_PAYMENT_TIME + " TIME, " +
@@ -339,6 +339,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // write me a method that check if a transaction id is in the database
+    // if it is in the database, generate a new transaction id
+    // if it is not in the database, return the transaction id
+
+
     /**
      * Inserts a new transaction record into the database.
      *
@@ -351,8 +356,18 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             ContentValues cv = new ContentValues();
 
+            String transactionId;
+
+            // Generate a new Transaction ID and check if it exists in the database
+            do {
+                transactionId = Utils.generateTransactionNumber();
+            } while (doesTransactionIdExist(db, transactionId));
+
+            Log.d("MyDatabaseHelper", "Transaction ID: " + transactionId);
+
             String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
+            cv.put(TRANSACTION_COLUMN_ID, transactionId);
             cv.put(TRANSACTION_COLUMN_PAYMENT_DATE, dateTime[0]);
             cv.put(TRANSACTION_COLUMN_PAYMENT_TIME, dateTime[1]);
             cv.put(TRANSACTION_COLUMN_ORDER_NUMBER, newTransaction.getOrderNumber());
@@ -368,6 +383,28 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         } catch (SQLiteException e) {
             Log.e("MyDatabaseHelper", "Failed to add transaction: " + e.getMessage());
             throw e;
+        }
+    }
+
+    /**
+     * Checks if a transaction ID already exists in the "transactions" table.
+     *
+     * @param db            The SQLiteDatabase instance.
+     * @param transactionId The transaction ID to check for existence.
+     * @return true if the transaction ID exists in the "transactions" table, false otherwise.
+     */
+    private boolean doesTransactionIdExist(SQLiteDatabase db, String transactionId) {
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT 1 FROM " + TRANSACTION_TABLE +
+                    " WHERE " + TRANSACTION_COLUMN_ID + " = ?";
+            cursor = db.rawQuery(query, new String[]{transactionId});
+            return cursor.moveToFirst();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
@@ -708,7 +745,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 Transactions transaction = new Transactions(
                         cursor.getString(2), // Transaction Date
                         cursor.getString(3), // Transaction Time
-                        cursor.getString(1), // Order Number
+                        cursor.getLong(1), // Order Number
                         cursor.getString(0), // Transaction ID
                         cursor.getString(5), // Transaction Status
                         cursor.getDouble(4), // Transaction Total

@@ -36,7 +36,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     public void onBindViewHolder(@NonNull DesignViewHolder holder, int position) {
         holder.dateTextView.setText(transactions.get(position).getTransactionDate());
         holder.timeTextView.setText(transactions.get(position).getTransactionTime());
-        holder.orderNumberTextView.setText(transactions.get(position).getOrderNumber());
+        holder.orderNumberTextView.setText(Utils.formatOrderNumber(transactions.get(position).getOrderNumber()));
         holder.ID_TextView.setText(transactions.get(position).getTransactionID());
         holder.statusTextView.setText(transactions.get(position).getTransactionStatus());
         holder.totalTextView.setText(getCurrencyFormat(transactions.get(position).getTransactionTotal()));

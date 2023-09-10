@@ -38,7 +38,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
 
     @Override
     public void onBindViewHolder(@NonNull OrdersAdapter.DesignViewHolder holder, int position) {
-        holder.order_number.setText(Utils.formatNumber(ordersArrayList.get(position).getOrderNumber()));
+        holder.order_number.setText(Utils.formatOrderNumber(ordersArrayList.get(position).getOrderNumber()));
         holder.order_date.setText(ordersArrayList.get(position).getOrderDate());
         holder.order_time.setText(ordersArrayList.get(position).getOrderTime());
         holder.order_status.setText(ordersArrayList.get(position).getOrderStatus());
