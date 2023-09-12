@@ -17,15 +17,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="5dp">
 
             <TextView
                 android:id="@+id/productName_design"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
-
                 android:text="@string/product_name"
                 android:textAlignment="textStart"
                 android:textColor="@color/black"
@@ -36,7 +35,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
                 android:text="@string/total_unit"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/black"
@@ -47,7 +45,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
                 android:text="@string/One"
                 android:textAlignment="textEnd"
                 android:textColor="@color/black"
@@ -57,7 +54,6 @@
                 android:id="@+id/unitPrice_design"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="110dp"
                 android:layout_weight="1"
