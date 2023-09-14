@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.chezelisma'
+    namespace 'com.module.dot'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.chezelisma"
+        applicationId "com.module.dot"
         minSdk 24
         targetSdk 33
         versionCode 1

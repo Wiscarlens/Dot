@@ -23,9 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChezElisma"
         tools:targetApi="31">
-        <activity
-            android:name=".newUsersFragment"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".newUsersFragment"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
