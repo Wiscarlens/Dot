@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class ReceiptFragment extends Fragment {
 
     ArrayList<Orders> orders = new ArrayList<>();
-    private PrintHelper printHelper;
+    //private PrintHelper printHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,7 @@ public class ReceiptFragment extends Fragment {
         receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
 
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext());
-        printHelper = new PrintHelper(getContext());
+        //printHelper = new PrintHelper(getContext());
 
         // Receiving Order  Number from HomeFragment
         getParentFragmentManager().setFragmentResultListener(
@@ -94,6 +94,11 @@ public class ReceiptFragment extends Fragment {
 
                     // Update UI elements with order data here
                     if (!orders.isEmpty()) {
+                        companyName.setText("Dot");
+                        companyAddress.setText("PO BOX 568153");
+                        companyCity.setText("Orlando, FL 32856");
+                        subtotal.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount())); // TODO: Replace with subtotal
+                        tax.setText("0.00");
                         date.setText(orders.get(0).getOrderDate());
                         time.setText(orders.get(0).getOrderTime());
                         // TODO: Make total a string and format it to local currency in order class
