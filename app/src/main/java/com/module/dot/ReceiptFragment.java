@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +34,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.module.dot.utils.BarcodeManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +85,6 @@ public class ReceiptFragment extends Fragment {
         receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
 
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext());
-        //printHelper = new PrintHelper(getContext());
 
         // Receiving Order  Number from HomeFragment
         getParentFragmentManager().setFragmentResultListener(
@@ -98,8 +99,17 @@ public class ReceiptFragment extends Fragment {
                             result.getLong("orderNumber") // Order Number
                     );
 
+                    String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
+
+                    // Generate the barcode from order number
+                    Drawable barcodeDrawable = BarcodeManager.generateBarcode(
+                            orderNumberString,
+                            getContext()
+                    );
+
                     // Update UI elements with order data here
                     if (!orders.isEmpty()) {
+                        // logo.setImageDrawable();
                         companyName.setText("Dot");
                         companyAddress.setText("PO BOX 568153");
                         companyCity.setText("Orlando, FL 32856");
@@ -109,7 +119,8 @@ public class ReceiptFragment extends Fragment {
                         time.setText(orders.get(0).getOrderTime());
                         // TODO: Make total a string and format it to local currency in order class
                         total.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount()));
-                        orderNumber.setText(Utils.formatOrderNumber(orders.get(0).getOrderNumber()));
+                        barcode.setImageDrawable(barcodeDrawable);
+                        orderNumber.setText(orderNumberString);
 
                         ArrayList<Items> selectedItems = orders.get(0).getSelectedItem();
 
@@ -127,7 +138,7 @@ public class ReceiptFragment extends Fragment {
         // When user clicks on print button, print receipt
         printButton.setOnClickListener(v -> {
                     createPDF();
-
+                    Toast.makeText(getContext(), "Print", Toast.LENGTH_SHORT).show();
 
 //            File pdfFile = generatePDF(); // Generate and get the PDF file
 //                    if (pdfFile != null) {
@@ -161,6 +172,7 @@ public class ReceiptFragment extends Fragment {
 
             try {
                 // Open an output stream using the document's URI
+                assert uri != null;
                 OutputStream outputStream = contentResolver.openOutputStream(uri);
 
                 if (outputStream != null) {
@@ -181,18 +193,37 @@ public class ReceiptFragment extends Fragment {
 
                     // Update the view elements with data
                     RecyclerView receiptItems = view.findViewById(R.id.receiptItems);
+
+                    ImageView logo = view.findViewById(R.id.receiptLogo);
+                    TextView companyName = view.findViewById(R.id.receiptCompanyName);
+                    TextView companyAddress = view.findViewById(R.id.receiptCompanyStreetName);
+                    TextView companyCity = view.findViewById(R.id.receiptCompanyCityStZipcode);
                     TextView date = view.findViewById(R.id.receiptDate);
                     TextView time = view.findViewById(R.id.receiptTime);
                     TextView total = view.findViewById(R.id.receiptTotal);
+                    TextView subtotal = view.findViewById(R.id.receiptSubtotal);
                     TextView orderNumber = view.findViewById(R.id.receiptOrderNumber);
+                    ImageView barcode = view.findViewById(R.id.receiptBarcode);
 
                     receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
 
+                    // Generate the barcode from order number
+                    Drawable barcodeDrawable = BarcodeManager.generateBarcode(
+                            orderNumberString,
+                            getContext()
+                    );
+
                     if (!orders.isEmpty()) {
+                        // logo.setImageDrawable();
+                        companyName.setText("Dot");
+                        companyAddress.setText("PO BOX 568153");
+                        companyCity.setText("Orlando, FL 32856");
+                        subtotal.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount())); // TODO: Replace with subtotal
                         date.setText(orders.get(0).getOrderDate());
                         time.setText(orders.get(0).getOrderTime());
                         total.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount()));
                         orderNumber.setText(orderNumberString);
+                        barcode.setImageDrawable(barcodeDrawable);
 
                         ArrayList<Items> selectedItems = orders.get(0).getSelectedItem();
 
@@ -333,31 +364,7 @@ public class ReceiptFragment extends Fragment {
 //
 
 
-    private void generateBarcode(String inputText) {
 
-        try {
-            BitMatrix bitMatrix = new MultiFormatWriter().encode(
-                    inputText,
-                    BarcodeFormat.CODE_128,
-                    500,
-                    200
-            );
-
-            int width = bitMatrix.getWidth();
-            int height = bitMatrix.getHeight();
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? getResources().getColor(R.color.black) : getResources().getColor(R.color.white));
-                }
-            }
-
-            //barcodeImageView.setImageBitmap(bitmap);
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

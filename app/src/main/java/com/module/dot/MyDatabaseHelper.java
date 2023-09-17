@@ -6,8 +6,6 @@ package com.module.dot;
 
 import static com.module.dot.LocalFormat.getCurrentDateTime;
 import static com.module.dot.PasswordUtils.hashPassword;
-import static com.module.dot.Utils.byteArrayToDrawable;
-import static com.module.dot.Utils.getByteArrayFromDrawable;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -199,7 +197,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues cv = new ContentValues();
-            cv.put(ITEMS_COLUMN_IMAGE, getByteArrayFromDrawable(newItem.getImage())); // Convert the selected image to a byte array (Blob)
+            cv.put(ITEMS_COLUMN_IMAGE, Utils.getByteArrayFromDrawable(newItem.getImage())); // Convert the selected image to a byte array (Blob)
             cv.put(ITEMS_COLUMN_NAME, newItem.getName());
             cv.put(ITEMS_COLUMN_PRICE, newItem.getPrice());
             cv.put(ITEMS_COLUMN_CATEGORY_ID, newItem.getCategory());
@@ -255,7 +253,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             cv.put(USERS_COLUMN_CITY, newUsers.getCity());
             cv.put(USERS_COLUMN_STATE, newUsers.getState());
             cv.put(USERS_COLUMN_ZIP_CODE, newUsers.getZipCode());
-            cv.put(USERS_COLUMN_PROFILE_IMAGE, getByteArrayFromDrawable(newUsers.getProfileImage()));
+            cv.put(USERS_COLUMN_PROFILE_IMAGE, Utils.getByteArrayFromDrawable(newUsers.getProfileImage()));
             cv.put(USERS_COLUMN_POSITION, newUsers.getPosition());
             cv.put(USERS_COLUMN_PASSWORD, hashPassword(newUsers.getPassword()));
 
@@ -543,7 +541,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 int quantity = cursor.getInt(12);
 
                 // Convert the Bitmap to a Drawable if needed
-                Drawable itemImageDrawable =  byteArrayToDrawable(itemImage, resources);
+                Drawable itemImageDrawable =  Utils.byteArrayToDrawable(itemImage, resources);
 
                 Items items = new Items(itemId, itemImageDrawable, itemName, itemPrice, quantity);
                 orderItemsList.add(items);
