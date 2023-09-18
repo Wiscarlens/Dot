@@ -337,10 +337,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // write me a method that check if a transaction id is in the database
-    // if it is in the database, generate a new transaction id
-    // if it is not in the database, return the transaction id
-
 
     /**
      * Inserts a new transaction record into the database.

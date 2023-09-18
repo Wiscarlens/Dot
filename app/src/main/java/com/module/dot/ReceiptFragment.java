@@ -35,6 +35,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.module.dot.utils.BarcodeManager;
+import com.module.dot.utils.PDFManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,8 +46,7 @@ import java.util.ArrayList;
 
 public class ReceiptFragment extends Fragment {
 
-    ArrayList<Orders> orders = new ArrayList<>();
-    //private PrintHelper printHelper;
+    private ArrayList<Orders> orders = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +61,8 @@ public class ReceiptFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        LinearLayout receiptLayout = view.findViewById(R.id.receiptFooter);
 
         ImageView logo = view.findViewById(R.id.receiptLogo);
         TextView companyName = view.findViewById(R.id.receiptCompanyName);
@@ -137,7 +139,10 @@ public class ReceiptFragment extends Fragment {
 
         // When user clicks on print button, print receipt
         printButton.setOnClickListener(v -> {
-                    createPDF();
+                    String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
+
+                    PDFManager.createPDF(orderNumberString, view, receiptLayout, getContext());
+
                     Toast.makeText(getContext(), "Print", Toast.LENGTH_SHORT).show();
 
 //            File pdfFile = generatePDF(); // Generate and get the PDF file
@@ -158,109 +163,7 @@ public class ReceiptFragment extends Fragment {
         }
 
 
-    private void createPDF() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
-
-            // Create a ContentValues object to store the file's metadata
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.Downloads.DISPLAY_NAME, "Receipt_" + orderNumberString + ".pdf");
-
-            // Get the content resolver and insert the file into the Downloads directory
-            ContentResolver contentResolver = getContext().getContentResolver();
-            Uri uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
-
-            try {
-                // Open an output stream using the document's URI
-                assert uri != null;
-                OutputStream outputStream = contentResolver.openOutputStream(uri);
-
-                if (outputStream != null) {
-                    // Define the page width and height in points (1/72 inch)
-                    int pageWidth = 1280; // 8.5 inches (8.5 * 72 points)
-                    int pageHeight = 1920; // 11 inches (11 * 72 points)
-
-                    // Create the PDF document
-                    PdfDocument document = new PdfDocument();
-                    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
-                    PdfDocument.Page page = document.startPage(pageInfo);
-                    Canvas canvas = page.getCanvas();
-
-                    // Inflate the XML layout into a view
-                    View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_receipt, null);
-
-                    LinearLayout receiptLayout = view.findViewById(R.id.receiptFooter);
-
-                    // Update the view elements with data
-                    RecyclerView receiptItems = view.findViewById(R.id.receiptItems);
-
-                    ImageView logo = view.findViewById(R.id.receiptLogo);
-                    TextView companyName = view.findViewById(R.id.receiptCompanyName);
-                    TextView companyAddress = view.findViewById(R.id.receiptCompanyStreetName);
-                    TextView companyCity = view.findViewById(R.id.receiptCompanyCityStZipcode);
-                    TextView date = view.findViewById(R.id.receiptDate);
-                    TextView time = view.findViewById(R.id.receiptTime);
-                    TextView total = view.findViewById(R.id.receiptTotal);
-                    TextView subtotal = view.findViewById(R.id.receiptSubtotal);
-                    TextView orderNumber = view.findViewById(R.id.receiptOrderNumber);
-                    ImageView barcode = view.findViewById(R.id.receiptBarcode);
-
-                    receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
-
-                    // Generate the barcode from order number
-                    Drawable barcodeDrawable = BarcodeManager.generateBarcode(
-                            orderNumberString,
-                            getContext()
-                    );
-
-                    if (!orders.isEmpty()) {
-                        // logo.setImageDrawable();
-                        companyName.setText("Dot");
-                        companyAddress.setText("PO BOX 568153");
-                        companyCity.setText("Orlando, FL 32856");
-                        subtotal.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount())); // TODO: Replace with subtotal
-                        date.setText(orders.get(0).getOrderDate());
-                        time.setText(orders.get(0).getOrderTime());
-                        total.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount()));
-                        orderNumber.setText(orderNumberString);
-                        barcode.setImageDrawable(barcodeDrawable);
-
-                        ArrayList<Items> selectedItems = orders.get(0).getSelectedItem();
-
-                        // Create the adapter and set it to the RecyclerView
-                        BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());
-                        receiptItems.setAdapter(receiptAdapter);
-                        receiptLayout.setVisibility(View.GONE);
-                    }
-
-
-                    // Measure and draw the updated view onto the PDF canvas
-                    view.measure(View.MeasureSpec.makeMeasureSpec(pageWidth, View.MeasureSpec.EXACTLY),
-                            View.MeasureSpec.makeMeasureSpec(pageHeight, View.MeasureSpec.EXACTLY));
-                    view.layout(0, 0, pageWidth, pageHeight);
-                    view.draw(canvas);
-
-                    document.finishPage(page);
-
-                    // Write the PDF content to the output stream
-                    document.writeTo(outputStream);
-
-                    // Close the output stream and the PDF document
-                    outputStream.close();
-                    document.close();
-
-                    Log.i("PDF", "PDF Created Successfully!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // Handle versions prior to Android 10 if needed
-        }
-    }
-
-
-//    private void printPDF(File pdfFile) {
+    //    private void printPDF(File pdfFile) {
 //        if (orders.isEmpty()) {
 //            // Handle the case where there are no orders to print
 //            return;
