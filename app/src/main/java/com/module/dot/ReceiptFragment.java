@@ -3,15 +3,8 @@ package com.module.dot;
 import static com.module.dot.LocalFormat.getCurrencyFormat;
 
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.graphics.pdf.PdfDocument;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,8 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,24 +21,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 import com.module.dot.utils.BarcodeManager;
 import com.module.dot.utils.PDFManager;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 
 
 public class ReceiptFragment extends Fragment {
-
-    private ArrayList<Orders> orders = new ArrayList<>();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +42,8 @@ public class ReceiptFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ArrayList<Orders> orders = new ArrayList<>();
 
         LinearLayout receiptLayout = view.findViewById(R.id.receiptFooter);
 
@@ -101,6 +84,7 @@ public class ReceiptFragment extends Fragment {
                             result.getLong("orderNumber") // Order Number
                     );
 
+                    // Format the order number to have at least 5 digits
                     String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
 
                     // Generate the barcode from order number
@@ -144,14 +128,6 @@ public class ReceiptFragment extends Fragment {
                     PDFManager.createPDF(orderNumberString, view, receiptLayout, getContext());
 
                     Toast.makeText(getContext(), "Print", Toast.LENGTH_SHORT).show();
-
-//            File pdfFile = generatePDF(); // Generate and get the PDF file
-//                    if (pdfFile != null) {
-//                        printPDF(pdfFile); // Print the generated PDF file
-//                        Toast.makeText(getContext(), "Print", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(getContext(), "Failed to generate PDF", Toast.LENGTH_SHORT).show();
-//                    }
 
             }
 
