@@ -5,7 +5,7 @@ package com.module.dot;
  */
 
 import static com.module.dot.LocalFormat.getCurrentDateTime;
-import static com.module.dot.PasswordUtils.hashPassword;
+import static com.module.dot.utils.PasswordUtils.hashPassword;
 
 import android.content.ContentValues;
 import android.content.Context;

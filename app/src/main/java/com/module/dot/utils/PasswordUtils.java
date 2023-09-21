@@ -1,4 +1,4 @@
-package com.module.dot;
+package com.module.dot.utils;
 
 import org.mindrot.jbcrypt.BCrypt;
 
