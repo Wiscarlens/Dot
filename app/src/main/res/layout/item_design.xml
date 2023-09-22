@@ -7,7 +7,7 @@
     android:gravity="center"
     android:padding="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ItemGridAdapter">
+    tools:context=".Activities.Items.ItemGridAdapter">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/ItemBackgroundColor"
