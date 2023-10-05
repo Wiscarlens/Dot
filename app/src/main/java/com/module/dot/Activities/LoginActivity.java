@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox rememberMe;
     private Button loginButton;
     private TextView forgotPassword;
+    private LinearLayout signUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         rememberMe = findViewById(R.id.checkBoxRememberMe);
         loginButton = findViewById(R.id.loginButton);
         forgotPassword = findViewById(R.id.forgotPassword);
+        signUp = findViewById(R.id.signUpLoginLL);
 
         // This string array hold the login page message in the string file.
         final String[] messages = {

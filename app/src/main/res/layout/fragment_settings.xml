@@ -25,6 +25,8 @@
             android:textAllCaps="true"
             android:textSize="15sp" />
 
+
+
     </androidx.cardview.widget.CardView>
 
 </FrameLayout>

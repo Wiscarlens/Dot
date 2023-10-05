@@ -28,7 +28,6 @@ public class UsersFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     private final ArrayList<Users> users_for_display = new ArrayList<>();
 
-
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         fragmentActivity = (FragmentActivity) context;
@@ -70,9 +69,11 @@ public class UsersFragment extends Fragment {
 
         // Create new user button
         addUser.setOnClickListener(view1 -> {
+            // Create new fragment manager and transaction
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+            // Replace current fragment with newUsersFragment
             newUsersFragment signUpActivity = new newUsersFragment();
             fragmentTransaction.replace(R.id.fragment_container, signUpActivity);
             fragmentTransaction.commit();
