@@ -24,7 +24,7 @@
         android:theme="@style/Theme.ChezElisma"
         tools:targetApi="31">
 <!--        <activity-->
-<!--            android:name=".newUsersFragment"-->
+<!--            android:name=".SignupFragment"-->
 <!--            android:exported="false" />-->
         <activity
             android:name=".Activities.LoginActivity"

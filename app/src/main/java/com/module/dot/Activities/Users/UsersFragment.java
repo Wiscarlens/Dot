@@ -73,8 +73,8 @@ public class UsersFragment extends Fragment {
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            // Replace current fragment with newUsersFragment
-            newUsersFragment signUpActivity = new newUsersFragment();
+            // Replace current fragment with SignupFragment
+            SignupFragment signUpActivity = new SignupFragment();
             fragmentTransaction.replace(R.id.fragment_container, signUpActivity);
             fragmentTransaction.commit();
         });

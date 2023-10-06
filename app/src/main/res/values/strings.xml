@@ -136,5 +136,6 @@
     <string name="zero">0</string>
     <string name="no_transactions">No Transactions</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="create_account">Create Account</string>
 
 </resources>

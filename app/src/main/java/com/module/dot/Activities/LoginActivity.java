@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,20 +18,17 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.module.dot.Activities.Users.SignupFragment;
 import com.module.dot.R;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private TextView loginMessage;
     private TextInputLayout emailLayout;
     private TextInputEditText email;
     private TextInputLayout passwordLayout;
     private TextInputEditText password;
-    private CheckBox rememberMe;
     private Button loginButton;
-    private TextView forgotPassword;
-    private LinearLayout signUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +37,17 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        loginMessage = findViewById(R.id.loginMessage);
+        TextView loginMessage = findViewById(R.id.loginMessage);
         emailLayout = findViewById(R.id.emailLayout);
         email = findViewById(R.id.email);
         passwordLayout = findViewById(R.id.passwordLayout);
         password = findViewById(R.id.passwordText);
-        rememberMe = findViewById(R.id.checkBoxRememberMe);
+        CheckBox rememberMe = findViewById(R.id.checkBoxRememberMe);
         loginButton = findViewById(R.id.loginButton);
-        forgotPassword = findViewById(R.id.forgotPassword);
-        signUp = findViewById(R.id.signUpLoginLL);
+        TextView forgotPassword = findViewById(R.id.forgotPassword);
+        LinearLayout signUp = findViewById(R.id.signUpLoginLL);
+        LinearLayout loginLL = findViewById(R.id.loginLL);
+        FrameLayout loginContainerFL = findViewById(R.id.loginContainerFL);
 
         // This string array hold the login page message in the string file.
         final String[] messages = {
@@ -110,6 +110,16 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 email.setError(messages[4]);
             }
+        });
+
+        signUp.setOnClickListener(v -> {
+            loginLL.setVisibility(LinearLayout.GONE);
+            loginContainerFL.setVisibility(FrameLayout.VISIBLE);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.loginContainerFL, new SignupFragment())
+                    .commit();
         });
     }
 
