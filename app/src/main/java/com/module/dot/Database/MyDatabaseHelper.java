@@ -802,9 +802,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    void deleteAllData(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + ITEMS_TABLE);
-    }
+//    void deleteAllData(){
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        db.execSQL("DELETE FROM " + ITEMS_TABLE);
+//    }
 
 }
