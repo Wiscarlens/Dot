@@ -106,7 +106,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     private static final String TRANSACTION_COLUMN_STATUS = "status";
     private static final String TRANSACTION_COLUMN_PAYMENT_METHOD = "payment_method";
 
-
     public MyDatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
@@ -616,6 +615,18 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    Cursor readAllData(String TABLE_NAME, String orderByColumn){
+        String query = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + orderByColumn + " DESC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+
+        if (db != null){
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
+    }
+
+
     /**
      * Retrieves order data from the provided database and populates an ArrayList with Orders objects.
      *
@@ -731,7 +742,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static void getTransactions(MyDatabaseHelper myDB, ArrayList<Transactions> transactions_for_display,
                                        RecyclerView recyclerView, ImageView noDataImage, TextView noDataText) {
         // Get a cursor to the order data in the database
-        Cursor cursor = myDB.readAllData(TRANSACTION_TABLE);
+        // TODO: Read data desc order ****Testing
+        Cursor cursor = myDB.readAllData(TRANSACTION_TABLE, TRANSACTION_COLUMN_PAYMENT_DATE);
 
         // Check if the database is empty
         if (cursor.getCount() == 0){
