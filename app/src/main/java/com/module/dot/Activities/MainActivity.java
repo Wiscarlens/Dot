@@ -93,10 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // Confirmation Message for log out
                 showDialogMessage();
 
-                // Toast Message for log out
-                String messages = getResources().getString(R.string.logout);
-
-                Toast.makeText(this, messages + "!", Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -116,7 +112,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     loginActivity = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(loginActivity);
                     finish();
+
+                    // Toast Message for log out
+                    String messages = getResources().getString(R.string.logout);
+
+                    Toast.makeText(this, messages + "!", Toast.LENGTH_SHORT).show();
+
                 }).show();
+
+
     }
 
 }

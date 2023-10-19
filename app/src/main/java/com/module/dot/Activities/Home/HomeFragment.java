@@ -31,6 +31,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,8 +87,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
-        TextView noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
+        LinearLayout noData = view.findViewById(R.id.noDataHomeFragmentLL); // When Database is empty
         GridView itemGridview = view.findViewById(R.id.itemList);
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
@@ -100,8 +100,7 @@ public class HomeFragment extends Fragment {
                 myDB, // Local database
                 items_for_display, // ArrayList to store Items objects for display
                 itemGridview, // GridView UI element to display items
-                noDataImage, // ImageView UI element to show when no data is available
-                noDataText, // TextView UI element to show when no data is available
+                noData,
                 getResources() // Resources instance to access app resources
         );
 

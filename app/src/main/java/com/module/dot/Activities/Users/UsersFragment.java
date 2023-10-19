@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -44,8 +45,9 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noUserImage = view.findViewById(R.id.no_user_imageview); // When users Database is empty
-        TextView noUserText = view.findViewById(R.id.no_user_textview); // When users Database is empty
+        LinearLayout noUser = view.findViewById(R.id.noUserFragmentLL); // When users Database is empty
+//        ImageView noUserImage = view.findViewById(R.id.no_user_imageview); // When users Database is empty
+//        TextView noUserText = view.findViewById(R.id.no_user_textview); // When users Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.userList);
         FloatingActionButton addUser = view.findViewById(R.id.addUserButton); // Add User button
 
@@ -58,8 +60,8 @@ public class UsersFragment extends Fragment {
                 myDB, // Local database
                 users_for_display, // ArrayList to store Users objects for display
                 recyclerView, // RecyclerView UI element to display users
-                noUserImage, // ImageView UI element to show when no data is available
-                noUserText, // TextView UI element to show when no data is available
+                noUser, // Linear Layout UI element to show when no data is available
+//                noUserText, // TextView UI element to show when no data is available
                 getResources() // Resources instance to access app resources
         );
 

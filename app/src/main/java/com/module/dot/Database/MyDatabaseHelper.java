@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -414,26 +415,22 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param myDB The instance of MyDatabaseHelper to access the database.
      * @param users_for_display The ArrayList to populate with Users objects.
      * @param recyclerView The RecyclerView to display the populated data.
-     * @param noUserImage The ImageView to display when there are no users available.
-     * @param noUserText The TextView to display when there are no users available.
+     * @param noUser The LinearLayout to display when there are no users available.
      * @param resources The Resources object to retrieve app resources.
      */
     public static void getUsers(MyDatabaseHelper myDB, ArrayList<Users> users_for_display,
-                                RecyclerView recyclerView, ImageView noUserImage,
-                                TextView noUserText, Resources resources){
+                                RecyclerView recyclerView, LinearLayout noUser, Resources resources){
         Cursor cursor = myDB.readAllData(USERS_TABLE_NAME);
 
         if (cursor.getCount() == 0){
             // If no users are found, hide the RecyclerView and show the no user message
             recyclerView.setVisibility(View.GONE);
-            noUserImage.setVisibility(View.VISIBLE);
-            noUserText.setVisibility(View.VISIBLE);
+            noUser.setVisibility(View.VISIBLE);
 
         } else {
             // If users are found, populate the ArrayList with user data
             while (cursor.moveToNext()){
-                noUserImage.setVisibility(View.GONE);
-                noUserText.setVisibility(View.GONE);
+                noUser.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
 
                 byte[] imageData = cursor.getBlob(12);
@@ -463,13 +460,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param myDB The database helper instance for querying item data.
      * @param items_for_display The ArrayList to store Items objects for display.
      * @param itemGridview The GridView UI element to display items.
-     * @param noDataImage The ImageView UI element to show when no data is available.
-     * @param noDataText The TextView UI element to show when no data is available.
+     * @param noData The LinearLayout UI element to show when no data is available.
      * @param resources The Resources instance to access app resources.
      */
     public static void getItems(MyDatabaseHelper myDB, ArrayList<Items> items_for_display,
-                                GridView itemGridview, ImageView noDataImage,
-                                TextView noDataText, Resources resources) {
+                                GridView itemGridview, LinearLayout noData, Resources resources) {
         // Get a cursor to the item data in the database
         Cursor cursor = myDB.readAllData(ITEMS_TABLE);
 
@@ -477,8 +472,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         if (cursor.getCount() == 0){
             // If the database is empty, hide the item grid view and show the no data message
             itemGridview.setVisibility(View.GONE);
-            noDataImage.setVisibility(View.VISIBLE);
-            noDataText.setVisibility(View.VISIBLE);
+            noData.setVisibility(View.VISIBLE);
 
         } else{
             // If the database is not empty, populate the arrays with the item data
@@ -508,8 +502,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             // Show the item grid view and hide the no data message
             itemGridview.setVisibility(View.VISIBLE);
-            noDataImage.setVisibility(View.GONE);
-            noDataText.setVisibility(View.GONE);
+            noData.setVisibility(View.VISIBLE);
         }
     }
 
@@ -633,12 +626,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param myDB The instance of MyDatabaseHelper to access the database.
      * @param ordersArrayList The ArrayList to populate with Orders objects.
      * @param recyclerView The RecyclerView to display the populated data.
-     * @param noDataImage The ImageView to display when there is no data available.
-     * @param noDataText The TextView to display when there is no data available.
+     * @param noOrder The ImageView to display when there is no data available.
      * @param resources The Resources object to retrieve app resources.
      */
     public static void getOrders(MyDatabaseHelper myDB, ArrayList<Orders> ordersArrayList,
-                                 RecyclerView recyclerView, ImageView noDataImage, TextView noDataText,
+                                 RecyclerView recyclerView, LinearLayout noOrder,
                                  Resources resources) {
         // Get a cursor to the order data in the database
         Cursor cursor = myDB.readAllData(ORDERS_TABLE_NAME);
@@ -647,8 +639,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         if (cursor.getCount() == 0){
             // If the database is empty, hide the item grid view and show the no data message
             recyclerView.setVisibility(View.GONE);
-            noDataImage.setVisibility(View.VISIBLE);
-            noDataText.setVisibility(View.VISIBLE);
+            noOrder.setVisibility(View.VISIBLE);
+//            noDataText.setVisibility(View.VISIBLE);
 
         } else {
             // If the database is not empty, populate the ArrayList with order data
@@ -679,8 +671,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             // Show the item grid view and hide the no data message
             recyclerView.setVisibility(View.VISIBLE);
-            noDataImage.setVisibility(View.GONE);
-            noDataText.setVisibility(View.GONE);
+            noOrder.setVisibility(View.GONE);
+//            noDataText.setVisibility(View.GONE);
         }
     }
 
@@ -736,11 +728,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
      * @param myDB The instance of MyDatabaseHelper to access the database.
      * @param transactions_for_display The ArrayList to populate with Transactions objects.
      * @param recyclerView The RecyclerView to display the populated data.
-     * @param noDataImage The ImageView to display when there is no data available.
-     * @param noDataText The TextView to display when there is no data available.
+     * @param noData The LinearLayout to display when there is no data available.
      */
     public static void getTransactions(MyDatabaseHelper myDB, ArrayList<Transactions> transactions_for_display,
-                                       RecyclerView recyclerView, ImageView noDataImage, TextView noDataText) {
+                                       RecyclerView recyclerView, LinearLayout noData) {
         // Get a cursor to the order data in the database
         // TODO: Read data desc order ****Testing
         Cursor cursor = myDB.readAllData(TRANSACTION_TABLE, TRANSACTION_COLUMN_PAYMENT_DATE);
@@ -749,8 +740,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         if (cursor.getCount() == 0){
             // If the database is empty, hide the item grid view and show the no data message
             recyclerView.setVisibility(View.GONE);
-            noDataImage.setVisibility(View.VISIBLE);
-            noDataText.setVisibility(View.VISIBLE);
+            noData.setVisibility(View.VISIBLE);
 
         } else {
             // If the database is not empty, populate the ArrayList with order data
@@ -769,8 +759,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             }
             // Show the item grid view and hide the no data message
             recyclerView.setVisibility(View.VISIBLE);
-            noDataImage.setVisibility(View.GONE);
-            noDataText.setVisibility(View.GONE);
+            noData.setVisibility(View.GONE);
         }
     }
 

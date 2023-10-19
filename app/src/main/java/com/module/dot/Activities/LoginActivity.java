@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -19,6 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.module.dot.Activities.Users.SignupFragment;
+import com.module.dot.ForgotPasswordFragment;
 import com.module.dot.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -109,6 +111,19 @@ public class LoginActivity extends AppCompatActivity {
                 email.setError(messages[3]);
             } else {
                 email.setError(messages[4]);
+            }
+        });
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginLL.setVisibility(LinearLayout.GONE);
+                loginContainerFL.setVisibility(FrameLayout.VISIBLE);
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.loginContainerFL, new ForgotPasswordFragment())
+                        .commit();
             }
         });
 

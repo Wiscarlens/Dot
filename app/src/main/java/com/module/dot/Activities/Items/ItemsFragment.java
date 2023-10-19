@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,18 +49,16 @@ public class ItemsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noDataImage = view.findViewById(R.id.no_data_imageview); // When Database is empty
-        TextView noDataText = view.findViewById(R.id.no_data_textview); // When Database is empty
+        LinearLayout noData = view.findViewById(R.id.noDataItemFragmentLL); // When Database is empty
         GridView itemGridview = view.findViewById(R.id.itemList); // When list of item will show
         FloatingActionButton addItem = view.findViewById(R.id.addButton); // Add Item floating button
 
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
         // Save item data from database to the arraylist
-        MyDatabaseHelper.getItems(myDB, items_for_display, itemGridview, noDataImage,
-                noDataText, getResources());
+        MyDatabaseHelper.getItems(myDB, items_for_display, itemGridview, noData, getResources());
 
-         // Initialize adapter with the arrays
+        // Initialize adapter with the arrays
         ItemGridAdapter adapter = new ItemGridAdapter(items_for_display);
 
         itemGridview.setAdapter(adapter);

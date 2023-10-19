@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.module.dot.Database.MyDatabaseHelper;
@@ -36,10 +37,8 @@ public class TransactionsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noUserImage = view.findViewById(R.id.no_transaction_imageview); // When users Database is empty
-        TextView noUserText = view.findViewById(R.id.no_transaction_textview); // When users Database is empty
+        LinearLayout noTransaction = view.findViewById(R.id.noTransactionFragmentLL); // When users Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.transactionList);
-
 
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
@@ -47,8 +46,7 @@ public class TransactionsFragment extends Fragment {
                 myDB,
                 transactions_for_display,
                 recyclerView,
-                noUserImage,
-                noUserText
+                noTransaction
         );
 
 

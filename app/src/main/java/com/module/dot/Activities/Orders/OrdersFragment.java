@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.module.dot.Database.MyDatabaseHelper;
@@ -34,8 +35,7 @@ public class OrdersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noDataImage = view.findViewById(R.id.no_orders_imageview); // When Database is empty
-        TextView noDataText = view.findViewById(R.id.no_orders_textview); // When Database is empty
+        LinearLayout noOrder = view.findViewById(R.id.noOrderFragmentLL); // When Database is empty
         RecyclerView OrderList_RecyclerView = view.findViewById(R.id.ordersList);  // Connect to Recyclerview in fragment_orders
 
         MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
@@ -44,8 +44,7 @@ public class OrdersFragment extends Fragment {
                 myDB, // Local database
                 orders_for_display, // ArrayList to store Orders objects for display
                 OrderList_RecyclerView, // RecyclerView UI element to display orders
-                noDataImage, // ImageView UI element to show when no data is available
-                noDataText, // TextView UI element to show when no data is available
+                noOrder,
                 getResources() // Resources instance to access app resources
         );
 
