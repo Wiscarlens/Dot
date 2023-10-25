@@ -29,10 +29,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.module.dot.Database.MyDatabaseHelper;
+import com.module.dot.Helpers.ScannerManager;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -59,13 +61,10 @@ public class New_Item_Fragment extends Fragment {
 
     // Step One field
     private ImageView itemImage;
-    private TextInputLayout itemNameLayout;
     private TextInputEditText itemName;
     private Spinner category;
-    private TextInputLayout unitPriceLayout;
     private TextInputEditText unitPrice;
 
-    // Step Two field
     private TextInputEditText sku;
     private Spinner unitType;
     private TextInputEditText itemStock;
@@ -119,13 +118,15 @@ public class New_Item_Fragment extends Fragment {
 
         // Step One form
         itemImage = stepOneLayout.findViewById(R.id.newItemImage);
-        itemNameLayout = stepOneLayout.findViewById(R.id.itemNameLayout);
+        TextInputLayout itemNameLayout = stepOneLayout.findViewById(R.id.itemNameLayout);
         itemName = stepOneLayout.findViewById(R.id.itemNameText);
         category = stepOneLayout.findViewById(R.id.productCategoryText);
-        unitPriceLayout = stepOneLayout.findViewById(R.id.unitPriceLayout);
+        TextInputLayout unitPriceLayout = stepOneLayout.findViewById(R.id.unitPriceLayout);
         unitPrice = stepOneLayout.findViewById(R.id.unitPriceText);
 
         // Step two form
+        // Step Two field
+        TextInputLayout skuLayout = stepTwoLayout.findViewById(R.id.SKULayout);
         sku = stepTwoLayout.findViewById(R.id.SKUText);
         unitType = stepTwoLayout.findViewById(R.id.unitSpinner);
         itemStock = stepTwoLayout.findViewById(R.id.stockText);
@@ -138,6 +139,8 @@ public class New_Item_Fragment extends Fragment {
         // Have data from the database
         ArrayList<String> categoryOptions = new ArrayList<>(); // Category Option Spinner
         ArrayList<String> unitOptions = new ArrayList<>(); // Unit Option Spinner
+
+        ScannerManager scannerManager = new ScannerManager(this);
 
         // Progress bar default value
         progressBar.setProgress(33);
@@ -224,6 +227,11 @@ public class New_Item_Fragment extends Fragment {
             fragmentTransaction.replace(R.id.fragment_container, itemsFragment); // Replace previous fragment
             fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
             fragmentTransaction.commit();
+        });
+
+        skuLayout.setEndIconOnClickListener(v -> {
+            scannerManager.startBarcodeScanning();
+            sku.setText(scannerManager.getScanItem());
         });
     }
 

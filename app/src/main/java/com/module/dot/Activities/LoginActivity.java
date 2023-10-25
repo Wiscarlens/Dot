@@ -88,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
         Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
 
         loginButton.setOnClickListener(v -> {
+            loginButton.setClickable(false);
+
             String userEmail = email.getText().toString().toLowerCase().trim();
             String userPassword = password.getText().toString().trim();
 
@@ -112,19 +114,19 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 email.setError(messages[4]);
             }
+
+            loginButton.setClickable(true);
+
         });
 
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginLL.setVisibility(LinearLayout.GONE);
-                loginContainerFL.setVisibility(FrameLayout.VISIBLE);
+        forgotPassword.setOnClickListener(v -> {
+            loginLL.setVisibility(LinearLayout.GONE);
+            loginContainerFL.setVisibility(FrameLayout.VISIBLE);
 
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.loginContainerFL, new ForgotPasswordFragment())
-                        .commit();
-            }
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.loginContainerFL, new ForgotPasswordFragment())
+                    .commit();
         });
 
         signUp.setOnClickListener(v -> {

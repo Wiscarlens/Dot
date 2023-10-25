@@ -469,7 +469,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = myDB.readAllData(ITEMS_TABLE);
 
         // Check if the database is empty
-        if (cursor.getCount() == 0){
+        if (cursor.getCount() == 0) {
             // If the database is empty, hide the item grid view and show the no data message
             itemGridview.setVisibility(View.GONE);
             noData.setVisibility(View.VISIBLE);
@@ -502,7 +502,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
             // Show the item grid view and hide the no data message
             itemGridview.setVisibility(View.VISIBLE);
-            noData.setVisibility(View.VISIBLE);
+            noData.setVisibility(View.GONE);
         }
     }
 

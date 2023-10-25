@@ -4,13 +4,23 @@ package com.module.dot.Activities.Home;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -22,19 +32,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -42,11 +39,12 @@ import com.module.dot.Activities.CaptureAct;
 import com.module.dot.Activities.ConfirmationFragment;
 import com.module.dot.Activities.Items.ItemGridAdapter;
 import com.module.dot.Activities.Items.Items;
-import com.module.dot.Helpers.LocalFormat;
-import com.module.dot.Database.MyDatabaseHelper;
 import com.module.dot.Activities.Orders.Orders;
-import com.module.dot.R;
 import com.module.dot.Activities.Transactions.Transactions;
+import com.module.dot.Database.MyDatabaseHelper;
+import com.module.dot.Helpers.LocalFormat;
+import com.module.dot.Helpers.ScannerManager;
+import com.module.dot.R;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
@@ -81,8 +79,6 @@ public class HomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -91,6 +87,8 @@ public class HomeFragment extends Fragment {
         GridView itemGridview = view.findViewById(R.id.itemList);
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
+
+        ScannerManager scannerManager = new ScannerManager(this);
 
         // Local database
         myDB = new MyDatabaseHelper(getContext());
@@ -121,16 +119,8 @@ public class HomeFragment extends Fragment {
             // TODO: Optimize - All the line below can be part of addToSElected Items method
             Double itemSelectedPrice = items_for_display.get(position).getPrice();
 
-            // Add selected item price together
-            totalPrice.set(totalPrice.get() + itemSelectedPrice);
-
-            // Format the double value into currency format
-            currentCharge = LocalFormat.getCurrencyFormat(totalPrice.get());
-
-            // Set the button text to the current value of price
-            chargeButton.setText(currentCharge);
-
             addToSelectedItems(selectedItem);
+            updateAmount(itemSelectedPrice);
 
         });
 
@@ -144,12 +134,44 @@ public class HomeFragment extends Fragment {
             setBottomSheetHeight(dialog, bottomSheetHeight);
         });
 
-        //When user click on scanner button
+        // When user click on scanner button
         scanButton.setOnClickListener(v -> {
-                if(items_for_display.isEmpty()) {
+                if (items_for_display.isEmpty()) {
                     Toast.makeText(fragmentActivity, "No item in database", Toast.LENGTH_SHORT).show();
                 } else {
-                    scanCode();  // Scan barcode to add item to cart
+                    scannerManager.startBarcodeScanning(); // Scan barcode
+                    String barcode = scannerManager.getScanItem(); // get barcode
+
+                    for (Items item : items_for_display) {
+                        if (barcode.equals(item.getSku())) {
+                            addToSelectedItems(item); // Add the item to the selectedItems list
+                            updateAmount(item.getPrice()); // Update Selected Item amount
+
+                            break;
+                        } else {
+                            Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    // Find the barcode in the database
+//                    scanCode();  // Scan barcode to add item to cart
                 }
             }
         );
@@ -296,24 +318,33 @@ public class HomeFragment extends Fragment {
         String scanItem = result.getContents();
 
         for (Items item : items_for_display) {
-             if(scanItem.equals(item.getSku())) {
+             if (scanItem.equals(item.getSku())) {
                  addToSelectedItems(item); // Add the item to the selectedItems list
-                 // Add selected item price together
-                 totalPrice.set(totalPrice.get() + item.getPrice()); // Add the item price to the total price
+                 updateAmount(item.getPrice()); // Update Selected Item amount
 
-                 // Format the double value into currency format
-                 currentCharge = LocalFormat.getCurrencyFormat(totalPrice.get());
-
-                 // Set the button text to the current value of price
-                 chargeButton.setText(currentCharge);
-
-                 Toast.makeText(fragmentActivity, item.getName() + " added", Toast.LENGTH_SHORT).show();
                  break;
-             } else{
+             } else {
                  Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
              }
         }
     });
+
+    private boolean addScannedItem(String scanItem){
+        for (Items item : items_for_display) {
+            if (scanItem.equals(item.getSku())) {
+//                return true;
+                addToSelectedItems(item); // Add the item to the selectedItems list
+                updateAmount(item.getPrice()); // Update Selected Item amount
+
+//                break;
+            } else {
+                Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
+//                return false;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Adds an item to the selectedItems list or increases its frequency if it already exists.
@@ -326,12 +357,24 @@ public class HomeFragment extends Fragment {
             if (item.getId() == newItem.getId()) {
                 // Item already exists, increase frequency
                 item.setFrequency(item.getFrequency() + 1);
+
                 return; // Exit the method since the item was found
             }
         }
 
         // Item not found, add it to selectedItems
         selectedItems.add(newItem);
+    }
+
+    private void updateAmount(double amount) {
+        // Add selected item price together
+        totalPrice.set(totalPrice.get() + amount); // Add the item price to the total price
+
+        // Format the double value into currency format
+        currentCharge = LocalFormat.getCurrencyFormat(totalPrice.get());
+
+        // Set the button text to the current value of price
+        chargeButton.setText(currentCharge);
     }
 
 
