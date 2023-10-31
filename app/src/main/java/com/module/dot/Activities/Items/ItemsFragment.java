@@ -13,11 +13,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,8 +36,7 @@ public class ItemsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_items, container, false);
     }
@@ -63,12 +59,7 @@ public class ItemsFragment extends Fragment {
 
         itemGridview.setAdapter(adapter);
 
-        itemGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), "You selected " + items_for_display.get(position).getName(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        itemGridview.setOnItemClickListener((parent, view12, position, id) -> Toast.makeText(getContext(), "You selected " + items_for_display.get(position).getName(), Toast.LENGTH_SHORT).show());
 
         addItem.setOnClickListener(view1 -> {
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();

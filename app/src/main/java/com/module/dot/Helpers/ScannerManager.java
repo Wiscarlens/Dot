@@ -14,9 +14,7 @@ public class ScannerManager {
     public ScannerManager(Fragment fragment) {
         // Initialize the scannerLauncher using the provided fragment
         scannerLauncher = fragment.registerForActivityResult(
-                new ScanContract(), result -> {
-                    scanItem = result.getContents();
-            }
+                new ScanContract(), result -> scanItem = result.getContents()
         );
     }
 

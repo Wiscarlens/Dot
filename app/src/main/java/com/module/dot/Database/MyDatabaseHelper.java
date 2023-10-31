@@ -137,7 +137,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         String query_items = "CREATE TABLE " + ITEMS_TABLE +
                 " (" + ITEMS_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ITEMS_COLUMN_IMAGE + " BLOB, " +
-                // Need to be a unique value
                 ITEMS_COLUMN_NAME + " TEXT NOT NULL, " +
                 ITEMS_COLUMN_PRICE + " REAL NOT NULL, " +
                 ITEMS_COLUMN_CATEGORY_ID + " TEXT, " +  // TODO: Foreign key to a future table call category
