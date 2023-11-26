@@ -20,7 +20,7 @@ import com.module.dot.Helpers.Utils;
 
 import java.util.ArrayList;
 
-public class TransactionDatabase extends MyDatabaseHelper {
+public class TransactionDatabase extends MyDatabaseManager {
     private static final String TRANSACTION_TABLE = "transactions";
     private static final String TRANSACTION_COLUMN_ID = "_id";
     private static final String TRANSACTION_COLUMN_ORDER_NUMBER = "order_id";
@@ -38,6 +38,15 @@ public class TransactionDatabase extends MyDatabaseHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        createTable(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    protected void createTable(SQLiteDatabase db) {
         // SQL query to create the "transactions" table
         String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE +
                 " (" + TRANSACTION_COLUMN_ID + " TEXT PRIMARY KEY, " +
@@ -52,6 +61,7 @@ public class TransactionDatabase extends MyDatabaseHelper {
 
         db.execSQL(query_transactions);
 
+        Log.i("TransactionDatabase", "Creating transaction table...");
     }
 
     /**
@@ -74,7 +84,7 @@ public class TransactionDatabase extends MyDatabaseHelper {
                     transactionId = Utils.generateTransactionNumber();
                 } while (doesTransactionIdExist(db, transactionId));
 
-                Log.d("MyDatabaseHelper", "Transaction ID: " + transactionId);
+                Log.d("MyDatabaseManager", "Transaction ID: " + transactionId);
 
                 String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
@@ -89,10 +99,10 @@ public class TransactionDatabase extends MyDatabaseHelper {
                 long result = db.insertOrThrow(TRANSACTION_TABLE, null, cv);
 
                 if (result != -1) {
-                    Log.i("MyDatabaseHelper", "Transaction Added Successfully!");
+                    Log.i("MyDatabaseManager", "Transaction Added Successfully!");
                 }
             } catch (SQLiteException e) {
-                Log.e("MyDatabaseHelper", "Failed to add transaction: " + e.getMessage());
+                Log.e("MyDatabaseManager", "Failed to add transaction: " + e.getMessage());
                 throw e;
             }
         }
@@ -101,43 +111,24 @@ public class TransactionDatabase extends MyDatabaseHelper {
     /**
      * Retrieves transaction data from the provided database and populates an ArrayList with Transactions objects.
      *
-     * @param myDB The instance of MyDatabaseHelper to access the database.
      * @param transactions_for_display The ArrayList to populate with Transactions objects.
-     * @param recyclerView The RecyclerView to display the populated data.
-     * @param noDataImage The ImageView to display when there is no data available.
-     * @param noDataText The TextView to display when there is no data available.
      */
-    public void readTransaction(com.module.dot.Database.MyDatabaseHelper myDB, ArrayList<Transactions> transactions_for_display,
-                                RecyclerView recyclerView, ImageView noDataImage, TextView noDataText) {
+    public void readTransaction(ArrayList<Transactions> transactions_for_display) {
             // Get a cursor to the order data in the database
             Cursor cursor = super.readAllData(TRANSACTION_TABLE);
 
-            // Check if the database is empty
-            if (cursor.getCount() == 0) {
-                // If the database is empty, hide the item grid view and show the no data message
-                recyclerView.setVisibility(View.GONE);
-                noDataImage.setVisibility(View.VISIBLE);
-                noDataText.setVisibility(View.VISIBLE);
+            while (cursor.moveToNext()) {
+                Transactions transaction = new Transactions(
+                        cursor.getString(2), // Transaction Date
+                        cursor.getString(3), // Transaction Time
+                        cursor.getLong(1), // Order Number
+                        cursor.getString(0), // Transaction ID
+                        cursor.getString(5), // Transaction Status
+                        cursor.getDouble(4), // Transaction Total
+                        cursor.getInt(6) // Payment Method
+                );
 
-            } else {
-                // If the database is not empty, populate the ArrayList with order data
-                while (cursor.moveToNext()) {
-                    Transactions transaction = new Transactions(
-                            cursor.getString(2), // Transaction Date
-                            cursor.getString(3), // Transaction Time
-                            cursor.getLong(1), // Order Number
-                            cursor.getString(0), // Transaction ID
-                            cursor.getString(5), // Transaction Status
-                            cursor.getDouble(4), // Transaction Total
-                            cursor.getInt(6) // Payment Method
-                    );
-
-                    transactions_for_display.add(transaction); // Add the order to the ArrayList
-                }
-                // Show the item grid view and hide the no data message
-                recyclerView.setVisibility(View.VISIBLE);
-                noDataImage.setVisibility(View.GONE);
-                noDataText.setVisibility(View.GONE);
+                transactions_for_display.add(transaction); // Add the order to the ArrayList
             }
 
         }

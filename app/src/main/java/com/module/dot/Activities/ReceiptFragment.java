@@ -2,17 +2,9 @@ package com.module.dot.Activities;
 
 import static com.module.dot.Helpers.LocalFormat.getCurrencyFormat;
 
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +13,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.module.dot.Activities.Home.BottomSheetAdapter;
+import com.module.dot.Activities.Items.Item;
+import com.module.dot.Activities.Orders.Orders;
+import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.Helpers.BarcodeManager;
 import com.module.dot.Helpers.PDFManager;
-import com.module.dot.Activities.Items.Items;
-import com.module.dot.Database.MyDatabaseHelper;
-import com.module.dot.Activities.Orders.Orders;
-import com.module.dot.R;
 import com.module.dot.Helpers.Utils;
+import com.module.dot.R;
 
 import java.util.ArrayList;
 
@@ -75,7 +73,7 @@ public class ReceiptFragment extends Fragment {
 
         receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext());
+//        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext());
 
         // Receiving Order  Number from HomeFragment
         getParentFragmentManager().setFragmentResultListener(
@@ -83,12 +81,15 @@ public class ReceiptFragment extends Fragment {
                 this,
                 (requestKey, result) -> {
 
-                    MyDatabaseHelper.getOrdersDetails(
-                            myDB,
-                            orders,
-                            getResources(),
-                            result.getLong("orderNumber") // Order Number
-                    );
+                    try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
+                        orderDatabase.getOrdersDetails(
+                                orders,
+                                getResources(),
+                                result.getLong("orderNumber") // Order Number
+                        );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     // Format the order number to have at least 5 digits
                     String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
@@ -114,7 +115,7 @@ public class ReceiptFragment extends Fragment {
                         barcode.setImageDrawable(barcodeDrawable);
                         orderNumber.setText(orderNumberString);
 
-                        ArrayList<Items> selectedItems = orders.get(0).getSelectedItem();
+                        ArrayList<Item> selectedItems = orders.get(0).getSelectedItem();
 
                         // Create the adapter and set it to the RecyclerView
                         BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());
@@ -211,7 +212,7 @@ public class ReceiptFragment extends Fragment {
 //                        total.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount()));
 //                        orderNumber.setText(orderNumberString);
 //
-//                        ArrayList<Items> selectedItems = orders.get(0).getSelectedItem();
+//                        ArrayList<Item> selectedItems = orders.get(0).getSelectedItem();
 //
 //                        // Create the adapter and set it to the RecyclerView
 //                        BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());

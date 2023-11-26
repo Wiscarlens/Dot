@@ -56,8 +56,7 @@
             android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
             android:inputType="numberDecimal"
-            android:textColor="@color/black"
-            android:focusable="true"/>
+            android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout

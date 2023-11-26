@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,33 +36,34 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
-import com.module.dot.Activities.CaptureAct;
 import com.module.dot.Activities.ConfirmationFragment;
+import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.Items.ItemGridAdapter;
-import com.module.dot.Activities.Items.Items;
 import com.module.dot.Activities.Orders.Orders;
 import com.module.dot.Activities.Transactions.Transactions;
-import com.module.dot.Database.MyDatabaseHelper;
+import com.module.dot.Database.Local.ItemDatabase;
+import com.module.dot.Database.Local.OrderDatabase;
+import com.module.dot.Database.Local.OrderItemsDatabase;
+import com.module.dot.Database.Local.TransactionDatabase;
 import com.module.dot.Helpers.LocalFormat;
 import com.module.dot.Helpers.ScannerManager;
 import com.module.dot.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class HomeFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     private Button chargeButton;
 
-    private final ArrayList<Items> items_for_display = new ArrayList<>();
-    private final ArrayList<Items> selectedItems =  new ArrayList<>();
+    private final ArrayList<Item> item_for_display = new ArrayList<>();
+    private final ArrayList<Item> selectedItems =  new ArrayList<>();
 
     // Select item total
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
     private String currentCharge;
     private long newOrderID;
-
-    private MyDatabaseHelper myDB;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -90,34 +92,34 @@ public class HomeFragment extends Fragment {
 
         ScannerManager scannerManager = new ScannerManager(this);
 
-        // Local database
-        myDB = new MyDatabaseHelper(getContext());
+        try (ItemDatabase itemDatabase = new ItemDatabase(getContext())) {
+            if (itemDatabase.isTableEmpty("items")) {
+                itemDatabase.showEmptyStateMessage(itemGridview, noData);
+            } else {
+                itemDatabase.showStateMessage(itemGridview, noData);
+                itemDatabase.readItem(item_for_display); // Read data from database and save it the arraylist
+            }
+        } catch (Exception e) {
+            Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
+        }
 
-        // Save item data from database to the arraylist
-        MyDatabaseHelper.getItems(
-                myDB, // Local database
-                items_for_display, // ArrayList to store Items objects for display
-                itemGridview, // GridView UI element to display items
-                noData,
-                getResources() // Resources instance to access app resources
-        );
 
-        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(items_for_display);
+        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(item_for_display);
         itemGridview.setAdapter(itemGridAdapter);
 
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
             // Find the selected item
-            Items selectedItem = new Items(
-                    items_for_display.get(position).getId(),
-                    items_for_display.get(position).getName(),
-                    items_for_display.get(position).getPrice(),
-                    items_for_display.get(position).getSku(),
+            Item selectedItem = new Item(
+                    item_for_display.get(position).getId(),
+                    item_for_display.get(position).getName(),
+                    item_for_display.get(position).getPrice(),
+                    item_for_display.get(position).getSku(),
                     1
             );
 
-            // TODO: Optimize - All the line below can be part of addToSElected Items method
-            Double itemSelectedPrice = items_for_display.get(position).getPrice();
+            // TODO: Optimize - All the line below can be part of addToSElected Item method
+            Double itemSelectedPrice = item_for_display.get(position).getPrice();
 
             addToSelectedItems(selectedItem);
             updateAmount(itemSelectedPrice);
@@ -136,13 +138,13 @@ public class HomeFragment extends Fragment {
 
         // When user click on scanner button
         scanButton.setOnClickListener(v -> {
-                if (items_for_display.isEmpty()) {
+                if (item_for_display.isEmpty()) {
                     Toast.makeText(fragmentActivity, "No item in database", Toast.LENGTH_SHORT).show();
                 } else {
                     scannerManager.startBarcodeScanning(); // Scan barcode
                     String barcode = scannerManager.getScanItem(); // get barcode
 
-                    for (Items item : items_for_display) {
+                    for (Item item : item_for_display) {
                         if (barcode.equals(item.getSku())) {
                             addToSelectedItems(item); // Add the item to the selectedItems list
                             updateAmount(item.getPrice()); // Update Selected Item amount
@@ -152,19 +154,6 @@ public class HomeFragment extends Fragment {
                             Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
                         }
                     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -223,11 +212,20 @@ public class HomeFragment extends Fragment {
                                     "Completed" // TODO: replace with the actual Order status
                             );
 
-                            newOrderID = myDB.setOrder(newOrder);
-
-                            for (Items item : selectedItems) {
-                                myDB.setOrderItem(newOrderID, item.getId(), item.getFrequency());
+                            try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
+                                newOrderID = orderDatabase.createOrder(newOrder);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+
+                            try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(getContext())){
+                                for (Item item : selectedItems) {
+                                    orderItemsDatabase.createOrderItems(newOrderID, item.getId(), item.getFrequency());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
 
                             // TODO: Create a new transaction
                             Transactions newTransaction = new Transactions(
@@ -237,7 +235,12 @@ public class HomeFragment extends Fragment {
                                     R.drawable.visa // TODO: replace with the actual payment method
                             );
 
-                            myDB.setTransaction(newTransaction);
+                            try (TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
+                                transactionDatabase.createTransaction(newTransaction);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
 
                             // Sending order number to receipt fragment
                             Bundle orderNumberBundle = new Bundle();
@@ -297,19 +300,19 @@ public class HomeFragment extends Fragment {
         return displayMetrics.heightPixels;
     }
 
-    /**
-     * Initiates a barcode scanning process using the specified scan options.
-     */
-    private void scanCode(){
-        ScanOptions options = new ScanOptions();
-
-        options.setPrompt("Press Volume Up to Turn Flash On");
-        options.setBeepEnabled(true);
-        options.setOrientationLocked(true);
-        options.setCaptureActivity(CaptureAct.class);
-
-        scannerLauncher.launch(options);
-    }
+//    /**
+//     * Initiates a barcode scanning process using the specified scan options.
+//     */
+//    private void scanCode(){
+//        ScanOptions options = new ScanOptions();
+//
+//        options.setPrompt("Press Volume Up to Turn Flash On");
+//        options.setBeepEnabled(true);
+//        options.setOrientationLocked(true);
+//        options.setCaptureActivity(CaptureAct.class);
+//
+//        scannerLauncher.launch(options);
+//    }
 
     /**
      * Result launcher for initiating barcode scanning and handling the scanning result.
@@ -317,7 +320,7 @@ public class HomeFragment extends Fragment {
     ActivityResultLauncher<ScanOptions>  scannerLauncher = registerForActivityResult(new ScanContract(), result -> {
         String scanItem = result.getContents();
 
-        for (Items item : items_for_display) {
+        for (Item item : item_for_display) {
              if (scanItem.equals(item.getSku())) {
                  addToSelectedItems(item); // Add the item to the selectedItems list
                  updateAmount(item.getPrice()); // Update Selected Item amount
@@ -329,31 +332,31 @@ public class HomeFragment extends Fragment {
         }
     });
 
-    private boolean addScannedItem(String scanItem){
-        for (Items item : items_for_display) {
-            if (scanItem.equals(item.getSku())) {
-//                return true;
-                addToSelectedItems(item); // Add the item to the selectedItems list
-                updateAmount(item.getPrice()); // Update Selected Item amount
-
-//                break;
-            } else {
-                Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
-//                return false;
-            }
-        }
-
-        return false;
-    }
+//    private boolean addScannedItem(String scanItem){
+//        for (Item item : item_for_display) {
+//            if (scanItem.equals(item.getSku())) {
+////                return true;
+//                addToSelectedItems(item); // Add the item to the selectedItems list
+//                updateAmount(item.getPrice()); // Update Selected Item amount
+//
+////                break;
+//            } else {
+//                Toast.makeText(fragmentActivity, "Item not found", Toast.LENGTH_SHORT).show();
+////                return false;
+//            }
+//        }
+//
+//        return false;
+//    }
 
     /**
      * Adds an item to the selectedItems list or increases its frequency if it already exists.
      *
      * @param newItem The item to be added or whose frequency should be increased.
      */
-    private void addToSelectedItems(Items newItem) {
+    private void addToSelectedItems(Item newItem) {
         // Check if the item is already in selectedItems
-        for (Items item : selectedItems) {
+        for (Item item : selectedItems) {
             if (item.getId() == newItem.getId()) {
                 // Item already exists, increase frequency
                 item.setFrequency(item.getFrequency() + 1);

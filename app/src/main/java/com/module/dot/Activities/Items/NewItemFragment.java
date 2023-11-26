@@ -29,18 +29,17 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.module.dot.Database.MyDatabaseHelper;
+import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Helpers.ScannerManager;
 import com.module.dot.R;
 
 import java.util.ArrayList;
 
 
-public class New_Item_Fragment extends Fragment {
+public class NewItemFragment extends Fragment {
     private ImageButton step1Button;
     private ImageButton step2Button;
     private ImageButton step3Button;
@@ -215,8 +214,11 @@ public class New_Item_Fragment extends Fragment {
             }
         });
 
+
+
         saveButton.setOnClickListener(v -> {
-            setItems(); // Save data locally
+            Item newItem = getItemFromForm();
+            createNewItem(newItem); // Save data locally
             //uploadData();
 
             // Replace Add item fragment with Home Fragment
@@ -361,8 +363,16 @@ public class New_Item_Fragment extends Fragment {
         }
 
     }
-    private void setItems() {
-        Items newItem = new Items(
+    private void createNewItem(Item newItem) {
+
+        try (ItemDatabase itemDB = new ItemDatabase(getContext())) {
+            itemDB.createItem(newItem);
+        }
+    }
+
+    private Item getItemFromForm() {
+
+        return new Item(
                 itemImage.getDrawable(),
                 String.valueOf(itemName.getText()).trim(),
                 Double.parseDouble(String.valueOf(unitPrice.getText()).trim()),
@@ -374,10 +384,6 @@ public class New_Item_Fragment extends Fragment {
                 Double.parseDouble(String.valueOf(itemTax.getText()).trim()),
                 String.valueOf(itemDescription.getText())
         );
-
-        try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-            myDB.setItem(newItem);
-        }
     }
 
 //    TODO: Upload data to firebase
@@ -396,7 +402,7 @@ public class New_Item_Fragment extends Fragment {
 //
 //        NewItemData newItemData = new NewItemData(Name, Price, Category, SKU, UnitType, stock, wholesalesPrice, tax, description);
 //
-//        FirebaseDatabase.getInstance().getReference("Items").child(Name)
+//        FirebaseDatabase.getInstance().getReference("Item").child(Name)
 //                .setValue(newItemData).addOnCompleteListener(task -> {
 //                    if(task.isSuccessful()){
 //                        String message = getResources().getString(R.string.save);

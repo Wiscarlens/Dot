@@ -15,8 +15,8 @@ import com.module.dot.R;
 import java.util.ArrayList;
 
 public class ItemGridAdapter extends BaseAdapter {
-    private final ArrayList<Items> items;
-    public ItemGridAdapter(ArrayList<Items> items) {
+    private final ArrayList<Item> items;
+    public ItemGridAdapter(ArrayList<Item> items) {
         this.items = items;
     }
 

@@ -33,7 +33,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginStart="10dp"
             android:layout_marginBottom="30dp"
-            android:text="@string/items"
+            android:text="@string/item"
             android:textAllCaps="true"
             android:textSize="15sp" />
 

@@ -21,7 +21,7 @@
     <string name="users">Users</string>
     <string name="transactions">Transactions</string>
     <string name="recent_transactions">Recent Transactions</string>
-    <string name="items">Items</string>
+    <string name="item">Items</string>
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
@@ -132,7 +132,6 @@
     <string name="status">Status</string>
     <string name="completed">Completed</string>
     <string name="bar">|</string>
-    <string name="item"> Items</string>
     <string name="zero">0</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="create_account">Create Account</string>
@@ -140,5 +139,7 @@
     <string name="reset_password">Reset Password</string>
     <string name="forgot_password_message">Enter the email you used to sign up to reset your password.</string>
     <string name="close_button">Close Button</string>
+    <string name="john_doe">John Doe</string>
+    <string name="johndoe_gmail_com">johndoe@gmail.com</string>
 
 </resources>
