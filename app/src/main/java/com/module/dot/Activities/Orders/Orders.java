@@ -1,7 +1,7 @@
 package com.module.dot.Activities.Orders;
 
 
-import com.module.dot.Activities.Items.Items;
+import com.module.dot.Activities.Items.Item;
 
 import java.util.ArrayList;
 
@@ -14,11 +14,11 @@ public class Orders {
     private final double orderTotalAmount;
     private String creatorID;
 
-    private ArrayList<Items> selectedItem;
+    private ArrayList<Item> selectedItem;
 
     // Constructor for displaying orders
     public Orders(long orderNumber, String orderDate, String orderTime, String orderStatus,
-                  int orderTotalItems, double orderTotalAmount, ArrayList<Items> selectedItem) {
+                  int orderTotalItems, double orderTotalAmount, ArrayList<Item> selectedItem) {
         this.orderNumber = orderNumber;
         this.orderDate = orderDate;
         this.orderTime = orderTime;
@@ -63,7 +63,7 @@ public class Orders {
         return creatorID;
     }
 
-    public ArrayList<Items> getSelectedItem() {
+    public ArrayList<Item> getSelectedItem() {
         return selectedItem;
     }
 }

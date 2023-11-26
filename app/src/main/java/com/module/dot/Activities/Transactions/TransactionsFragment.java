@@ -2,6 +2,11 @@ package com.module.dot.Activities.Transactions;
 
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,18 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.module.dot.Database.MyDatabaseHelper;
+import com.module.dot.Database.Local.TransactionDatabase;
+import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.R;
-import com.module.dot.Activities.Transactions.TransactionRecyclerAdapter;
-import com.module.dot.Activities.Transactions.Transactions;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TransactionsFragment extends Fragment {
 
@@ -36,20 +35,29 @@ public class TransactionsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noUserImage = view.findViewById(R.id.no_transaction_imageview); // When users Database is empty
-        TextView noUserText = view.findViewById(R.id.no_transaction_textview); // When users Database is empty
+        LinearLayout noTransaction = view.findViewById(R.id.noTransactionFragmentLL); // When users Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.transactionList);
 
+//        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
+        try (TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())) {
+            if(!transactionDatabase.isTableExists("transactions")){
+                transactionDatabase.onCreate(transactionDatabase.getWritableDatabase()); // Create the database
+                transactionDatabase.showEmptyStateMessage(recyclerView, noTransaction);
+                return;
+            } else {
+                if (transactionDatabase.isTableEmpty("transactions")) {
+                    transactionDatabase.showEmptyStateMessage(recyclerView, noTransaction);
+                } else {
+                    transactionDatabase.showStateMessage(recyclerView, noTransaction);
 
-        MyDatabaseHelper.getTransactions(
-                myDB,
-                transactions_for_display,
-                recyclerView,
-                noUserImage,
-                noUserText
-        );
+                    transactionDatabase.readTransaction(transactions_for_display); // Read data from database and save it the arraylist
+                }
+            }
+
+        } catch (Exception e) {
+            Log.i("TransactionFragment", Objects.requireNonNull(e.getMessage()));
+        }
 
 
         TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactions_for_display);

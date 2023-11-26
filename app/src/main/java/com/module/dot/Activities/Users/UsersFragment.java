@@ -2,6 +2,11 @@ package com.module.dot.Activities.Users;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,17 +17,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.module.dot.Database.MyDatabaseHelper;
+import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class UsersFragment extends Fragment {
     private FragmentActivity fragmentActivity;
@@ -44,24 +44,34 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noUserImage = view.findViewById(R.id.no_user_imageview); // When users Database is empty
-        TextView noUserText = view.findViewById(R.id.no_user_textview); // When users Database is empty
+        LinearLayout noUser = view.findViewById(R.id.noUserFragmentLL); // When users Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.userList);
         FloatingActionButton addUser = view.findViewById(R.id.addUserButton); // Add User button
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
+//        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
 
-        // Save item data from database to the arraylist
-        MyDatabaseHelper.getUsers(
-                myDB, // Local database
-                users_for_display, // ArrayList to store Users objects for display
-                recyclerView, // RecyclerView UI element to display users
-                noUserImage, // ImageView UI element to show when no data is available
-                noUserText, // TextView UI element to show when no data is available
-                getResources() // Resources instance to access app resources
-        );
+
+
+        try (UserDatabase userDatabase = new UserDatabase(getContext())) {
+            if(!userDatabase.isTableExists("users")){
+                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
+                userDatabase.showEmptyStateMessage(recyclerView, noUser);
+                return;
+            } else {
+                if (userDatabase.isTableEmpty("users")) {
+                    userDatabase.showEmptyStateMessage(recyclerView, noUser);
+                } else {
+                    userDatabase.showStateMessage(recyclerView, noUser);
+                    userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
+                }
+            }
+
+        } catch (Exception e) {
+            Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
+        }
+
 
         UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
 

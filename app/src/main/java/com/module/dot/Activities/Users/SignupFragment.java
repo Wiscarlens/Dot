@@ -2,16 +2,6 @@ package com.module.dot.Activities.Users;
 
 import static android.app.Activity.RESULT_OK;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -33,10 +23,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.module.dot.Database.MyDatabaseHelper;
+import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -438,8 +438,12 @@ public class SignupFragment extends Fragment {
                 String.valueOf(password.getText())
         );
 
-        try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-            myDB.setUser(newUsers);
+//        try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
+//            myDB.setUser(newUsers);
+//        }
+
+        try (UserDatabase myDB = new UserDatabase(getContext())) {
+            myDB.createUser(newUsers);
         }
     }
 

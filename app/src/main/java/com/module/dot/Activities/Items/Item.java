@@ -6,7 +6,7 @@ package com.module.dot.Activities.Items;
 
 import android.graphics.drawable.Drawable;
 
-public class Items {
+public class Item {
     private Drawable image;
     private final String name;
     private final Double price;
@@ -23,9 +23,9 @@ public class Items {
     private  Integer backgroundColor;
 
     // Use for add item to database
-    public Items(Drawable image, String name, Double price, String category, String sku,
-                 String unitType, Integer stock, Double wholesalePrice, double tax,
-                 String description) {
+    public Item(Drawable image, String name, Double price, String category, String sku,
+                String unitType, Integer stock, Double wholesalePrice, double tax,
+                String description) {
         this.image = image;
         this.name = name;
         this.price = price;
@@ -39,7 +39,7 @@ public class Items {
     }
 
     // Use for display item in the gridview
-    public Items(Long id, String name, Drawable image, Double price, String SKU, String unitType, Integer backgroundColor) {
+    public Item(Long id, String name, Drawable image, Double price, String SKU, String unitType, Integer backgroundColor) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -49,8 +49,8 @@ public class Items {
         this.backgroundColor = backgroundColor;
     }
 
-    // Selected Items
-    public Items(Long id, String name, Double price, String SKU, Integer frequency) {
+    // Selected Item
+    public Item(Long id, String name, Double price, String SKU, Integer frequency) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -59,7 +59,7 @@ public class Items {
     }
 
     // Use for display order item
-    public Items(Long id, Drawable image, String name, Double price, Integer frequency) {
+    public Item(Long id, Drawable image, String name, Double price, Integer frequency) {
         this.id = id;
         this.image = image;
         this.name = name;

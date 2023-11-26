@@ -11,7 +11,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center"
-        android:contentDescription="@string/items"
+        android:contentDescription="@string/item"
         android:src="@drawable/baseline_image_24"
         android:scaleType="fitCenter" />
 

@@ -30,7 +30,8 @@
         android:hint="@string/sku"
         app:boxBackgroundMode="outline"
         app:boxBackgroundColor="@color/white"
-        app:endIconMode="clear_text">
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/baseline_qr_code_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/SKUText"

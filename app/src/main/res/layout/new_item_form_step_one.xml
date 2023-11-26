@@ -18,13 +18,12 @@
         android:textStyle="bold"
         android:gravity="start"
         android:textColor="@color/black"
-        android:layout_marginBottom="30dp"
-        android:scaleType="centerCrop"/>
+        android:layout_marginBottom="10dp" />
 
     <ImageView
         android:id="@+id/newItemImage"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:src="@drawable/uploading"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center"

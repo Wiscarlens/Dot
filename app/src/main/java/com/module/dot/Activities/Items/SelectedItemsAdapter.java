@@ -18,10 +18,10 @@ import java.util.ArrayList;
  */
 
 public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdapter.DesignViewHolder> {
-    ArrayList<Items> selectedItems;
+    ArrayList<Item> selectedItems;
     Context context;
 
-    public SelectedItemsAdapter(ArrayList<Items> selectedItem, Context context) {
+    public SelectedItemsAdapter(ArrayList<Item> selectedItem, Context context) {
         this.selectedItems = selectedItem;
         this.context = context;
     }

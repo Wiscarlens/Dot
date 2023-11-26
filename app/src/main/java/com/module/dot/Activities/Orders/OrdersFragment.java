@@ -1,6 +1,11 @@
 package com.module.dot.Activities.Orders;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,18 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.module.dot.Database.MyDatabaseHelper;
-import com.module.dot.Activities.Orders.Orders;
-import com.module.dot.Activities.Orders.OrdersAdapter;
+import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class OrdersFragment extends Fragment {
     private final ArrayList<Orders> orders_for_display = new ArrayList<>();
@@ -34,20 +32,26 @@ public class OrdersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView noDataImage = view.findViewById(R.id.no_orders_imageview); // When Database is empty
-        TextView noDataText = view.findViewById(R.id.no_orders_textview); // When Database is empty
+        LinearLayout noOrder = view.findViewById(R.id.noOrderFragmentLL); // When Database is empty
         RecyclerView OrderList_RecyclerView = view.findViewById(R.id.ordersList);  // Connect to Recyclerview in fragment_orders
 
-        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
+        try (OrderDatabase orderDatabase = new OrderDatabase(getContext())) {
+            if(!orderDatabase.isTableExists("orders")){
+                orderDatabase.onCreate(orderDatabase.getWritableDatabase()); // Create the database
+                return;
+            } else {
+                if (orderDatabase.isTableEmpty("orders")) {
+                    orderDatabase.showEmptyStateMessage(OrderList_RecyclerView, noOrder);
+                } else {
+                    orderDatabase.showStateMessage(OrderList_RecyclerView, noOrder);
 
-        MyDatabaseHelper.getOrders(
-                myDB, // Local database
-                orders_for_display, // ArrayList to store Orders objects for display
-                OrderList_RecyclerView, // RecyclerView UI element to display orders
-                noDataImage, // ImageView UI element to show when no data is available
-                noDataText, // TextView UI element to show when no data is available
-                getResources() // Resources instance to access app resources
-        );
+                    orderDatabase.readOrder(orders_for_display, getResources());
+                }
+            }
+
+        } catch (Exception e) {
+            Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
+        }
 
         OrdersAdapter ordersAdapter = new OrdersAdapter(orders_for_display, getContext());
         OrderList_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

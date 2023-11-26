@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.module.dot.Activities.Home.HomeFragment;
 import com.module.dot.R;
 
@@ -36,6 +37,7 @@ public class ConfirmationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        LottieAnimationView animationView = view.findViewById(R.id.confirmationAnimationView);
         TextView status = view.findViewById(R.id.confirmationStatusTextView);
         TextView price = view.findViewById(R.id.confirmationPriceTextView);
         Button receipt = view.findViewById(R.id.printReceiptButton);
@@ -46,10 +48,11 @@ public class ConfirmationFragment extends Fragment {
                 "priceData",
                 this,
                 (requestKey, result) -> {
-            String data = result.getString("price");
-            price.setText(data);
-            // TODO: get text from string.xml
-            status.setText("Payment Successful");
+                    animationView.playAnimation();
+                    String data = result.getString("price");
+                    price.setText(data);
+                    // TODO: get text from string.xml
+                    status.setText("Payment Successful");
         });
 
 

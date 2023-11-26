@@ -17,16 +17,16 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.module.dot.Activities.Items.Items;
+import com.module.dot.Activities.Items.Item;
 import com.module.dot.R;
 
 import java.util.ArrayList;
 
 public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.BottomViewHolder>{
-    private final ArrayList<Items> items;
+    private final ArrayList<Item> items;
     private final Context context;
 
-    public BottomSheetAdapter(ArrayList<Items> items, Context context) {
+    public BottomSheetAdapter(ArrayList<Item> items, Context context) {
         this.items = items;
         this.context = context;
     }
