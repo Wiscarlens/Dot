@@ -50,7 +50,6 @@ public class ItemDatabase extends MyDatabaseManager {
         String query_items = "CREATE TABLE " + NAME_TABLE_ITEMS +
                 " (" + ID_COLUMN_ITEMS + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 IMAGE_COLUMN_ITEMS + " BLOB, " +
-                // Need to be a unique value
                 NAME_COLUMN_ITEMS + " TEXT NOT NULL, " +
                 PRICE_COLUMN_ITEMS + " REAL NOT NULL, " +
                 CATEGORY_ID_COLUMN_ITEMS + " TEXT, " +  // TODO: Foreign key to a future table call category

@@ -21,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -64,25 +63,18 @@ public class SignupFragment extends Fragment {
 
     // Declare Form part one field
     private TextInputEditText firstName;
-    private TextInputEditText middleName;
     private TextInputEditText lastName;
     private TextInputEditText DOB;
-    private Spinner gender;
 
     // Declare Form part two field
     private TextInputEditText email;
     private TextInputEditText phoneNumber;
-    private TextInputEditText streetName;
-    private TextInputEditText city;
-    private TextInputEditText state;
-    private TextInputEditText zipCode;
+    private TextInputEditText address;
 
     // Declare Form part two field
     private ImageView profileImage;
     private Spinner position;
     private TextInputEditText password;
-    private TextInputEditText confirmedPassword;
-    private TextInputLayout confirmedPasswordLayout;
 
     private Button saveButton;
 
@@ -95,8 +87,7 @@ public class SignupFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sign_up, container, false);
     }
@@ -133,29 +124,22 @@ public class SignupFragment extends Fragment {
 
         // Step one form field
         firstName = stepOneLayout.findViewById(R.id.signupFirstNameText);
-        middleName = stepOneLayout.findViewById(R.id.signupMiddleNameText);
         lastName = stepOneLayout.findViewById(R.id.signupLastNameText);
         TextInputLayout DOB_layout = stepOneLayout.findViewById(R.id.signupDOBLayout);
         DOB = stepOneLayout.findViewById(R.id.signupDOBText);
-        gender = stepOneLayout.findViewById(R.id.signupGenderText);
 
         // Step two form field
         email = stepTwoLayout.findViewById(R.id.signupEmailText);
         phoneNumber = stepTwoLayout.findViewById(R.id.signupPhoneNumberText);
-        streetName = stepTwoLayout.findViewById(R.id.signupStreetNameText);
-        city = stepTwoLayout.findViewById(R.id.signupCityText);
-        state = stepTwoLayout.findViewById(R.id.signupStateText);
-        zipCode = stepTwoLayout.findViewById(R.id.signupZipCodeText);
+        address = stepTwoLayout.findViewById(R.id.signupAddressText);
 
         // Step three form field
         profileImage = stepThreeLayout.findViewById(R.id.newProfileImage);
         position = stepThreeLayout.findViewById(R.id.signupPositionText);
         password = stepThreeLayout.findViewById(R.id.signupPasswordText);
         TextInputLayout passwordLayout = stepThreeLayout.findViewById(R.id.signupPasswordLayout);
-        confirmedPassword = stepThreeLayout.findViewById(R.id.signupConfirmPasswordText);
 
         // Have data from the database
-        ArrayList<String> genderOptions = new ArrayList<>(); // Gender Option Spinner
         ArrayList<String> positionOptions = new ArrayList<>(); // Category Option Spinner
 
         // This field a copy of the error message from the String resources file.
@@ -183,14 +167,6 @@ public class SignupFragment extends Fragment {
             imagePickerLauncher.launch(intent);
 
         });
-
-        // Load data to Gender Option Spinner
-        genderOptions.add("Male");
-        genderOptions.add("Female");
-
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, genderOptions);
-        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        gender.setAdapter(genderAdapter);
 
         positionOptions.add("Cashier");
         positionOptions.add("Manager");
@@ -233,11 +209,7 @@ public class SignupFragment extends Fragment {
         showStepContent(currentStep);
 
         saveButton.setOnClickListener(v -> {
-            if(password.getText().toString().equals(confirmedPassword.getText().toString())){
-                saveToDatabase();
-            } else {
-                Toast.makeText(getContext(), "Password do not match", Toast.LENGTH_SHORT).show();
-            }
+            saveToDatabase();
 
             // Replace Add item fragment with Home Fragment
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
@@ -424,23 +396,14 @@ public class SignupFragment extends Fragment {
         Users newUsers = new Users(
                 profileImage.getDrawable(),
                 String.valueOf(firstName.getText()),
-                String.valueOf(middleName.getText()),
                 String.valueOf(lastName.getText()),
                 String.valueOf(DOB.getText()),
-                String.valueOf(gender.getSelectedItem()),
                 String.valueOf(email.getText()),
                 String.valueOf(phoneNumber.getText()),
-                String.valueOf(streetName.getText()),
-                String.valueOf(city.getText()),
-                String.valueOf(state.getText()),
-                Integer.parseInt(String.valueOf(zipCode.getText())),
+                String.valueOf(address.getText()),
                 String.valueOf(position.getSelectedItem()),
                 String.valueOf(password.getText())
         );
-
-//        try (MyDatabaseHelper myDB = new MyDatabaseHelper(getContext())) {
-//            myDB.setUser(newUsers);
-//        }
 
         try (UserDatabase myDB = new UserDatabase(getContext())) {
             myDB.createUser(newUsers);

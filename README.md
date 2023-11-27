@@ -25,7 +25,7 @@ Dot is an Inventory Management mobile app developed in Java and XML for Android 
 1. Clone the repository:
 
     ```shell
-    git clone https://github.com/yourusername/dot-inventory-management.git
+    git clone https://github.com/wiscarlens/dot
     ```
 
 2. Open the project in Android Studio.

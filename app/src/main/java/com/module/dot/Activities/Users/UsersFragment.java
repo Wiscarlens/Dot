@@ -34,8 +34,7 @@ public class UsersFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_users, container, false);
     }
@@ -49,10 +48,6 @@ public class UsersFragment extends Fragment {
         FloatingActionButton addUser = view.findViewById(R.id.addUserButton); // Add User button
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-//        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
-
-
 
         try (UserDatabase userDatabase = new UserDatabase(getContext())) {
             if(!userDatabase.isTableExists("users")){
@@ -71,7 +66,6 @@ public class UsersFragment extends Fragment {
         } catch (Exception e) {
             Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
-
 
         UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
 
