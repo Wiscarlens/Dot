@@ -54,27 +54,4 @@
             android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signupConfirmPasswordLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/confirm_password"
-        app:boxBackgroundMode="outline"
-        app:boxBackgroundColor="@color/white"
-        app:endIconMode="password_toggle"
-        app:helperText="@string/required"
-        app:helperTextTextColor="@color/red"
-        app:helperTextEnabled="false">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signupConfirmPasswordText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:inputType="textPassword"
-            android:textColor="@color/black" />
-    </com.google.android.material.textfield.TextInputLayout>
-
 </LinearLayout>
