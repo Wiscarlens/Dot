@@ -35,6 +35,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.module.dot.Database.Cloud.Firebase;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.R;
 
@@ -96,7 +97,7 @@ public class SignupFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
+
 
         progressBar = view.findViewById(R.id.progress_horizontal);
 
@@ -404,6 +405,9 @@ public class SignupFragment extends Fragment {
                 String.valueOf(position.getSelectedItem()),
                 String.valueOf(password.getText())
         );
+
+        Firebase firebase = new Firebase();
+        firebase.createUser(newUsers, getContext());
 
         try (UserDatabase myDB = new UserDatabase(getContext())) {
             myDB.createUser(newUsers);

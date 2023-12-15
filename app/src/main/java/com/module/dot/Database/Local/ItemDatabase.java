@@ -78,7 +78,15 @@ public class ItemDatabase extends MyDatabaseManager {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues cv = new ContentValues();
 
-            cv.put(IMAGE_COLUMN_ITEMS, Utils.getByteArrayFromDrawable(newItem.getImage())); // Convert the selected image to a byte array (Blob)
+            if (newItem.getImage() == null) {
+                // Handle the case where the conversion fails
+                Log.e("MyDatabaseManager", "Failed to convert image to byte array");
+                throw new SQLiteException("Failed to convert image to byte array");
+            } else {
+                // Convert the selected image to a byte array (Blob)
+                cv.put(IMAGE_COLUMN_ITEMS, Utils.getByteArrayFromDrawable(newItem.getImage()));
+            }
+
             cv.put(NAME_COLUMN_ITEMS, newItem.getName());
             cv.put(PRICE_COLUMN_ITEMS, newItem.getPrice());
             cv.put(CATEGORY_ID_COLUMN_ITEMS, newItem.getCategory());

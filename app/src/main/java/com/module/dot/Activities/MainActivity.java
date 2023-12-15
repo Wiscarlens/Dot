@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.module.dot.Activities.Home.HomeFragment;
 import com.module.dot.Activities.Items.ItemsFragment;
 import com.module.dot.Activities.Orders.OrdersFragment;
@@ -30,6 +31,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     FirebaseAuth mAuth;
 
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        // Check if user is signed in (non-null) and update UI accordingly.
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if(currentUser != null){
+//            //reload();
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

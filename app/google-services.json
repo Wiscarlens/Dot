@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "278824547740",
-    "project_id": "chezelisma",
-    "storage_bucket": "chezelisma.appspot.com"
+    "project_number": "199140644261",
+    "project_id": "dot-mc",
+    "storage_bucket": "dot-mc.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:278824547740:android:ae8c572fc97cdd2d5a0459",
+        "mobilesdk_app_id": "1:199140644261:android:2dc8167935b9e565a7444c",
         "android_client_info": {
           "package_name": "com.module.dot"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "278824547740-gditorhptnebc42i06aeo38l4r9ebg4k.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBBFFH-01_MOfJsv_sttR0kLZnpcz7Nc8Y"
+          "current_key": "AIzaSyD9snv-CyK2nmL-fA67FT3b_vcULC04KCw"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "278824547740-gditorhptnebc42i06aeo38l4r9ebg4k.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -4,6 +4,7 @@ package com.module.dot.Helpers;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -37,8 +38,28 @@ public class Utils {
      * @return The byte array representation of the Drawable object.
      */
     public static byte[] getByteArrayFromDrawable(Drawable drawable) {
-        // Get the bitmap from the drawable.
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        if (drawable == null) {
+            return null;
+        }
+
+        Bitmap bitmap;
+
+        if (drawable instanceof BitmapDrawable) {
+            // If it's already a BitmapDrawable, no need to convert
+            bitmap = ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            // If it's a VectorDrawable, create a Bitmap and draw the VectorDrawable on it
+            int width = drawable.getIntrinsicWidth();
+            int height = drawable.getIntrinsicHeight();
+
+            // Create a Bitmap with ARGB_8888 format for better quality
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+            // Create a Canvas and draw the VectorDrawable on the Bitmap
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+        }
 
         // Create a byte array output stream.
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -72,8 +93,6 @@ public class Utils {
 
         return formattedNum.toString();
     }
-
-
 
 
     /**

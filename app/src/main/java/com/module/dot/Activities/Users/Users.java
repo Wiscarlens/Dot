@@ -3,17 +3,21 @@ package com.module.dot.Activities.Users;
 import android.graphics.drawable.Drawable;
 
 public class Users {
-    private final Drawable profileImage;
+    private Drawable profileImage;
     private String userID;
-    private final String firstName;
-    private final String lastName;
+    private String firstName;
+    private String lastName;
     private String dateOfBirth;
     private String email;
     private String phoneNumber;
     private String address;
-    private final String position;
+    private String position;
     private String password;
     private String dateRegistered;
+
+    public Users() {
+
+    }
 
     // Constructor for showing the user's profile.
     public Users(Drawable profileImage, String firstName, String lastName, String position) {
@@ -85,5 +89,49 @@ public class Users {
 
     public String getDateRegistered() {
         return dateRegistered;
+    }
+
+    public void setProfileImage(Drawable profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setDateRegistered(String dateRegistered) {
+        this.dateRegistered = dateRegistered;
     }
 }
