@@ -45,6 +45,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Database.Cloud.Firebase;
 import com.module.dot.Database.Local.UserDatabase;
+import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.io.ByteArrayOutputStream;
@@ -404,53 +405,42 @@ public class SignupFragment extends Fragment {
     }
 
     private void saveToDatabase() {
-
-//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-//        assert firebaseUser != null;
-//        String UID = firebaseUser.getUid();
-
-        String UID = Firebase.getCurrentUserOnlineID(mAuth);
-
-        String imagePath = "Profiles/" + UID;
-
-        // Get the data from an ImageView as bytes
-        profileImage.setDrawingCacheEnabled(true);
-        profileImage.buildDrawingCache();
-
-        Bitmap bitmap = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageData = baos.toByteArray();
-
+//        String UID = Firebase.getCurrentUserOnlineID(mAuth);
+//
+//        String imagePath = "Profiles/" + UID;
+//
+//        // Get the data from an ImageView as bytes
+//        profileImage.setDrawingCacheEnabled(true);
+//        profileImage.buildDrawingCache();
+//
+////        Bitmap bitmap = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+////        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+////        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+////        byte[] imageData = baos.toByteArray();
+//
 //        byte[] imageData = Utils.getByteArrayFromDrawable(profileImage.getDrawable());
+//
+//        StorageReference storageReference = storage.getReference(imagePath);
+//        UploadTask uploadTask = storageReference.putBytes(imageData);
+//
+//        uploadTask.addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle unsuccessful uploads
+//                Log.e("Firebase", "Error while uploading image to Firebase Storage", exception);
+//            }
+//        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                Log.i("Firebase", "Image uploaded successfully");
+//                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+//                // ...
+//            }
+//        });
 
-        StorageReference storageReference = storage.getReference(imagePath);
-        UploadTask uploadTask = storageReference.putBytes(imageData);
-
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.e("Firebase", "Error while uploading image to Firebase Storage", exception);
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.i("Firebase", "Image uploaded successfully");
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-            }
-        });
-
-
-//        StorageReference metadata = new StorageMetadata.Builder()
-//                .setCustomMetadata("full_name", "l")
-//                .build();
-
-//        UploadTask uploadTask = storageReference.putFile(profileImage.get)
 
         Users newUser = new Users(
-                imagePath,
+                null, // Profile Image Path
                 String.valueOf(firstName.getText()),
                 String.valueOf(lastName.getText()),
                 String.valueOf(DOB.getText()),
@@ -462,7 +452,7 @@ public class SignupFragment extends Fragment {
         );
 
         Firebase firebase = new Firebase();
-        firebase.createUser(newUser, getContext());
+        firebase.createUser(newUser, profileImage, getContext());
 
         try (UserDatabase myDB = new UserDatabase(getContext())) {
             myDB.createUser(newUser);

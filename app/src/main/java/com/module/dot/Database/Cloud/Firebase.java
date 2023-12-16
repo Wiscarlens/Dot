@@ -2,10 +2,13 @@ package com.module.dot.Database.Cloud;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -13,7 +16,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Users.Users;
+import com.module.dot.Helpers.Utils;
 
 import java.util.ArrayList;
 
@@ -28,8 +35,14 @@ public class Firebase {
         return firebaseUser.getUid();
     }
 
+//    private String getNewUserOnlineID() {
+//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+//        assert firebaseUser != null;
+//        return firebaseUser.getUid();
+//    }
 
-    public void createUser(Users newUser, Context context){
+
+    public void createUser(Users newUser, ImageView profileImage, Context context){
         mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -37,10 +50,13 @@ public class Firebase {
                         try {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             assert firebaseUser != null;
-                            String userId = firebaseUser.getUid();
+                            String UID = firebaseUser.getUid();
 
                             mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("users").child(userId).setValue(newUser);
+                            saveImageToFirebaseStorage(profileImage, UID);
+                            newUser.setProfileImagePath(UID);
+                            mDatabase.child("users").child(UID).setValue(newUser);
+
                         } catch (Exception e) {
                             Log.e("Firebase", "Error while adding user to online database", e);
                         }
@@ -55,6 +71,8 @@ public class Firebase {
                         Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
 
     }
 
@@ -92,6 +110,33 @@ public class Firebase {
                 }
             });
         }
+    }
+
+    public void saveImageToFirebaseStorage(ImageView profileImage, String UID) {
+        String imagePath = "Profiles/" + UID;
+
+        // Get the data from an ImageView as bytes
+        profileImage.setDrawingCacheEnabled(true);
+        profileImage.buildDrawingCache();
+
+        byte[] imageData = Utils.getByteArrayFromDrawable(profileImage.getDrawable());
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference(imagePath);
+
+        UploadTask uploadTask = storageReference.putBytes(imageData);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e("Firebase", "Error while uploading image to Firebase Storage", exception);
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i("Firebase", "Image uploaded successfully");
+            }
+        });
     }
 
 
