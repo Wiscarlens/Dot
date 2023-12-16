@@ -97,8 +97,6 @@ public class SignupFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
         progressBar = view.findViewById(R.id.progress_horizontal);
 
         step1Button = view.findViewById(R.id.stepOneButton);

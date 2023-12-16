@@ -143,5 +143,6 @@
     <string name="john_doe">John Doe</string>
     <string name="johndoe_gmail_com">johndoe@gmail.com</string>
     <string name="address">Address</string>
+    <string name="default_initial">J</string>
 
 </resources>

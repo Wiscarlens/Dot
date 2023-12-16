@@ -12,17 +12,27 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.module.dot.Activities.Home.HomeFragment;
 import com.module.dot.Activities.Items.ItemsFragment;
 import com.module.dot.Activities.Orders.OrdersFragment;
 import com.module.dot.Activities.Settings.SettingsFragment;
 import com.module.dot.Activities.Transactions.TransactionsFragment;
+import com.module.dot.Activities.Users.Users;
 import com.module.dot.Activities.Users.UsersFragment;
 import com.module.dot.R;
 
@@ -31,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Intent loginActivity;
 
     FirebaseAuth mAuth;
+
+    View navigationHeader;
+
+    public static Users currentUser;
 
 
 //    @Override
@@ -48,15 +62,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        Log.d("Firebase", "User: " + user.getPhoneNumber());
-
-        drawerLayout = findViewById(R.id.drawer_layout);
+        // Find views in the navigation header
         NavigationView navigationView = findViewById(R.id.nav_view);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        navigationHeader = navigationView.getHeaderView(0);
 
         mAuth = FirebaseAuth.getInstance();
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+//        NavigationView navigationView = findViewById(R.id.nav_view);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        ImageView navHeaderImage = navigationHeader.findViewById(R.id.iv_profile_image);
+        TextView navHeaderInitial = navigationHeader.findViewById(R.id.tv_initials);
+        TextView navHeaderFullName = navigationHeader.findViewById(R.id.tv_fullName);
+        TextView navHeaderEmail = navigationHeader.findViewById(R.id.tv_email);
+
+//        navHeaderFullName.setText("fullName");
+//        navHeaderInitial.setText("X");
+//        navHeaderEmail.setText("email");
 
         setSupportActionBar(toolbar);
 
@@ -76,6 +99,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             navigationView.setCheckedItem(R.id.nav_home);
         }
+
+
+
+
+        // TODO: This feature will be a method in Firebase class
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+
+        if (user != null) {
+            String uid = user.getUid();
+
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        currentUser = new Users(
+                                null, // Profile Image Path
+                                dataSnapshot.child("firstName").getValue(String.class),
+                                dataSnapshot.child("lastName").getValue(String.class),
+                                dataSnapshot.child("email").getValue(String.class)
+                        );
+
+                        // TODO: will be a above on a separate module
+                        // Set the navigation header
+                        String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+
+                        navHeaderFullName.setText(fullName);
+                        navHeaderInitial.setText(currentUser.getFirstName());
+                        navHeaderEmail.setText(dataSnapshot.child("email").getValue(String.class));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("Firebase", "Error getting user data", databaseError.toException());
+                }
+            });
+        }
+
 
     }
 
