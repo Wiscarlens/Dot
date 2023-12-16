@@ -1,6 +1,7 @@
 package com.module.dot.Helpers;
 
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -115,6 +116,22 @@ public class Utils {
         }
 
         return transactionNumber.toString();
+    }
+
+    public static Drawable getDrawableFromDrawableFolder(Context context, int drawableResourceId) {
+        try {
+            // Get the Resources object
+            Resources resources = context.getResources();
+
+            // Retrieve the Drawable using the resource ID
+            Drawable drawable = resources.getDrawable(drawableResourceId, null);
+
+            return drawable;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle any exceptions that may occur during the retrieval
+            return null;
+        }
     }
 
 

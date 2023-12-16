@@ -395,7 +395,7 @@ public class SignupFragment extends Fragment {
 
     private void saveToDatabase() {
         Users newUsers = new Users(
-                profileImage.getDrawable(),
+                null, //profileImage.getDrawable()
                 String.valueOf(firstName.getText()),
                 String.valueOf(lastName.getText()),
                 String.valueOf(DOB.getText()),

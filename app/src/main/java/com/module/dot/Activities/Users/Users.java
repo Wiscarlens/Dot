@@ -3,7 +3,7 @@ package com.module.dot.Activities.Users;
 import android.graphics.drawable.Drawable;
 
 public class Users {
-    private Drawable profileImage;
+    private String profileImagePath;
     private String userID;
     private String firstName;
     private String lastName;
@@ -20,18 +20,18 @@ public class Users {
     }
 
     // Constructor for showing the user's profile.
-    public Users(Drawable profileImage, String firstName, String lastName, String position) {
-        this.profileImage = profileImage;
+    public Users(String profileImagePath, String firstName, String lastName, String position) {
+        this.profileImagePath = profileImagePath;
         this.firstName = firstName;
         this.lastName = lastName;
         this.position = position;
     }
 
     // Constructor for the User class.
-    public Users(Drawable profileImage, String firstName, String lastName, String dateOfBirth,
+    public Users(String profileImagePath, String firstName, String lastName, String dateOfBirth,
                  String email, String phoneNumber, String address,
                  String position, String password_hash) {
-        this.profileImage = profileImage;
+        this.profileImagePath = profileImagePath;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
@@ -47,8 +47,8 @@ public class Users {
     }
 
 
-    public Drawable getProfileImage() {
-        return profileImage;
+    public String getProfileImagePath() {
+        return profileImagePath;
     }
 
     public String getUserID() {
@@ -91,8 +91,8 @@ public class Users {
         return dateRegistered;
     }
 
-    public void setProfileImage(Drawable profileImage) {
-        this.profileImage = profileImage;
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
     }
 
     public void setUserID(String userID) {

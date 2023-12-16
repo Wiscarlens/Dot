@@ -98,7 +98,7 @@ public class UserDatabase extends MyDatabaseManager {
             cv.put(EMAIL_COLUMN_USERS, newUsers.getEmail());
             cv.put(PHONE_NUMBER_COLUMN_USERS, newUsers.getPhoneNumber());
             cv.put(ADDRESS_COLUMN_USERS, newUsers.getAddress());
-            cv.put(PROFILE_PICTURE_COLUMN_USERS, Utils.getByteArrayFromDrawable(newUsers.getProfileImage()));
+//            cv.put(PROFILE_PICTURE_COLUMN_USERS, Utils.getByteArrayFromDrawable(newUsers.getProfileImagePath()));
             cv.put(POSITION_TITLE_COLUMN_USERS, newUsers.getPosition());
             cv.put(PASSWORD_HASH_COLUMN_USERS, hashPassword(newUsers.getPassword()));
 
@@ -121,13 +121,13 @@ public class UserDatabase extends MyDatabaseManager {
         // If users are found, populate the ArrayList with user data
         while (cursor.moveToNext()){
             // Retrieve item image as byte array
-            byte[] imageData = cursor.getBlob(11);
-
-            // Convert the Bitmap to a Drawable if needed
-            Drawable itemImageDrawable = convertByteArrayToDrawable(imageData);
+//            byte[] imageData = cursor.getBlob(11);
+//
+//            // Convert the Bitmap to a Drawable if needed
+//            Drawable itemImageDrawable = convertByteArrayToDrawable(imageData);
 
             Users newUser = new Users(
-                    itemImageDrawable,
+                    cursor.getString(11),
                     cursor.getString(1),
                     cursor.getString(2),
                     cursor.getString(12)

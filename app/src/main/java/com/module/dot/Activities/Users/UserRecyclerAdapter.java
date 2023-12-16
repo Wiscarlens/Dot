@@ -5,6 +5,7 @@ package com.module.dot.Activities.Users;
  */
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -42,7 +44,15 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     }
 
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        holder.photoProfile.setImageDrawable(users_for_display.get(position).getProfileImage());
+        Drawable defaultProfileImage = Utils.getDrawableFromDrawableFolder(context, R.drawable.cartoon);
+
+        if (users_for_display.get(position).getProfileImagePath() == null) {
+            holder.photoProfile.setImageDrawable(defaultProfileImage);
+        } else {
+
+        }
+
+
         holder.fullNameTextView.setText(users_for_display.get(position).getFullName());
         holder.positionTextView.setText(users_for_display.get(position).getPosition());
 
