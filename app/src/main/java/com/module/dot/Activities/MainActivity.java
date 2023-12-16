@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.module.dot.Activities.Home.HomeFragment;
 import com.module.dot.Activities.Items.ItemsFragment;
 import com.module.dot.Activities.Orders.OrdersFragment;
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private Intent loginActivity;
 
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
     View navigationHeader;
 
@@ -101,11 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
-
-
-        // TODO: This feature will be a method in Firebase class
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
+        FirebaseUser user = mAuth.getCurrentUser();
 
         if (user != null) {
             String uid = user.getUid();
