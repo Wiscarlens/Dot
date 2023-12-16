@@ -10,15 +10,16 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.module.dot.Activities.Home.HomeFragment;
 import com.module.dot.Activities.Items.ItemsFragment;
 import com.module.dot.Activities.Orders.OrdersFragment;
@@ -35,7 +37,11 @@ import com.module.dot.Activities.Settings.SettingsFragment;
 import com.module.dot.Activities.Transactions.TransactionsFragment;
 import com.module.dot.Activities.Users.Users;
 import com.module.dot.Activities.Users.UsersFragment;
+import com.module.dot.Database.Cloud.Firebase;
+import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
@@ -74,14 +80,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        NavigationView navigationView = findViewById(R.id.nav_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
 
-        ImageView navHeaderImage = navigationHeader.findViewById(R.id.iv_profile_image);
+        CircleImageView navHeaderImage = navigationHeader.findViewById(R.id.iv_profile_image);
         TextView navHeaderInitial = navigationHeader.findViewById(R.id.tv_initials);
         TextView navHeaderFullName = navigationHeader.findViewById(R.id.tv_fullName);
         TextView navHeaderEmail = navigationHeader.findViewById(R.id.tv_email);
 
+        String UID = Firebase.getCurrentUserOnlineID(mAuth);
+        String imagePath = "Profiles/" + UID;
+        StorageReference storageRef = storage.getReference(imagePath);
+
+        final long ONE_MEGABYTE = 512 * 512;
+        storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Data for "images/island.jpg" is returns, use this as needed
+                Log.i("Firebase", "Successfully retrieved profile image");
+                Drawable profileImage = Utils.byteArrayToDrawable(bytes, getResources());
+                navHeaderInitial.setVisibility(View.GONE);
+                navHeaderImage.setImageDrawable(profileImage);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.e("Firebase", "Error getting profile image", exception);
+
+            }
+        });
+
+//        navHeaderImage.setImageDrawable();
+
 //        navHeaderFullName.setText("fullName");
 //        navHeaderInitial.setText("X");
 //        navHeaderEmail.setText("email");
+
+
 
         setSupportActionBar(toolbar);
 

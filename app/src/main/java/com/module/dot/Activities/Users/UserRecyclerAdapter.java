@@ -22,6 +22,8 @@ import com.module.dot.R;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder> {
     private final ArrayList<Users> users_for_display;
     private final Context context;
@@ -44,11 +46,16 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     }
 
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        Drawable defaultProfileImage = Utils.getDrawableFromDrawableFolder(context, R.drawable.cartoon);
 
         if (users_for_display.get(position).getProfileImagePath() == null) {
-            holder.photoProfile.setImageDrawable(defaultProfileImage);
+            holder.initial.setVisibility(View.VISIBLE);
+            holder.initial.setText(users_for_display.get(position).getFirstName().substring(0, 1));
+
         } else {
+            holder.initial.setVisibility(View.GONE);
+
+            Drawable defaultProfileImage = Utils.getDrawableFromDrawableFolder(context, R.drawable.cartoon);
+            holder.photoProfile.setImageDrawable(defaultProfileImage);
 
         }
 
@@ -62,7 +69,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         private final TextView fullNameTextView;
         private final TextView positionTextView;
-        private final ImageView photoProfile;
+        private final CircleImageView photoProfile;
+        private final TextView initial;
         private final CardView cardView;
 
         public UserViewHolder(@NonNull View itemView) {
@@ -71,6 +79,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
             fullNameTextView = itemView.findViewById(R.id.UserFullNameDesign);
             positionTextView = itemView.findViewById(R.id.positionDesign);
             photoProfile = itemView.findViewById(R.id.profileImage);
+            initial = itemView.findViewById(R.id.tv_initials);
             cardView = itemView.findViewById(R.id.userCardView);
         }
     }

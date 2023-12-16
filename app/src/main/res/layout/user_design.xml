@@ -27,19 +27,51 @@
             android:orientation="vertical"
             tools:ignore="TextSizeCheck">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profileImage"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
-                android:layout_marginStart="5dp"
-                android:src="@drawable/baseline_person_24"
-                app:civ_border_color="@color/black"
-                app:civ_border_width="2dp"
-                app:civ_circle_background_color="@color/black"
+<!--            <de.hdodenhof.circleimageview.CircleImageView-->
+<!--                android:id="@+id/profileImage"-->
+<!--                android:layout_width="65dp"-->
+<!--                android:layout_height="65dp"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:src="@drawable/baseline_person_24"-->
+<!--                app:civ_border_color="@color/black"-->
+<!--                app:civ_border_width="2dp"-->
+<!--                app:civ_circle_background_color="@color/black"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:layout_constraintVertical_bias="0.5" />-->
+
+            <RelativeLayout
+                android:id="@+id/profileLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+                app:layout_constraintVertical_bias="0.5">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/circle_background"
+                    app:civ_border_color="@color/black"
+                    app:civ_border_width="2dp"
+                    app:civ_circle_background_color="@color/black" />
+
+                <TextView
+                    android:id="@+id/tv_initials"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:maxLength="1"
+                    android:text="@string/default_initial"
+                    android:textColor="#FFFFFF"
+                    android:textSize="45sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/UserFullNameDesign"
@@ -51,7 +83,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/positionDesign"
-                app:layout_constraintStart_toEndOf="@+id/profileImage"
+                app:layout_constraintStart_toEndOf="@+id/profileLayout"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -62,7 +94,7 @@
                 android:text="@string/position"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/profileImage"
+                app:layout_constraintStart_toEndOf="@+id/profileLayout"
                 app:layout_constraintTop_toBottomOf="@+id/UserFullNameDesign" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

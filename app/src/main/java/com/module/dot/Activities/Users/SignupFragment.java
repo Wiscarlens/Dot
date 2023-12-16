@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,14 +40,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Database.Cloud.Firebase;
 import com.module.dot.Database.Local.UserDatabase;
-import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.io.ByteArrayOutputStream;
@@ -406,9 +404,12 @@ public class SignupFragment extends Fragment {
     }
 
     private void saveToDatabase() {
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        assert firebaseUser != null;
-        String UID = firebaseUser.getUid();
+
+//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+//        assert firebaseUser != null;
+//        String UID = firebaseUser.getUid();
+
+        String UID = Firebase.getCurrentUserOnlineID(mAuth);
 
         String imagePath = "Profiles/" + UID;
 
@@ -430,10 +431,12 @@ public class SignupFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
+                Log.e("Firebase", "Error while uploading image to Firebase Storage", exception);
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i("Firebase", "Image uploaded successfully");
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                 // ...
             }
@@ -465,6 +468,8 @@ public class SignupFragment extends Fragment {
             myDB.createUser(newUser);
         }
     }
+
+
 
 
 }
