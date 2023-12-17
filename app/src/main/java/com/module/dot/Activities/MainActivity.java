@@ -1,12 +1,5 @@
 package com.module.dot.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -18,8 +11,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +35,7 @@ import com.module.dot.Activities.Settings.SettingsFragment;
 import com.module.dot.Activities.Transactions.TransactionsFragment;
 import com.module.dot.Activities.Users.Users;
 import com.module.dot.Activities.Users.UsersFragment;
-import com.module.dot.Database.Cloud.Firebase;
+import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
@@ -54,21 +52,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static Users currentUser;
 
-
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if(currentUser != null){
-//            //reload();
-//        }
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         // Find views in the navigation header
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -85,27 +74,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView navHeaderFullName = navigationHeader.findViewById(R.id.tv_fullName);
         TextView navHeaderEmail = navigationHeader.findViewById(R.id.tv_email);
 
-        String UID = Firebase.getCurrentUserOnlineID(mAuth);
+        String UID = FirebaseHandler.getCurrentUserOnlineID(mAuth);
         String imagePath = "Profiles/" + UID;
         StorageReference storageRef = storage.getReference(imagePath);
 
         final long ONE_MEGABYTE = 512 * 512;
-        storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                // Data for "images/island.jpg" is returns, use this as needed
-                Log.i("Firebase", "Successfully retrieved profile image");
-                Drawable profileImage = Utils.byteArrayToDrawable(bytes, getResources());
-                navHeaderInitial.setVisibility(View.GONE);
-                navHeaderImage.setImageDrawable(profileImage);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-                Log.e("Firebase", "Error getting profile image", exception);
+        storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+            // Data for "images/island.jpg" is returns, use this as needed
+            Log.i("Firebase", "Successfully retrieved profile image");
+            Drawable profileImage = Utils.byteArrayToDrawable(bytes, getResources());
+            navHeaderInitial.setVisibility(View.GONE);
+            navHeaderImage.setImageDrawable(profileImage);
+        }).addOnFailureListener(exception -> {
+            // Handle any errors
+            Log.e("Firebase", "Error getting profile image", exception);
 
-            }
         });
 
 //        navHeaderImage.setImageDrawable();

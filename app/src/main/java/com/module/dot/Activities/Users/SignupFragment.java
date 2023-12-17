@@ -7,12 +7,9 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,20 +32,14 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.module.dot.Database.Cloud.Firebase;
+import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.UserDatabase;
-import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -177,7 +168,6 @@ public class SignupFragment extends Fragment {
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             imagePickerLauncher.launch(intent);
-
         });
 
         positionOptions.add("Cashier");
@@ -405,40 +395,6 @@ public class SignupFragment extends Fragment {
     }
 
     private void saveToDatabase() {
-//        String UID = Firebase.getCurrentUserOnlineID(mAuth);
-//
-//        String imagePath = "Profiles/" + UID;
-//
-//        // Get the data from an ImageView as bytes
-//        profileImage.setDrawingCacheEnabled(true);
-//        profileImage.buildDrawingCache();
-//
-////        Bitmap bitmap = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
-////        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-////        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-////        byte[] imageData = baos.toByteArray();
-//
-//        byte[] imageData = Utils.getByteArrayFromDrawable(profileImage.getDrawable());
-//
-//        StorageReference storageReference = storage.getReference(imagePath);
-//        UploadTask uploadTask = storageReference.putBytes(imageData);
-//
-//        uploadTask.addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle unsuccessful uploads
-//                Log.e("Firebase", "Error while uploading image to Firebase Storage", exception);
-//            }
-//        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                Log.i("Firebase", "Image uploaded successfully");
-//                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                // ...
-//            }
-//        });
-
-
         Users newUser = new Users(
                 null, // Profile Image Path
                 String.valueOf(firstName.getText()),
@@ -451,15 +407,13 @@ public class SignupFragment extends Fragment {
                 String.valueOf(password.getText())
         );
 
-        Firebase firebase = new Firebase();
-        firebase.createUser(newUser, profileImage, getContext());
+        FirebaseHandler firebaseHandler = new FirebaseHandler();
+        firebaseHandler.createUser(newUser, profileImage, getContext());
 
         try (UserDatabase myDB = new UserDatabase(getContext())) {
             myDB.createUser(newUser);
         }
     }
-
-
 
 
 }

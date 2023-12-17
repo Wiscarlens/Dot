@@ -8,8 +8,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.SecureRandom;
 
 
@@ -131,6 +135,29 @@ public class Utils {
             e.printStackTrace();
             // Handle any exceptions that may occur during the retrieval
             return null;
+        }
+    }
+
+    private void saveBitmapToInternalStorage(Context context, Bitmap bitmap, String fileName) {
+        try {
+            // Create a directory for your app's images if it doesn't exist
+            File directory = new File(context.getFilesDir(), "Profiles");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Create a file to save the image
+            File file = new File(directory, fileName);
+
+            // Save the Bitmap to the file
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+
+            Log.i("Firebase", "Profile image saved to internal storage: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            Log.e("Firebase", "Error saving profile image to internal storage", e);
         }
     }
 

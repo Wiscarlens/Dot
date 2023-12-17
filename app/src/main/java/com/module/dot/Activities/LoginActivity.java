@@ -18,12 +18,13 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.module.dot.Activities.Users.SignupFragment;
 import com.module.dot.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth;
+    private FirebaseAuth mAuth;
     private TextInputLayout emailLayout;
     private TextInputEditText email;
     private TextInputLayout passwordLayout;
@@ -31,11 +32,23 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null){
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        auth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         TextView loginMessage = findViewById(R.id.loginMessage);
         emailLayout = findViewById(R.id.emailLayout);
@@ -96,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             // Check if email field is empty or format is correct
             if (!userEmail.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
                 if (!userPassword.isEmpty()) {
-                    auth.signInWithEmailAndPassword(userEmail, userPassword)
+                    mAuth.signInWithEmailAndPassword(userEmail, userPassword)
                             .addOnSuccessListener(authResult -> {
                                 Toast.makeText(LoginActivity.this, messages[0], Toast.LENGTH_SHORT).show();
                                 // Open main activity

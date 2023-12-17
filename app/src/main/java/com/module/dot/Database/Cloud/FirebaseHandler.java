@@ -25,7 +25,7 @@ import com.module.dot.Helpers.Utils;
 import java.util.ArrayList;
 
 // TODO: Change class name to something else. There is another class name firebase
-public class Firebase {
+public class FirebaseHandler {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private DatabaseReference mDatabase;
 

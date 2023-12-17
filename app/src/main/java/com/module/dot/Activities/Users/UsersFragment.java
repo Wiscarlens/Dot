@@ -131,7 +131,7 @@ public class UsersFragment extends Fragment {
 
 //        Users currentUser = getCurrentUser(auth);
 
-        Log.i("UserFragment", MainActivity.currentUser.getFirstName());
+//        Log.i("UserFragment", MainActivity.currentUser.getFirstName());
 
 
 
