@@ -36,6 +36,42 @@ public class FirebaseHandler {
         return firebaseUser.getUid();
     }
 
+    // Check if current user is administrator
+    public interface AdminCheckCallback {
+        void onAdminCheckResult(boolean isAdmin);
+    }
+
+    public static void isCurrentUserAdmin(FirebaseAuth mAuth, AdminCheckCallback callback) {
+        String currentUserID = getCurrentUserOnlineID(mAuth);
+        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference("users");
+
+        firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean isAdmin = false;
+
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    Users firebaseUser = userSnapshot.getValue(Users.class);
+
+                    if (firebaseUser != null && firebaseUser.getUserID().equals(currentUserID)) {
+                        if (firebaseUser.getPosition().equals("Administrator")) {
+                            isAdmin = true;
+                        }
+                        break;
+                    }
+                }
+
+                callback.onAdminCheckResult(isAdmin);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseUserDatabase", "Failed to sync user data from Firebase: " + databaseError.getMessage());
+                callback.onAdminCheckResult(false); // Assume not admin in case of error
+            }
+        });
+    }
+
 
     public void createUser(Users newUser, ImageView profileImage, Context context){
         mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword())
@@ -138,25 +174,44 @@ public class FirebaseHandler {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try (UserDatabase userDatabase = new UserDatabase(context)) {
+//                     Check if current user is administrator
+//                    isCurrentUserAdmin(FirebaseAuth.getInstance(), new AdminCheckCallback() {
+//                        @Override
+//                        public void onAdminCheckResult(boolean isAdmin) {
+//                            if (isAdmin) {
+//                                // If the user is an administrator, delete all data from the local database
+//
+//                                // Iterate through Firebase data
+//                                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+//                                    Users firebaseUser = userSnapshot.getValue(Users.class);
+//
+//                                    // Create user in the local database
+//                                    assert firebaseUser != null;
+//                                    userDatabase.createUser(firebaseUser);
+//                                    Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
+//                                }
+//                            } else {
+//                                // TODO: Clean the user table
+//                                //userDatabase.deleteAllData(tableName);
+//                                Log.i("FirebaseHandler", "User is not an administrator.");
+//                            }
+//                        }
+//                    });
+
                     // Iterate through Firebase data
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         Users firebaseUser = userSnapshot.getValue(Users.class);
 
-                        SQLiteDatabase db = userDatabase.getWritableDatabase();
-
-                        // Check if the user with the same email already exists in the local database
-                        assert firebaseUser != null;
-                        if (userDatabase.isEmailExists(db, firebaseUser.getEmail(), tableName, "email")) {
-                            Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " already exists in SQLite.");
-                            continue;  // Skip inserting duplicate users
-                        }
-
                         // Create user in the local database
+                        assert firebaseUser != null;
                         userDatabase.createUser(firebaseUser);
+                        Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
                     }
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e("UserDatabase", "Failed to sync user data from Firebase: " + e.getMessage());
+                    Log.e("FirebaseUserDatabase", "Failed to sync user data from Firebase: " + e.getMessage());
                 }
             }
 

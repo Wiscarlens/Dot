@@ -84,26 +84,6 @@ public class UsersFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        FirebaseHandler.readUser(users_for_display);
-
-//        try (UserDatabase userDatabase = new UserDatabase(getContext())) {
-//            if(!userDatabase.isTableExists("users")){
-//                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
-//                userDatabase.showEmptyStateMessage(recyclerView, noUser);
-//                return;
-//            } else {
-//                if (userDatabase.isTableEmpty("users")) {
-//                    userDatabase.showEmptyStateMessage(recyclerView, noUser);
-//                } else {
-//                    userDatabase.showStateMessage(recyclerView, noUser);
-//                    userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
-//        }
-
         UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
 
         recyclerView.setAdapter(adapter);

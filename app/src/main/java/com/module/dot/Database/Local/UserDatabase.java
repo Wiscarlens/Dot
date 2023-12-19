@@ -88,7 +88,7 @@ public class UserDatabase extends MyDatabaseManager {
             // Check if the email already exists in the database
             if (super.isEmailExists(db, newUsers.getEmail(), NAME_TABLE_USERS, EMAIL_COLUMN_USERS)) {
                 Log.i("MyDatabaseManager", "Email already exists.");
-                Toast.makeText(context, "Email already exists. Please use a different email.", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Email already exists. Please use a different email.", Toast.LENGTH_SHORT).show();
                 return;
             }
 

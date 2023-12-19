@@ -39,6 +39,8 @@ import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
+import java.util.Objects;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -129,6 +131,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    // Check if user is an administrator
+                    if(!Objects.equals(dataSnapshot.child("position").getValue(String.class), "Administrator")){
+                        navigationView.getMenu().findItem(R.id.nav_users).setVisible(false);
+                    }
+
                     if (dataSnapshot.exists()) {
                         currentUser = new Users(
                                 null, // Profile Image Path
@@ -220,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(this, messages + "!", Toast.LENGTH_SHORT).show();
 
                 }).show();
-
 
     }
 
