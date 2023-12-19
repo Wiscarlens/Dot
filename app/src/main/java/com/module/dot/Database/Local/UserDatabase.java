@@ -83,6 +83,8 @@ public class UserDatabase extends MyDatabaseManager {
 
     public void createUser(Users newUsers) throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
+
+            // TODO: This block that check email will be independent from the database
             // Check if the email already exists in the database
             if (super.isEmailExists(db, newUsers.getEmail(), NAME_TABLE_USERS, EMAIL_COLUMN_USERS)) {
                 Log.i("MyDatabaseManager", "Email already exists.");

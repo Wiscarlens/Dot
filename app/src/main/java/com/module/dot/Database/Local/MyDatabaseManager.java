@@ -95,7 +95,7 @@ public abstract class MyDatabaseManager extends SQLiteOpenHelper {
      * @param email The email address to check for existence in the database.
      * @return {@code true} if the email exists in the "users" table, {@code false} otherwise.
      */
-    protected boolean isEmailExists(SQLiteDatabase db, String email, String table_name, String email_column) {
+    public boolean isEmailExists(SQLiteDatabase db, String email, String table_name, String email_column) {
         // Perform a database query to check for the existence of the email
         Cursor cursor = db.query(table_name, new String[]{email_column},
                 email_column + "=?", new String[]{email},

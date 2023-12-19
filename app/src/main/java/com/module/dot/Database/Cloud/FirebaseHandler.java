@@ -1,6 +1,7 @@
 package com.module.dot.Database.Cloud;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -20,11 +21,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Users.Users;
+import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.Utils;
 
 import java.util.ArrayList;
 
-// TODO: Change class name to something else. There is another class name firebase
 public class FirebaseHandler {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private DatabaseReference mDatabase;
@@ -34,12 +35,6 @@ public class FirebaseHandler {
         assert firebaseUser != null;
         return firebaseUser.getUid();
     }
-
-//    private String getNewUserOnlineID() {
-//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-//        assert firebaseUser != null;
-//        return firebaseUser.getUid();
-//    }
 
 
     public void createUser(Users newUser, ImageView profileImage, Context context){
@@ -76,40 +71,34 @@ public class FirebaseHandler {
 
     }
 
-    public void readUser(ArrayList<Users> users_for_display){
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
+    public static void readUser(ArrayList<Users> userList){
+        // Firebase database reference
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
-        if (user != null) {
-            String uid = user.getUid();
+        // Attach a ValueEventListener
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userList.clear(); // Clear the list before populating it again
 
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
-
-            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        Users newUser = new Users(
-                                null, // Profile Image Path
-                                dataSnapshot.child("firstName").getValue(String.class),
-                                dataSnapshot.child("lastName").getValue(String.class),
-                                dataSnapshot.child("position").getValue(String.class)
-                        );
-
-                        String firstName = dataSnapshot.child("email").getValue(String.class);
-
-                        // Now you have the user's first name
-                        assert firstName != null;
-                        Log.d("User's First Name", firstName);
-                    }
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Users user = snapshot.getValue(Users.class);
+                    userList.add(user);
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("Firebase", "Error getting user data", databaseError.toException());
-                }
-            });
-        }
+                Log.i("Firebase", "Data read successfully");
+
+                // Notify the adapter that the data set has changed
+//                usersAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error
+                Log.e("Firebase", "Error: " + databaseError.getMessage());
+            }
+        });
+
     }
 
     public void saveImageToFirebaseStorage(ImageView profileImage, String UID) {
@@ -135,6 +124,45 @@ public class FirebaseHandler {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.i("Firebase", "Image uploaded successfully");
+            }
+        });
+    }
+
+
+    // Synchronize user data from Firebase to SQLite
+    public static void syncUserDataFromFirebase(Context context, String tableName){
+        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
+
+        // Fetch data from Firebase
+        firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try (UserDatabase userDatabase = new UserDatabase(context)) {
+                    // Iterate through Firebase data
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        Users firebaseUser = userSnapshot.getValue(Users.class);
+
+                        SQLiteDatabase db = userDatabase.getWritableDatabase();
+
+                        // Check if the user with the same email already exists in the local database
+                        assert firebaseUser != null;
+                        if (userDatabase.isEmailExists(db, firebaseUser.getEmail(), tableName, "email")) {
+                            Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " already exists in SQLite.");
+                            continue;  // Skip inserting duplicate users
+                        }
+
+                        // Create user in the local database
+                        userDatabase.createUser(firebaseUser);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("UserDatabase", "Failed to sync user data from Firebase: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("UserDatabase", "Firebase data fetch cancelled: " + databaseError.getMessage());
             }
         });
     }
