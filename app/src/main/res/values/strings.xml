@@ -145,5 +145,6 @@
     <string name="address">Address</string>
     <string name="default_initial">J</string>
     <string name="image_header">Image Header</string>
+    <string name="company_name">Company Name</string>
 
 </resources>

@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         });
 
+        // TODO: set navigation header here
 //        navHeaderImage.setImageDrawable();
 
 //        navHeaderFullName.setText("fullName");
@@ -145,9 +146,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         );
 
                         // TODO: will be a above on a separate module
-                        // Set the navigation header
-                        String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+                        // Company Name
+                        toolbar.setTitle(dataSnapshot.child("companyName").getValue(String.class));
 
+                        // Set the navigation header information
+                        String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
                         navHeaderFullName.setText(fullName);
                         navHeaderInitial.setText(currentUser.getFirstName());
                         navHeaderEmail.setText(dataSnapshot.child("email").getValue(String.class));

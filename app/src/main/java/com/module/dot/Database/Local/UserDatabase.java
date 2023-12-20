@@ -33,6 +33,7 @@ public class UserDatabase extends MyDatabaseManager {
     private static final String STATE_COLUMN_USERS = "state";
     private static final String ZIP_CODE_COLUMN_USERS = "zip_code";
     private static final String PROFILE_PICTURE_COLUMN_USERS = "profile_picture";
+    private static final String POSITION_COLUMN_USERS = "company_name";
     private static final String POSITION_TITLE_COLUMN_USERS = "position_title"; // TODO: Foreign key to a future table call position title
     private static final String PASSWORD_HASH_COLUMN_USERS = "password_hash";
     private static final String DATE_REGISTERED_COLUMN_USERS = "date_registered";
@@ -71,6 +72,7 @@ public class UserDatabase extends MyDatabaseManager {
                 STATE_COLUMN_USERS + " TEXT, " +
                 ZIP_CODE_COLUMN_USERS + " TEXT, " +
                 PROFILE_PICTURE_COLUMN_USERS + " BLOB, " +
+                POSITION_COLUMN_USERS + " TEXT," +
                 POSITION_TITLE_COLUMN_USERS + " TEXT, " +
                 PASSWORD_HASH_COLUMN_USERS + " TEXT NOT NULL, " +
                 DATE_REGISTERED_COLUMN_USERS + " TIME DEFAULT CURRENT_TIMESTAMP);";

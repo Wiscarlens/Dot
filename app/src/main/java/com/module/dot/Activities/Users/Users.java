@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable;
 public class Users {
     private String profileImagePath;
     private String userID;
+    private String adminID;
     private String firstName;
     private String lastName;
     private String dateOfBirth;
     private String email;
     private String phoneNumber;
     private String address;
+    private String companyName;
     private String position;
     private String password;
     private String dateRegistered;
@@ -29,7 +31,7 @@ public class Users {
 
     // Constructor for the User class.
     public Users(String profileImagePath, String firstName, String lastName, String dateOfBirth,
-                 String email, String phoneNumber, String address,
+                 String email, String phoneNumber, String address, String companyName,
                  String position, String password_hash) {
         this.profileImagePath = profileImagePath;
         this.firstName = firstName;
@@ -38,6 +40,7 @@ public class Users {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.companyName = companyName;
         this.position = position;
         this.password = password_hash;
     }
@@ -53,6 +56,14 @@ public class Users {
 
     public String getUserID() {
         return userID;
+    }
+
+    public String getAdminID() {
+        return adminID;
+    }
+
+    public void setAdminID(String adminID) {
+        this.adminID = adminID;
     }
 
     public String getFirstName() {
@@ -77,6 +88,14 @@ public class Users {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getPosition() {

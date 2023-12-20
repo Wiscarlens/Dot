@@ -73,8 +73,9 @@ public class SignupFragment extends Fragment {
     private TextInputEditText phoneNumber;
     private TextInputEditText address;
 
-    // Declare Form part two field
+    // Declare Form part three field
     private ImageView profileImage;
+    private TextInputEditText companyName;
     private Spinner position;
     private TextInputEditText password;
 
@@ -138,6 +139,7 @@ public class SignupFragment extends Fragment {
 
         // Step three form field
         profileImage = stepThreeLayout.findViewById(R.id.newProfileImage);
+        companyName = stepThreeLayout.findViewById(R.id.signupCompanyNameText);
         position = stepThreeLayout.findViewById(R.id.signupPositionText);
         password = stepThreeLayout.findViewById(R.id.signupPasswordText);
         TextInputLayout passwordLayout = stepThreeLayout.findViewById(R.id.signupPasswordLayout);
@@ -170,9 +172,10 @@ public class SignupFragment extends Fragment {
             imagePickerLauncher.launch(intent);
         });
 
-        positionOptions.add("Cashier");
-        positionOptions.add("Manager");
         positionOptions.add("Administrator");
+        positionOptions.add("Manager");
+        positionOptions.add("Cashier");
+
 
         ArrayAdapter<String> positionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, positionOptions);
         positionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -403,6 +406,7 @@ public class SignupFragment extends Fragment {
                 String.valueOf(email.getText()),
                 String.valueOf(phoneNumber.getText()),
                 String.valueOf(address.getText()),
+                String.valueOf(companyName.getText()),
                 String.valueOf(position.getSelectedItem()),
                 String.valueOf(password.getText())
         );

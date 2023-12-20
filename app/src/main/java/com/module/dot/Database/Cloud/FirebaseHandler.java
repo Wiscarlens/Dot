@@ -1,7 +1,6 @@
 package com.module.dot.Database.Cloud;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -25,6 +24,7 @@ import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.Utils;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FirebaseHandler {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -77,11 +77,10 @@ public class FirebaseHandler {
         mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        // Get the user ID
                         try {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             assert firebaseUser != null;
-                            String UID = firebaseUser.getUid();
+                            String UID = firebaseUser.getUid(); // Get the user ID
 
                             mDatabase = FirebaseDatabase.getInstance().getReference();
                             saveImageToFirebaseStorage(profileImage, UID);
@@ -174,38 +173,19 @@ public class FirebaseHandler {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try (UserDatabase userDatabase = new UserDatabase(context)) {
-//                     Check if current user is administrator
-//                    isCurrentUserAdmin(FirebaseAuth.getInstance(), new AdminCheckCallback() {
-//                        @Override
-//                        public void onAdminCheckResult(boolean isAdmin) {
-//                            if (isAdmin) {
-//                                // If the user is an administrator, delete all data from the local database
-//
-//                                // Iterate through Firebase data
-//                                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-//                                    Users firebaseUser = userSnapshot.getValue(Users.class);
-//
-//                                    // Create user in the local database
-//                                    assert firebaseUser != null;
-//                                    userDatabase.createUser(firebaseUser);
-//                                    Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
-//                                }
-//                            } else {
-//                                // TODO: Clean the user table
-//                                //userDatabase.deleteAllData(tableName);
-//                                Log.i("FirebaseHandler", "User is not an administrator.");
-//                            }
-//                        }
-//                    });
-
                     // Iterate through Firebase data
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         Users firebaseUser = userSnapshot.getValue(Users.class);
 
                         // Create user in the local database
                         assert firebaseUser != null;
-                        userDatabase.createUser(firebaseUser);
-                        Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
+
+                        // Do not show current user in the list
+                        if (!Objects.equals(firebaseUser.getUserID(), getCurrentUserOnlineID(FirebaseAuth.getInstance()))) {
+                            userDatabase.createUser(firebaseUser);
+                            Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
+                        }
+
                     }
 
 

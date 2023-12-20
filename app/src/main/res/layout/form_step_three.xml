@@ -19,6 +19,30 @@
         android:layout_gravity="center"
         android:contentDescription="@string/new_user_profile" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signupCompanyNameLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/company_name"
+        app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="@color/white"
+        app:endIconMode="clear_text"
+        app:helperText="@string/required"
+        app:helperTextTextColor="@color/red"
+        app:helperTextEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signupCompanyNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:inputType="textPersonName"
+            android:textColor="@color/black"
+            android:textColorHint="#757575" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Spinner
         android:id="@+id/signupPositionText"
         style="@style/Widget.AppCompat.Spinner.DropDown"
@@ -29,7 +53,8 @@
         android:gravity="start|center_vertical"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:textColor="@color/gray" />
+        android:textColor="@color/gray"
+        android:visibility="gone"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signupPasswordLayout"
