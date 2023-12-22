@@ -54,7 +54,7 @@ public class FirebaseHandler {
                     Users firebaseUser = userSnapshot.getValue(Users.class);
 
                     if (firebaseUser != null && firebaseUser.getUserID().equals(currentUserID)) {
-                        if (firebaseUser.getPosition().equals("Administrator")) {
+                        if (firebaseUser.getPositionTitle().equals("Administrator")) {
                             isAdmin = true;
                         }
                         break;
@@ -179,6 +179,8 @@ public class FirebaseHandler {
 
                         // Create user in the local database
                         assert firebaseUser != null;
+
+                        Log.d("FirebaseUserDatabase", "User: " + firebaseUser.toString());
 
                         // Do not show current user in the list
                         if (!Objects.equals(firebaseUser.getUserID(), getCurrentUserOnlineID(FirebaseAuth.getInstance()))) {

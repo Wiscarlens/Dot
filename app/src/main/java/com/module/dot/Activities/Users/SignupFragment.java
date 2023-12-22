@@ -413,10 +413,6 @@ public class SignupFragment extends Fragment {
 
         FirebaseHandler firebaseHandler = new FirebaseHandler();
         firebaseHandler.createUser(newUser, profileImage, getContext());
-
-        try (UserDatabase myDB = new UserDatabase(getContext())) {
-            myDB.createUser(newUser);
-        }
     }
 
 

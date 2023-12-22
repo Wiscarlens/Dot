@@ -6,10 +6,10 @@ package com.module.dot.Activities.Users;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,9 +61,9 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
 
         holder.fullNameTextView.setText(users_for_display.get(position).getFullName());
-        holder.positionTextView.setText(users_for_display.get(position).getPosition());
+        holder.positionTextView.setText(users_for_display.get(position).getPositionTitle());
 
-        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + users_for_display.get(position).getFullName(), Toast.LENGTH_SHORT).show());
+        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + users_for_display.get(position).getPositionTitle(), Toast.LENGTH_SHORT).show());
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {

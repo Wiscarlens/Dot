@@ -84,7 +84,7 @@ public class UsersFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+//        FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
 
         UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
 

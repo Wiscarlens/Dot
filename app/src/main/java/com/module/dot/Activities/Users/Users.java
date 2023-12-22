@@ -1,6 +1,6 @@
 package com.module.dot.Activities.Users;
 
-import android.graphics.drawable.Drawable;
+import androidx.annotation.NonNull;
 
 public class Users {
     private String profileImagePath;
@@ -13,7 +13,7 @@ public class Users {
     private String phoneNumber;
     private String address;
     private String companyName;
-    private String position;
+    private String positionTitle;
     private String password;
     private String dateRegistered;
 
@@ -22,17 +22,17 @@ public class Users {
     }
 
     // Constructor for showing the user's profile.
-    public Users(String profileImagePath, String firstName, String lastName, String position) {
+    public Users(String profileImagePath, String firstName, String lastName, String positionTitle) {
         this.profileImagePath = profileImagePath;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.position = position;
+        this.positionTitle = positionTitle;
     }
 
     // Constructor for the User class.
     public Users(String profileImagePath, String firstName, String lastName, String dateOfBirth,
                  String email, String phoneNumber, String address, String companyName,
-                 String position, String password_hash) {
+                 String positionTitle, String password_hash) {
         this.profileImagePath = profileImagePath;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,7 +41,7 @@ public class Users {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.companyName = companyName;
-        this.position = position;
+        this.positionTitle = positionTitle;
         this.password = password_hash;
     }
 
@@ -49,13 +49,20 @@ public class Users {
         return firstName + " " + lastName;
     }
 
-
     public String getProfileImagePath() {
         return profileImagePath;
     }
 
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
+    }
+
     public String getUserID() {
         return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getAdminID() {
@@ -70,24 +77,48 @@ public class Users {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getDateOfBirth() {
         return dateOfBirth;
     }
 
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getAddress() {
         return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCompanyName() {
@@ -98,59 +129,47 @@ public class Users {
         this.companyName = companyName;
     }
 
-    public String getPosition() {
-        return position;
+    public String getPositionTitle() {
+        return positionTitle;
+    }
+
+    public void setPositionTitle(String positionTitle) {
+        this.positionTitle = positionTitle;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public String getDateRegistered() {
-        return dateRegistered;
-    }
-
-    public void setProfileImagePath(String profileImagePath) {
-        this.profileImagePath = profileImagePath;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
+    public String getDateRegistered() {
+        return dateRegistered;
+    }
+
     public void setDateRegistered(String dateRegistered) {
         this.dateRegistered = dateRegistered;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Users{" +
+                "profileImagePath='" + profileImagePath + '\'' +
+                ", userID='" + userID + '\'' +
+                ", adminID='" + adminID + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", companyName='" + companyName + '\'' +
+                ", positionTitle='" + positionTitle + '\'' +
+                ", password='" + password + '\'' +
+                ", dateRegistered='" + dateRegistered + '\'' +
+                '}';
     }
 }

@@ -7,14 +7,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.module.dot.Activities.Users.Users;
-import com.module.dot.Helpers.Utils;
 
 import java.util.ArrayList;
 
@@ -64,14 +62,14 @@ public class UserDatabase extends MyDatabaseManager {
                 FIRST_NAME_COLUMN_USERS + " TEXT NOT NULL, " +
                 LAST_NAME_COLUMN_USERS + " TEXT NOT NULL, " +
                 DOB_COLUMN_USERS + " DATE, " +
-                GENDER_COLUMN_USERS + " TEXT, " +
+                GENDER_COLUMN_USERS + " TEXT, " + // TODO: Delete this column
                 EMAIL_COLUMN_USERS + " TEXT NOT NULL UNIQUE, " +
                 PHONE_NUMBER_COLUMN_USERS + " TEXT, " +
                 ADDRESS_COLUMN_USERS + " TEXT, " +
-                CITY_COLUMN_USERS + " TEXT, " +
-                STATE_COLUMN_USERS + " TEXT, " +
-                ZIP_CODE_COLUMN_USERS + " TEXT, " +
-                PROFILE_PICTURE_COLUMN_USERS + " BLOB, " +
+                CITY_COLUMN_USERS + " TEXT, " + // TODO: Delete this column
+                STATE_COLUMN_USERS + " TEXT, " + // TODO: Delete this column
+                ZIP_CODE_COLUMN_USERS + " TEXT, " + // TODO: Delete this column
+                PROFILE_PICTURE_COLUMN_USERS + " BLOB, " + // TODO: Change to TEXT
                 POSITION_COLUMN_USERS + " TEXT," +
                 POSITION_TITLE_COLUMN_USERS + " TEXT, " +
                 PASSWORD_HASH_COLUMN_USERS + " TEXT NOT NULL, " +
@@ -103,7 +101,7 @@ public class UserDatabase extends MyDatabaseManager {
             cv.put(PHONE_NUMBER_COLUMN_USERS, newUsers.getPhoneNumber());
             cv.put(ADDRESS_COLUMN_USERS, newUsers.getAddress());
 //            cv.put(PROFILE_PICTURE_COLUMN_USERS, Utils.getByteArrayFromDrawable(newUsers.getProfileImagePath()));
-            cv.put(POSITION_TITLE_COLUMN_USERS, newUsers.getPosition());
+            cv.put(POSITION_TITLE_COLUMN_USERS, newUsers.getPositionTitle());
             cv.put(PASSWORD_HASH_COLUMN_USERS, hashPassword(newUsers.getPassword()));
 
             long result = db.insertOrThrow(NAME_TABLE_USERS, null, cv);
@@ -136,6 +134,8 @@ public class UserDatabase extends MyDatabaseManager {
                     cursor.getString(2),
                     cursor.getString(12)
             );
+
+            Log.d("UserDatabaseTest", newUser.toString());
 
             users_for_display.add(newUser);
         }
