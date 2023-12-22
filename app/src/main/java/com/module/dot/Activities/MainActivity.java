@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     // Check if user is an administrator
-                    if(!Objects.equals(dataSnapshot.child("position").getValue(String.class), "Administrator")){
+                    if(!Objects.equals(dataSnapshot.child("positionTitle").getValue(String.class), "Administrator")){
                         navigationView.getMenu().findItem(R.id.nav_users).setVisible(false);
                     }
 

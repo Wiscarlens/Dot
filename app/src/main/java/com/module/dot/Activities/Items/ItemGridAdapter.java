@@ -49,7 +49,7 @@ public class ItemGridAdapter extends BaseAdapter {
         ItemNameTextView.setText(items.get(position).getName());
         priceTextView.setText(LocalFormat.getCurrencyFormat(items.get(position).getPrice()));
         unitTypeTextView.setText((items.get(position).getUnitType()));
-        backgroundColor.setBackgroundColor((items.get(position).getBackgroundColor()));
+        backgroundColor.setBackgroundColor(0); // TDO: Set the background color
 
         return view;
     }

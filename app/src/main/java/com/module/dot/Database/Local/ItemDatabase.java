@@ -129,12 +129,10 @@ public class ItemDatabase extends MyDatabaseManager {
             Item item = new Item(
                     cursor.getLong(0),      // id
                     cursor.getString(2),    // name
-                    itemImageDrawable,                 // imageData
+                    itemImageDrawable,         // imageData
                     cursor.getDouble(3),    // price
                     cursor.getString(5),    // SKU
-                    cursor.getString(6),    // unitType
-                    // TODO: Default Background Color
-                    R.color.white                      // backgroundColor
+                    cursor.getString(6)     // unitType
             );
 
             item_for_display.add(item); // Add the item to the ArrayList

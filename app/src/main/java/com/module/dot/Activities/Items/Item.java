@@ -9,22 +9,21 @@ import android.graphics.drawable.Drawable;
 public class Item {
     private Drawable image;
     private final String name;
-    private final Double price;
+    private final double price;
     private String category;
     private String sku;
     private String unitType;
-    private Integer stock;
-    private Double wholesalePrice;
+    private int stock;
+    private double wholesalePrice;
     private double tax;
     private String description;
 
-    private Long id;
-    private Integer frequency = 1;
-    private  Integer backgroundColor;
+    private long id;
+    private int frequency = 1;
 
     // Use for add item to database
-    public Item(Drawable image, String name, Double price, String category, String sku,
-                String unitType, Integer stock, Double wholesalePrice, double tax,
+    public Item(Drawable image, String name, double price, String category, String sku,
+                String unitType, int stock, double wholesalePrice, double tax,
                 String description) {
         this.image = image;
         this.name = name;
@@ -39,18 +38,17 @@ public class Item {
     }
 
     // Use for display item in the gridview
-    public Item(Long id, String name, Drawable image, Double price, String SKU, String unitType, Integer backgroundColor) {
+    public Item(long id, String name, Drawable image, double price, String SKU, String unitType) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.price = price;
         this.sku = SKU;
         this.unitType = unitType;
-        this.backgroundColor = backgroundColor;
     }
 
     // Selected Item
-    public Item(Long id, String name, Double price, String SKU, Integer frequency) {
+    public Item(long id, String name, double price, String SKU, int frequency) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -67,59 +65,92 @@ public class Item {
         this.frequency = frequency;
     }
 
-    public void setFrequency(Integer frequency) {
-        this.frequency = frequency;
+    public Drawable getImage() {
+        return image;
+    }
+
+    public void setImage(Drawable image) {
+        this.image = image;
     }
 
     public String getName() {
         return name;
     }
 
-    public Integer getFrequency() {
-        return frequency;
-    }
-
-    public Double getPrice() {
+    public double getPrice() {
         return price;
-    }
-
-    public Drawable getImage() {
-        return image;
     }
 
     public String getCategory() {
         return category;
     }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public String getSku() {
         return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     public String getUnitType() {
         return unitType;
     }
 
-    public Integer getStock() {
+    public void setUnitType(String unitType) {
+        this.unitType = unitType;
+    }
+
+    public int getStock() {
         return stock;
     }
 
-    public Double getWholesalePrice() {
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public double getWholesalePrice() {
         return wholesalePrice;
+    }
+
+    public void setWholesalePrice(double wholesalePrice) {
+        this.wholesalePrice = wholesalePrice;
     }
 
     public double getTax() {
         return tax;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public Integer getBackgroundColor() {
-        return backgroundColor;
+    public void setTax(double tax) {
+        this.tax = tax;
     }
 
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
 }

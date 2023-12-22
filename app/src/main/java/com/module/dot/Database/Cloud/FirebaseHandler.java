@@ -106,6 +106,41 @@ public class FirebaseHandler {
 
     }
 
+    public void createItem (Users newUser, ImageView itemImage, Context context){
+        mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        try {
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            assert firebaseUser != null;
+                            String UID = firebaseUser.getUid(); // Get the user ID
+
+                            mDatabase = FirebaseDatabase.getInstance().getReference();
+                            saveImageToFirebaseStorage(itemImage, UID);
+                            newUser.setProfileImagePath(UID);
+                            mDatabase.child("items").child(UID).setValue(newUser);
+
+                        } catch (Exception e) {
+                            Log.e("Firebase", "Error while adding user to online database", e);
+                        }
+
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d("Firebase", "createUserWithEmail:success");
+                        Toast.makeText(context, "Account created!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w("Firebase", "createUserWithEmail:failure", task.getException());
+                        // Inside your Fragment class
+                        Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+    }
+
+
+
     public static void readUser(ArrayList<Users> userList){
         // Firebase database reference
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
@@ -165,7 +200,7 @@ public class FirebaseHandler {
 
 
     // Synchronize user data from Firebase to SQLite
-    public static void syncUserDataFromFirebase(Context context, String tableName){
+    public static void syncUserDataFromFirebase(Context context, String tableName, Runnable onComplete){
         DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Fetch data from Firebase
@@ -180,7 +215,9 @@ public class FirebaseHandler {
                         // Create user in the local database
                         assert firebaseUser != null;
 
-                        Log.d("FirebaseUserDatabase", "User: " + firebaseUser.toString());
+                        // Check if positionTitle is being correctly fetched
+                        Log.d("FirebaseUserDatabase", "User positionTitle: " + firebaseUser.getPositionTitle());
+
 
                         // Do not show current user in the list
                         if (!Objects.equals(firebaseUser.getUserID(), getCurrentUserOnlineID(FirebaseAuth.getInstance()))) {
@@ -190,6 +227,8 @@ public class FirebaseHandler {
 
                     }
 
+                    // Trigger the callback
+                    onComplete.run();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -197,10 +236,14 @@ public class FirebaseHandler {
                 }
             }
 
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("UserDatabase", "Firebase data fetch cancelled: " + databaseError.getMessage());
             }
+
+
         });
     }
 

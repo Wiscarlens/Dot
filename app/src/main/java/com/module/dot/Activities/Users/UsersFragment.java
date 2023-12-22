@@ -43,17 +43,28 @@ public class UsersFragment extends Fragment {
                 userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
                 userDatabase.showEmptyStateMessage(recyclerView, noUser);
 
-                FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+                //FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
 
             } else {
-                FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+                // FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+                FirebaseHandler.syncUserDataFromFirebase(getContext(), "users", new Runnable() {
+                    @Override
+                    public void run() {
+                        if (userDatabase.isTableEmpty("users")) {
+                            userDatabase.showEmptyStateMessage(recyclerView, noUser);
+                        } else {
+                            userDatabase.showStateMessage(recyclerView, noUser);
+                            userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
 
-                if (userDatabase.isTableEmpty("users")) {
-                    userDatabase.showEmptyStateMessage(recyclerView, noUser);
-                } else {
-                    userDatabase.showStateMessage(recyclerView, noUser);
-                    userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
-                }
+                            // Update the RecyclerView after the data fetch is complete
+                            UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
+                            recyclerView.setAdapter(adapter);
+
+                        }
+
+                    }
+                });
+
             }
 
         } catch (Exception e) {
