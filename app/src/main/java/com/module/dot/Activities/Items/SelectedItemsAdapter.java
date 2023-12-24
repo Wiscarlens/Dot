@@ -37,7 +37,7 @@ public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdap
 
     @Override
     public void onBindViewHolder(@NonNull DesignViewHolder holder, int position) {
-        holder.selectedItem_ImageView.setImageDrawable(selectedItems.get(position).getImage());
+        holder.selectedItem_ImageView.setImageDrawable(selectedItems.get(position).getImagePath());
     }
 
     @Override

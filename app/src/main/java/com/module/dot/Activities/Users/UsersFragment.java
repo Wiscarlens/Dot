@@ -29,6 +29,7 @@ import java.util.Objects;
 public class UsersFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     FirebaseAuth auth;
+    private UserDatabase userDatabase;
 
     private LinearLayout noUser;
     private RecyclerView recyclerView;
@@ -38,33 +39,23 @@ public class UsersFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        try (UserDatabase userDatabase = new UserDatabase(getContext())) {
-            if(!userDatabase.isTableExists("users")){
-                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
+        try {
+            if (userDatabase.isTableEmpty("users")) {
                 userDatabase.showEmptyStateMessage(recyclerView, noUser);
-
-                //FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
-
             } else {
-                // FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
-                FirebaseHandler.syncUserDataFromFirebase(getContext(), "users", new Runnable() {
-                    @Override
-                    public void run() {
-                        if (userDatabase.isTableEmpty("users")) {
-                            userDatabase.showEmptyStateMessage(recyclerView, noUser);
-                        } else {
-                            userDatabase.showStateMessage(recyclerView, noUser);
-                            userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
+                userDatabase.showStateMessage(recyclerView, noUser);
+                users_for_display.clear(); // Clear the list before updating it
 
-                            // Update the RecyclerView after the data fetch is complete
-                            UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
-                            recyclerView.setAdapter(adapter);
 
-                        }
 
-                    }
-                });
 
+                userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
+
+                // Update the RecyclerView after the data fetch is complete
+                Log.d("UserFragmentTest", "onStart: " + users_for_display.get(0).getPositionTitle());
+
+                UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
+                recyclerView.setAdapter(adapter);
             }
 
         } catch (Exception e) {
@@ -88,6 +79,7 @@ public class UsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         auth = FirebaseAuth.getInstance();
+        userDatabase = new UserDatabase(getContext());
 
         noUser = view.findViewById(R.id.noUserFragmentLL); // When users Database is empty
         recyclerView = view.findViewById(R.id.userList);
@@ -95,11 +87,37 @@ public class UsersFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+        // Save Image Locally
 
-        UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
 
-        recyclerView.setAdapter(adapter);
+
+        if(!userDatabase.isTableExists("users")){
+            userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
+//            userDatabase.showEmptyStateMessage(recyclerView, noUser);
+
+            FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+
+        } else {
+            // TODO: just use firebase only
+            FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+
+        }
+
+
+
+//        if (userDatabase.isTableEmpty("users")) {
+//            userDatabase.showEmptyStateMessage(recyclerView, noUser);
+//        } else {
+//            userDatabase.showStateMessage(recyclerView, noUser);
+//            users_for_display.clear(); // Clear the list before updating it
+//            userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
+//
+//            // Update the RecyclerView after the data fetch is complete
+//            Log.d("UserFragmentTest", "onStart: " + users_for_display.get(0).getPositionTitle());
+//        }
+
+//        UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
+//        recyclerView.setAdapter(adapter);
 
         // Create new user button
         addUser.setOnClickListener(view1 -> {

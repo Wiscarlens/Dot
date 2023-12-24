@@ -150,8 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         toolbar.setTitle(dataSnapshot.child("companyName").getValue(String.class));
 
                         // Set the navigation header information
-                        String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
-                        navHeaderFullName.setText(fullName);
+                        navHeaderFullName.setText(dataSnapshot.child("fullName").getValue(String.class));
                         navHeaderInitial.setText(currentUser.getFirstName());
                         navHeaderEmail.setText(dataSnapshot.child("email").getValue(String.class));
                     }

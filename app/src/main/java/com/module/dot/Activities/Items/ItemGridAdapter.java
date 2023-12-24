@@ -45,7 +45,7 @@ public class ItemGridAdapter extends BaseAdapter {
         TextView unitTypeTextView = view.findViewById(R.id.itemUnitTypeHolderDesign);
         CardView backgroundColor = view.findViewById(R.id.ItemBackgroundColor);
 
-        ItemImageView.setImageDrawable(items.get(position).getImage()); // Set the Drawable object
+        ItemImageView.setImageDrawable(items.get(position).getImagePath()); // Set the Drawable object
         ItemNameTextView.setText(items.get(position).getName());
         priceTextView.setText(LocalFormat.getCurrencyFormat(items.get(position).getPrice()));
         unitTypeTextView.setText((items.get(position).getUnitType()));

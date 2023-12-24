@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.Users.Users;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.Utils;
@@ -53,7 +54,7 @@ public class FirebaseHandler {
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     Users firebaseUser = userSnapshot.getValue(Users.class);
 
-                    if (firebaseUser != null && firebaseUser.getUserID().equals(currentUserID)) {
+                    if (firebaseUser != null && firebaseUser.getLocalID().equals(currentUserID)) {
                         if (firebaseUser.getPositionTitle().equals("Administrator")) {
                             isAdmin = true;
                         }
@@ -74,7 +75,7 @@ public class FirebaseHandler {
 
 
     public void createUser(Users newUser, ImageView profileImage, Context context){
-        mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword())
+        mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword_hash())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         try {
@@ -106,36 +107,30 @@ public class FirebaseHandler {
 
     }
 
-    public void createItem (Users newUser, ImageView itemImage, Context context){
-        mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword())
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        try {
-                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            assert firebaseUser != null;
-                            String UID = firebaseUser.getUid(); // Get the user ID
+    public void createItem (Item newItem, ImageView itemImage, Context context){
+        try {
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            assert firebaseUser != null;
+            String UID = firebaseUser.getUid(); // Get the user ID
 
-                            mDatabase = FirebaseDatabase.getInstance().getReference();
-                            saveImageToFirebaseStorage(itemImage, UID);
-                            newUser.setProfileImagePath(UID);
-                            mDatabase.child("items").child(UID).setValue(newUser);
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            saveImageToFirebaseStorage(itemImage, UID);
+//            newItem.setProfileImagePath(UID); // TODO: Add image path to item
+            mDatabase.child("items").child(newItem.getName()).setValue(newItem);
 
-                        } catch (Exception e) {
-                            Log.e("Firebase", "Error while adding user to online database", e);
-                        }
-
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("Firebase", "createUserWithEmail:success");
-                        Toast.makeText(context, "Account created!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w("Firebase", "createUserWithEmail:failure", task.getException());
-                        // Inside your Fragment class
-                        Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        } catch (Exception e) {
+            Log.e("Firebase", "Error while adding user to online database", e);
+        }
 
 
+//        FirebaseDatabase.getInstance().getReference("Item").child(Name)
+//                .setValue(newItemData).addOnCompleteListener(task -> {
+//                    if(task.isSuccessful()){
+//                        String message = getResources().getString(R.string.save);
+//                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+//                    }
+//                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
+//    }
 
     }
 
@@ -200,7 +195,7 @@ public class FirebaseHandler {
 
 
     // Synchronize user data from Firebase to SQLite
-    public static void syncUserDataFromFirebase(Context context, String tableName, Runnable onComplete){
+    public static void syncUserDataFromFirebase(Context context, String tableName){
         DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Fetch data from Firebase
@@ -220,15 +215,12 @@ public class FirebaseHandler {
 
 
                         // Do not show current user in the list
-                        if (!Objects.equals(firebaseUser.getUserID(), getCurrentUserOnlineID(FirebaseAuth.getInstance()))) {
+                        if (!Objects.equals(firebaseUser.getLocalID(), getCurrentUserOnlineID(FirebaseAuth.getInstance()))) {
                             userDatabase.createUser(firebaseUser);
-                            Log.i("UserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
+                            Log.i("FirebaseUserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
                         }
 
                     }
-
-                    // Trigger the callback
-                    onComplete.run();
 
                 } catch (Exception e) {
                     e.printStackTrace();

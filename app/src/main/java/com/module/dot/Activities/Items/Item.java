@@ -7,7 +7,7 @@ package com.module.dot.Activities.Items;
 import android.graphics.drawable.Drawable;
 
 public class Item {
-    private Drawable image;
+    private Drawable imagePath;
     private final String name;
     private final double price;
     private String category;
@@ -22,10 +22,10 @@ public class Item {
     private int frequency = 1;
 
     // Use for add item to database
-    public Item(Drawable image, String name, double price, String category, String sku,
+    public Item(Drawable imagePath, String name, double price, String category, String sku,
                 String unitType, int stock, double wholesalePrice, double tax,
                 String description) {
-        this.image = image;
+        this.imagePath = imagePath;
         this.name = name;
         this.price = price;
         this.category = category;
@@ -38,10 +38,10 @@ public class Item {
     }
 
     // Use for display item in the gridview
-    public Item(long id, String name, Drawable image, double price, String SKU, String unitType) {
+    public Item(long id, String name, Drawable imagePath, double price, String SKU, String unitType) {
         this.id = id;
         this.name = name;
-        this.image = image;
+        this.imagePath = imagePath;
         this.price = price;
         this.sku = SKU;
         this.unitType = unitType;
@@ -57,20 +57,20 @@ public class Item {
     }
 
     // Use for display order item
-    public Item(Long id, Drawable image, String name, Double price, Integer frequency) {
+    public Item(Long id, Drawable imagePath, String name, Double price, Integer frequency) {
         this.id = id;
-        this.image = image;
+        this.imagePath = imagePath;
         this.name = name;
         this.price = price;
         this.frequency = frequency;
     }
 
-    public Drawable getImage() {
-        return image;
+    public Drawable getImagePath() {
+        return imagePath;
     }
 
-    public void setImage(Drawable image) {
-        this.image = image;
+    public void setImagePath(Drawable imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getName() {

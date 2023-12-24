@@ -14,9 +14,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
@@ -27,6 +35,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder> {
     private final ArrayList<Users> users_for_display;
     private final Context context;
+
+    FirebaseStorage storage = FirebaseStorage.getInstance(); // TODO: Testing purpose
 
     public UserRecyclerAdapter(ArrayList<Users> users_for_display, Context context) {
         this.users_for_display = users_for_display;
@@ -47,6 +57,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
 
+        Log.d("Test", "onBindViewHolder: " + users_for_display.get(position).getProfileImagePath());
+
         if (users_for_display.get(position).getProfileImagePath() == null) {
             holder.initial.setVisibility(View.VISIBLE);
             holder.initial.setText(users_for_display.get(position).getFirstName().substring(0, 1));
@@ -62,6 +74,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
         holder.fullNameTextView.setText(users_for_display.get(position).getFullName());
         holder.positionTextView.setText(users_for_display.get(position).getPositionTitle());
+
+        Log.d("UserRecyclerAdapter", "onBindViewHolder: " + users_for_display.get(position).getPositionTitle());
 
         holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + users_for_display.get(position).getPositionTitle(), Toast.LENGTH_SHORT).show());
     }

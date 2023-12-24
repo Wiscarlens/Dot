@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Helpers.Utils;
-import com.module.dot.R;
 
 import java.util.ArrayList;
 
@@ -78,13 +77,13 @@ public class ItemDatabase extends MyDatabaseManager {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues cv = new ContentValues();
 
-            if (newItem.getImage() == null) {
+            if (newItem.getImagePath() == null) {
                 // Handle the case where the conversion fails
                 Log.e("MyDatabaseManager", "Failed to convert image to byte array");
                 throw new SQLiteException("Failed to convert image to byte array");
             } else {
                 // Convert the selected image to a byte array (Blob)
-                cv.put(IMAGE_COLUMN_ITEMS, Utils.getByteArrayFromDrawable(newItem.getImage()));
+                cv.put(IMAGE_COLUMN_ITEMS, Utils.getByteArrayFromDrawable(newItem.getImagePath()));
             }
 
             cv.put(NAME_COLUMN_ITEMS, newItem.getName());
