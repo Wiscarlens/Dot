@@ -23,10 +23,15 @@ public class Users {
     }
 
     // Constructor for showing the user's profile.
-    public Users(String firstName, String lastName, String positionTitle, String profileImagePath) {
+    public Users(String globalID, String creatorID, String firstName, String lastName,
+                 String email, String companyName, String positionTitle, String profileImagePath) {
+        this.globalID = globalID;
+        this.creatorID = creatorID;
         this.profileImagePath = profileImagePath;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
+        this.companyName = companyName;
         this.positionTitle = positionTitle;
     }
 
@@ -51,10 +56,9 @@ public class Users {
     }
 
     // Constructor for the User class.
-    public Users(String profileImagePath, String firstName, String lastName, String dateOfBirth,
+    public Users(String firstName, String lastName, String dateOfBirth,
                  String email, String phoneNumber, String address, String companyName,
                  String positionTitle, String password_hash) {
-        this.profileImagePath = profileImagePath;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;

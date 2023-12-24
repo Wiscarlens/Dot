@@ -138,46 +138,6 @@ public class Utils {
         }
     }
 
-    private void saveBitmapToInternalStorage(Context context, Bitmap bitmap, String fileName) {
-        try {
-            // Create a directory for your app's images if it doesn't exist
-            File directory = new File(context.getFilesDir(), "Profiles");
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            // Create a file to save the image
-            File file = new File(directory, fileName);
-
-            // Save the Bitmap to the file
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-
-            Log.i("Firebase", "Profile image saved to internal storage: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            Log.e("Firebase", "Error saving profile image to internal storage", e);
-        }
-    }
-
-
-    public static void saveImageLocally(Context context, Drawable drawable, String imageName) {
-        // Convert the drawable to a Bitmap
-        Bitmap bitmap = drawableToBitmap(drawable);
-
-        // Save the Bitmap to local storage (you can customize the directory and file name)
-        File directory = context.getDir("Profiles", Context.MODE_PRIVATE);
-        File file = new File(directory, imageName + ".png");
-
-        try (FileOutputStream out = new FileOutputStream(file)) {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 50, out);
-            Log.i("LocalImage", "Successfully saved image locally: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            Log.e("LocalImage", "Error saving image locally", e);
-        }
-    }
-
 
     /**
      * Converts a Drawable object to a Bitmap.

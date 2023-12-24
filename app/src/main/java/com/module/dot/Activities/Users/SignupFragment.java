@@ -36,8 +36,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
+import com.module.dot.Activities.MainActivity;
 import com.module.dot.Database.Cloud.FirebaseHandler;
-import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class SignupFragment extends Fragment {
     // Declare Form part three field
     private ImageView profileImage;
     private TextInputEditText companyName;
-    private Spinner position;
+    private Spinner positionTitle;
     private TextInputEditText password;
 
     private Button saveButton;
@@ -140,7 +140,7 @@ public class SignupFragment extends Fragment {
         // Step three form field
         profileImage = stepThreeLayout.findViewById(R.id.newProfileImage);
         companyName = stepThreeLayout.findViewById(R.id.signupCompanyNameText);
-        position = stepThreeLayout.findViewById(R.id.signupPositionText);
+        positionTitle = stepThreeLayout.findViewById(R.id.signupPositionText);
         password = stepThreeLayout.findViewById(R.id.signupPasswordText);
         TextInputLayout passwordLayout = stepThreeLayout.findViewById(R.id.signupPasswordLayout);
 
@@ -172,14 +172,24 @@ public class SignupFragment extends Fragment {
             imagePickerLauncher.launch(intent);
         });
 
-        positionOptions.add("Administrator");
-        positionOptions.add("Manager");
-        positionOptions.add("Cashier");
+        // Admin Create new user
+        if (MainActivity.currentUser != null) {
+            positionOptions.add("Manager");
+            positionOptions.add("Cashier");
 
+            companyName.setText(MainActivity.currentUser.getCompanyName());
+
+            companyName.setVisibility(View.GONE);
+            positionTitle.setVisibility(View.VISIBLE);
+        } else {
+            positionOptions.add("Administrator");
+
+            positionTitle.setVisibility(View.GONE);
+        }
 
         ArrayAdapter<String> positionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, positionOptions);
         positionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        position.setAdapter(positionAdapter);
+        positionTitle.setAdapter(positionAdapter);
 
 
         // Progress bar default value
@@ -399,7 +409,6 @@ public class SignupFragment extends Fragment {
 
     private void saveToDatabase() {
         Users newUser = new Users(
-                null, // Profile Image Path
                 String.valueOf(firstName.getText()),
                 String.valueOf(lastName.getText()),
                 String.valueOf(DOB.getText()),
@@ -407,7 +416,7 @@ public class SignupFragment extends Fragment {
                 String.valueOf(phoneNumber.getText()),
                 String.valueOf(address.getText()),
                 String.valueOf(companyName.getText()),
-                String.valueOf(position.getSelectedItem()),
+                String.valueOf(positionTitle.getSelectedItem()),
                 String.valueOf(password.getText())
         );
 

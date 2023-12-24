@@ -21,8 +21,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Items.Item;
+import com.module.dot.Activities.MainActivity;
 import com.module.dot.Activities.Users.Users;
 import com.module.dot.Database.Local.UserDatabase;
+import com.module.dot.Helpers.ImageStorageManager;
 import com.module.dot.Helpers.Utils;
 
 import java.util.ArrayList;
@@ -83,12 +85,20 @@ public class FirebaseHandler {
                         try {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             assert firebaseUser != null;
-                            String UID = firebaseUser.getUid(); // Get the user ID
+                            String globalID = firebaseUser.getUid(); // Get the user ID
+
+                            newUser.setGlobalID(globalID);
+
+                            if (MainActivity.currentUser == null){
+                                newUser.setCreatorID(globalID); // Create user from log in page
+                            } else {
+                                newUser.setCreatorID(MainActivity.currentUser.getGlobalID());
+                            }
 
                             mDatabase = FirebaseDatabase.getInstance().getReference();
-                            saveImageToFirebaseStorage(profileImage, UID);
-                            newUser.setProfileImagePath(UID);
-                            mDatabase.child("users").child(UID).setValue(newUser);
+                            saveImageToFirebaseStorage(profileImage, globalID);
+                            newUser.setProfileImagePath(globalID);
+                            mDatabase.child("users").child(globalID).setValue(newUser);
 
                         } catch (Exception e) {
                             Log.e("Firebase", "Error while adding user to online database", e);
@@ -212,14 +222,15 @@ public class FirebaseHandler {
                         // Create user in the local database
                         assert firebaseUser != null;
 
-                        // Check if positionTitle is being correctly fetched
-                        Log.d("FirebaseUserDatabase", "User positionTitle: " + firebaseUser.getPositionTitle());
-
-
                         // Do not show current user in the list
-                        if (!Objects.equals(firebaseUser.getLocalID(), getCurrentUserOnlineID(FirebaseAuth.getInstance()))) {
-                            userDatabase.createUser(firebaseUser);
-                            Log.i("FirebaseUserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
+                        if (Objects.equals(firebaseUser.getGlobalID(), MainActivity.currentUser.getGlobalID())) {
+                            Log.i("FirebaseUserDatabase", "Skipping current user: " + firebaseUser.getFullName());
+                        } else {
+                            if (Objects.equals(MainActivity.currentUser.getCreatorID(), firebaseUser.getCreatorID())){
+                                userDatabase.createUser(firebaseUser);
+
+                                Log.i("FirebaseUserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
+                            }
                         }
 
                     }
@@ -252,9 +263,8 @@ public class FirebaseHandler {
             int finalPosition = position;
 
             imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-                Log.i("FirebaseDownloadImage", "Successfully saved profile image locally");
                 Drawable profileImage = Utils.byteArrayToDrawable(bytes, context.getResources());
-                Utils.saveImageLocally(context, profileImage, usersList.get(finalPosition).getProfileImagePath());
+                ImageStorageManager.saveImageLocally(context, profileImage, usersList.get(finalPosition).getProfileImagePath());
             }).addOnFailureListener(exception -> {
                 Log.e("Firebase", "Error getting profile image", exception);
                 // Handle any errors, e.g., set a default image

@@ -25,6 +25,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.module.dot.Helpers.ImageStorageManager;
 import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
@@ -65,8 +66,8 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         } else {
             holder.initial.setVisibility(View.GONE);
 
-            Drawable defaultProfileImage = Utils.getDrawableFromDrawableFolder(context, R.drawable.cartoon);
-            holder.photoProfile.setImageDrawable(defaultProfileImage);
+            Drawable profileImage = ImageStorageManager.loadImageLocally(context, users_for_display.get(position).getProfileImagePath());
+            holder.photoProfile.setImageDrawable(profileImage);
 
         }
 
@@ -76,7 +77,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
         Log.d("UserRecyclerAdapter", "onBindViewHolder: " + users_for_display.get(position).getPositionTitle());
 
-        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + users_for_display.get(position).getPositionTitle(), Toast.LENGTH_SHORT).show());
+        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + users_for_display.get(position).getFullName(), Toast.LENGTH_SHORT).show());
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {

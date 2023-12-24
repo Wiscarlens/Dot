@@ -167,4 +167,21 @@ public class UserDatabase extends MyDatabaseManager {
         }
     }
 
+    public void deleteAllUsers() {
+
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            // Delete all rows from the "users" table
+            int result = db.delete(NAME_TABLE_USERS, null, null);
+
+            if (result > 0) {
+                Log.i("UserDatabase", "Successfully deleted all users.");
+            } else {
+                Log.e("UserDatabase", "Failed to delete users.");
+            }
+        } catch (SQLiteException e) {
+            Log.e("UserDatabase", "Error deleting users: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }

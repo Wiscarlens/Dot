@@ -36,10 +36,12 @@ import com.module.dot.Activities.Transactions.TransactionsFragment;
 import com.module.dot.Activities.Users.Users;
 import com.module.dot.Activities.Users.UsersFragment;
 import com.module.dot.Database.Cloud.FirebaseHandler;
+import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -139,20 +141,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     if (dataSnapshot.exists()) {
                         currentUser = new Users(
-                                null, // Profile Image Path
+                                dataSnapshot.child("globalID").getValue(String.class),
+                                dataSnapshot.child("creatorID").getValue(String.class),
                                 dataSnapshot.child("firstName").getValue(String.class),
                                 dataSnapshot.child("lastName").getValue(String.class),
-                                dataSnapshot.child("email").getValue(String.class)
+                                dataSnapshot.child("email").getValue(String.class),
+                                dataSnapshot.child("companyName").getValue(String.class),
+                                dataSnapshot.child("positionTitle").getValue(String.class),
+                                dataSnapshot.child("profileImagePath").getValue(String.class)
                         );
 
                         // TODO: will be a above on a separate module
-                        // Company Name
-                        toolbar.setTitle(dataSnapshot.child("companyName").getValue(String.class));
+
+                        toolbar.setTitle(currentUser.getCompanyName()); // Company Name as the title of the toolbar
 
                         // Set the navigation header information
                         navHeaderFullName.setText(dataSnapshot.child("fullName").getValue(String.class));
                         navHeaderInitial.setText(currentUser.getFirstName());
-                        navHeaderEmail.setText(dataSnapshot.child("email").getValue(String.class));
+                        navHeaderEmail.setText(currentUser.getEmail());
                     }
                 }
 
@@ -201,8 +207,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // Confirmation Message for log out
                 showDialogMessage();
 
-                mAuth.signOut();
-
                 break;
         }
 
@@ -211,14 +215,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showDialogMessage() {
+
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle(getResources().getString(R.string.confirm))
                 .setMessage(getResources().getString(R.string.confirm_logout))
                 .setNegativeButton(getResources().getString(R.string.no), (dialog, which) -> {
-                    // If user click on NO
+                    // When user click on NO
+                    dialog.cancel();
                 })
                 .setPositiveButton(getResources().getString(R.string.yes), (dialog, which) -> {
-                    // Open login Activity when user click on YES
+                    // When user click on YES
+                    mAuth.signOut(); // Sign out from Server
+
+                    // TODO: Make this block code independent from the firebase
+                    // TODO: Delete all tables and images from the local database
+                    // Clean user local database
+                    try(UserDatabase userDatabase = new UserDatabase(this)){
+                        userDatabase.deleteAllUsers();
+                    } catch (Exception e){
+                        Log.e("MainActivity", "Error deleting all users", e);
+                    }
+
                     loginActivity = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(loginActivity);
                     finish();
@@ -228,7 +245,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     Toast.makeText(this, messages + "!", Toast.LENGTH_SHORT).show();
 
+
+
                 }).show();
+
 
     }
 
