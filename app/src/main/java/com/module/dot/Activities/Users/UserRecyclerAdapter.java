@@ -36,7 +36,6 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
     private final ArrayList<Users> users_for_display;
     private final Context context;
 
-    FirebaseStorage storage = FirebaseStorage.getInstance(); // TODO: Testing purpose
 
     public UserRecyclerAdapter(ArrayList<Users> users_for_display, Context context) {
         this.users_for_display = users_for_display;

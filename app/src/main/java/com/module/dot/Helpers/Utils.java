@@ -162,4 +162,43 @@ public class Utils {
     }
 
 
+    public static void saveImageLocally(Context context, Drawable drawable, String imageName) {
+        // Convert the drawable to a Bitmap
+        Bitmap bitmap = drawableToBitmap(drawable);
+
+        // Save the Bitmap to local storage (you can customize the directory and file name)
+        File directory = context.getDir("Profiles", Context.MODE_PRIVATE);
+        File file = new File(directory, imageName + ".png");
+
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 50, out);
+            Log.i("LocalImage", "Successfully saved image locally: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            Log.e("LocalImage", "Error saving image locally", e);
+        }
+    }
+
+
+    /**
+     * Converts a Drawable object to a Bitmap.
+     *
+     * @param drawable The Drawable object to convert.
+     * @return The Bitmap representation of the Drawable object.
+     */
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+
+
 }

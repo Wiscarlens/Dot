@@ -1,6 +1,7 @@
 package com.module.dot.Activities.Users;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,8 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.UserDatabase;
+import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -29,10 +33,14 @@ import java.util.Objects;
 public class UsersFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     FirebaseAuth auth;
+    FirebaseStorage storage = FirebaseStorage.getInstance(); // TODO: Testing purpose
+
+    StorageReference storageRef;
     private UserDatabase userDatabase;
 
     private LinearLayout noUser;
     private RecyclerView recyclerView;
+
     private final ArrayList<Users> users_for_display = new ArrayList<>();
 
     @Override
@@ -47,12 +55,9 @@ public class UsersFragment extends Fragment {
                 users_for_display.clear(); // Clear the list before updating it
 
 
-
-
                 userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
 
-                // Update the RecyclerView after the data fetch is complete
-                Log.d("UserFragmentTest", "onStart: " + users_for_display.get(0).getPositionTitle());
+                FirebaseHandler.downloadAndSaveImagesLocally(users_for_display, getContext());
 
                 UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
                 recyclerView.setAdapter(adapter);
@@ -87,7 +92,7 @@ public class UsersFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Save Image Locally
+
 
 
 

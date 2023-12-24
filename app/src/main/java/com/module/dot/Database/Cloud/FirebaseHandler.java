@@ -1,6 +1,7 @@
 package com.module.dot.Database.Cloud;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import java.util.Objects;
 
 public class FirebaseHandler {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private static final FirebaseStorage storage = FirebaseStorage.getInstance();
     private DatabaseReference mDatabase;
 
     public static String getCurrentUserOnlineID(FirebaseAuth mAuth) {
@@ -237,6 +239,27 @@ public class FirebaseHandler {
 
 
         });
+    }
+
+
+    public static void downloadAndSaveImagesLocally(ArrayList<Users> usersList, Context context) {
+        final long ONE_MEGABYTE = 512 * 512;
+
+        for (int position = 0; position < usersList.size(); position++) {
+            String imagePath = "Profiles/" + usersList.get(position).getProfileImagePath();
+            StorageReference imageRef = storage.getReference(imagePath);
+
+            int finalPosition = position;
+
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+                Log.i("FirebaseDownloadImage", "Successfully saved profile image locally");
+                Drawable profileImage = Utils.byteArrayToDrawable(bytes, context.getResources());
+                Utils.saveImageLocally(context, profileImage, usersList.get(finalPosition).getProfileImagePath());
+            }).addOnFailureListener(exception -> {
+                Log.e("Firebase", "Error getting profile image", exception);
+                // Handle any errors, e.g., set a default image
+            });
+        }
     }
 
 
