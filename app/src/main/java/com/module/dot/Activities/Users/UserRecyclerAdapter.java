@@ -14,19 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.module.dot.Helpers.ImageStorageManager;
-import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -34,12 +25,12 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapter.UserViewHolder> {
-    private final ArrayList<Users> users_for_display;
+    private final ArrayList<User> user_for_display;
     private final Context context;
 
 
-    public UserRecyclerAdapter(ArrayList<Users> users_for_display, Context context) {
-        this.users_for_display = users_for_display;
+    public UserRecyclerAdapter(ArrayList<User> user_for_display, Context context) {
+        this.user_for_display = user_for_display;
         this.context = context;
     }
 
@@ -52,32 +43,31 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return users_for_display.size();
+        return user_for_display.size();
     }
 
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
 
-        Log.d("Test", "onBindViewHolder: " + users_for_display.get(position).getProfileImagePath());
+        Log.d("Test", "onBindViewHolder: " + user_for_display.get(position).getProfileImagePath());
 
-        if (users_for_display.get(position).getProfileImagePath() == null) {
+        if (user_for_display.get(position).getProfileImagePath() == null) {
             holder.initial.setVisibility(View.VISIBLE);
-            holder.initial.setText(users_for_display.get(position).getFirstName().substring(0, 1));
+            holder.initial.setText(user_for_display.get(position).getFirstName().substring(0, 1));
 
         } else {
             holder.initial.setVisibility(View.GONE);
 
-            Drawable profileImage = ImageStorageManager.loadImageLocally(context, users_for_display.get(position).getProfileImagePath());
+            Drawable profileImage = ImageStorageManager.loadImageLocally(context, "Profiles", user_for_display.get(position).getProfileImagePath());
             holder.photoProfile.setImageDrawable(profileImage);
-
         }
 
 
-        holder.fullNameTextView.setText(users_for_display.get(position).getFullName());
-        holder.positionTextView.setText(users_for_display.get(position).getPositionTitle());
+        holder.fullNameTextView.setText(user_for_display.get(position).getFullName());
+        holder.positionTextView.setText(user_for_display.get(position).getPositionTitle());
 
-        Log.d("UserRecyclerAdapter", "onBindViewHolder: " + users_for_display.get(position).getPositionTitle());
+        Log.d("UserRecyclerAdapter", "onBindViewHolder: " + user_for_display.get(position).getPositionTitle());
 
-        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + users_for_display.get(position).getFullName(), Toast.LENGTH_SHORT).show());
+        holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + user_for_display.get(position).getFullName(), Toast.LENGTH_SHORT).show());
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {

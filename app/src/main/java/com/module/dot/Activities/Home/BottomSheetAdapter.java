@@ -48,7 +48,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
         holder.itemNameTextView.setText(items.get(position).getName());
         holder.priceTextView.setText(getCurrencyFormat(items.get(position).getPrice()));
-        holder.frequencyTextView.setText(String.valueOf(items.get(position).getFrequency()));
+        holder.frequencyTextView.setText(String.valueOf(items.get(position).getQuantity()));
 
         // When User click in a product in bottom sheet
         holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + items.get(position).getName(), Toast.LENGTH_SHORT).show());

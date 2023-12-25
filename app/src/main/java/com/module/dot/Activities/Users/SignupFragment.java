@@ -408,7 +408,7 @@ public class SignupFragment extends Fragment {
     }
 
     private void saveToDatabase() {
-        Users newUser = new Users(
+        User newUser = new User(
                 String.valueOf(firstName.getText()),
                 String.valueOf(lastName.getText()),
                 String.valueOf(DOB.getText()),

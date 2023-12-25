@@ -33,7 +33,7 @@ import com.module.dot.Activities.Items.ItemsFragment;
 import com.module.dot.Activities.Orders.OrdersFragment;
 import com.module.dot.Activities.Settings.SettingsFragment;
 import com.module.dot.Activities.Transactions.TransactionsFragment;
-import com.module.dot.Activities.Users.Users;
+import com.module.dot.Activities.Users.User;
 import com.module.dot.Activities.Users.UsersFragment;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.UserDatabase;
@@ -41,7 +41,6 @@ import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     View navigationHeader;
 
-    public static Users currentUser;
+    public static User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     if (dataSnapshot.exists()) {
-                        currentUser = new Users(
+                        currentUser = new User(
                                 dataSnapshot.child("globalID").getValue(String.class),
                                 dataSnapshot.child("creatorID").getValue(String.class),
                                 dataSnapshot.child("firstName").getValue(String.class),
@@ -229,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     // TODO: Make this block code independent from the firebase
                     // TODO: Delete all tables and images from the local database
+                    // Delete Image folder from local storage
                     // Clean user local database
                     try(UserDatabase userDatabase = new UserDatabase(this)){
                         userDatabase.deleteAllUsers();

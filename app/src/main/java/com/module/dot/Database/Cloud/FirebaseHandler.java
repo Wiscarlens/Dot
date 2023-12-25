@@ -22,7 +22,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.MainActivity;
-import com.module.dot.Activities.Users.Users;
+import com.module.dot.Activities.Users.User;
+import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.ImageStorageManager;
 import com.module.dot.Helpers.Utils;
@@ -46,39 +47,9 @@ public class FirebaseHandler {
         void onAdminCheckResult(boolean isAdmin);
     }
 
-    public static void isCurrentUserAdmin(FirebaseAuth mAuth, AdminCheckCallback callback) {
-        String currentUserID = getCurrentUserOnlineID(mAuth);
-        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference("users");
-
-        firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean isAdmin = false;
-
-                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    Users firebaseUser = userSnapshot.getValue(Users.class);
-
-                    if (firebaseUser != null && firebaseUser.getLocalID().equals(currentUserID)) {
-                        if (firebaseUser.getPositionTitle().equals("Administrator")) {
-                            isAdmin = true;
-                        }
-                        break;
-                    }
-                }
-
-                callback.onAdminCheckResult(isAdmin);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("FirebaseUserDatabase", "Failed to sync user data from Firebase: " + databaseError.getMessage());
-                callback.onAdminCheckResult(false); // Assume not admin in case of error
-            }
-        });
-    }
 
 
-    public void createUser(Users newUser, ImageView profileImage, Context context){
+    public void createUser(User newUser, ImageView profileImage, Context context){
         mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword_hash())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -96,7 +67,7 @@ public class FirebaseHandler {
                             }
 
                             mDatabase = FirebaseDatabase.getInstance().getReference();
-                            saveImageToFirebaseStorage(profileImage, globalID);
+                            saveImageToFirebaseStorage(profileImage, "Profiles/" + globalID);
                             newUser.setProfileImagePath(globalID);
                             mDatabase.child("users").child(globalID).setValue(newUser);
 
@@ -119,36 +90,9 @@ public class FirebaseHandler {
 
     }
 
-    public void createItem (Item newItem, ImageView itemImage, Context context){
-        try {
-            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-            assert firebaseUser != null;
-            String UID = firebaseUser.getUid(); // Get the user ID
-
-            mDatabase = FirebaseDatabase.getInstance().getReference();
-            saveImageToFirebaseStorage(itemImage, UID);
-//            newItem.setProfileImagePath(UID); // TODO: Add image path to item
-            mDatabase.child("items").child(newItem.getName()).setValue(newItem);
-
-        } catch (Exception e) {
-            Log.e("Firebase", "Error while adding user to online database", e);
-        }
 
 
-//        FirebaseDatabase.getInstance().getReference("Item").child(Name)
-//                .setValue(newItemData).addOnCompleteListener(task -> {
-//                    if(task.isSuccessful()){
-//                        String message = getResources().getString(R.string.save);
-//                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-//                    }
-//                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show());
-//    }
-
-    }
-
-
-
-    public static void readUser(ArrayList<Users> userList){
+    public static void readUser(ArrayList<User> userList){
         // Firebase database reference
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
@@ -159,7 +103,7 @@ public class FirebaseHandler {
                 userList.clear(); // Clear the list before populating it again
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Users user = snapshot.getValue(Users.class);
+                    User user = snapshot.getValue(User.class);
                     userList.add(user);
                 }
 
@@ -178,14 +122,12 @@ public class FirebaseHandler {
 
     }
 
-    public void saveImageToFirebaseStorage(ImageView profileImage, String UID) {
-        String imagePath = "Profiles/" + UID;
-
+    public static void saveImageToFirebaseStorage(ImageView image, String imagePath) {
         // Get the data from an ImageView as bytes
-        profileImage.setDrawingCacheEnabled(true);
-        profileImage.buildDrawingCache();
+        image.setDrawingCacheEnabled(true);
+        image.buildDrawingCache();
 
-        byte[] imageData = Utils.getByteArrayFromDrawable(profileImage.getDrawable());
+        byte[] imageData = Utils.getByteArrayFromDrawable(image.getDrawable());
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference(imagePath);
@@ -205,6 +147,43 @@ public class FirebaseHandler {
         });
     }
 
+    public static void syncDataFromFirebase(String tableName, Context context){
+        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
+        firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try (ItemDatabase itemDatabase = new ItemDatabase(context)) {
+                    // Iterate through Firebase data
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+
+                        Item item = userSnapshot.getValue(Item.class);
+
+                        // Create item in the local database
+                        assert item != null;
+
+                        if (Objects.equals(MainActivity.currentUser.getCreatorID(), item.getCreatorID())){
+                            downloadAndSaveImagesLocally("Items", item.getImagePath(), context);
+                            itemDatabase.createItem(item);
+                        }
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("FirebaseItemDatabase", "Failed to sync item data from Firebase: " + e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("UserDatabase", "Firebase data fetch cancelled: " + error.getMessage());
+
+            }
+        });
+
+    }
+
 
     // Synchronize user data from Firebase to SQLite
     public static void syncUserDataFromFirebase(Context context, String tableName){
@@ -217,7 +196,7 @@ public class FirebaseHandler {
                 try (UserDatabase userDatabase = new UserDatabase(context)) {
                     // Iterate through Firebase data
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                        Users firebaseUser = userSnapshot.getValue(Users.class);
+                        User firebaseUser = userSnapshot.getValue(User.class);
 
                         // Create user in the local database
                         assert firebaseUser != null;
@@ -227,6 +206,7 @@ public class FirebaseHandler {
                             Log.i("FirebaseUserDatabase", "Skipping current user: " + firebaseUser.getFullName());
                         } else {
                             if (Objects.equals(MainActivity.currentUser.getCreatorID(), firebaseUser.getCreatorID())){
+                                downloadAndSaveImagesLocally("Profiles", firebaseUser.getProfileImagePath(), context);
                                 userDatabase.createUser(firebaseUser);
 
                                 Log.i("FirebaseUserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
@@ -253,23 +233,44 @@ public class FirebaseHandler {
     }
 
 
-    public static void downloadAndSaveImagesLocally(ArrayList<Users> usersList, Context context) {
+    public static void downloadAndSaveImagesLocally(String folderName, String fileName, Context context) {
         final long ONE_MEGABYTE = 512 * 512;
 
-        for (int position = 0; position < usersList.size(); position++) {
-            String imagePath = "Profiles/" + usersList.get(position).getProfileImagePath();
-            StorageReference imageRef = storage.getReference(imagePath);
+        String imagePath = folderName + "/" + fileName;
+        StorageReference imageRef = storage.getReference(imagePath);
 
-            int finalPosition = position;
+        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+            Drawable image = Utils.byteArrayToDrawable(bytes, context.getResources());
 
-            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-                Drawable profileImage = Utils.byteArrayToDrawable(bytes, context.getResources());
-                ImageStorageManager.saveImageLocally(context, profileImage, usersList.get(finalPosition).getProfileImagePath());
-            }).addOnFailureListener(exception -> {
-                Log.e("Firebase", "Error getting profile image", exception);
-                // Handle any errors, e.g., set a default image
-            });
-        }
+            ImageStorageManager.saveImageLocally(context, image, "Profiles", fileName);
+        }).addOnFailureListener(exception -> {
+            Log.e("Firebase", "Error getting profile image", exception);
+            // Handle any errors, e.g., set a default image
+        });
+
+    }
+
+
+    public static void createItem(Item newItem, ImageView itemImage){
+        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
+
+        // Use push to generate a unique key
+        DatabaseReference newItemRef = itemsRef.push();
+
+        String globalID = newItemRef.getKey(); // Get get item global ID
+
+        newItem.setGlobalID(globalID);
+
+        // Set the item with the generated key
+        newItemRef.setValue(newItem).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Save the image to Firebase Storage with the generated key
+                saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
+                Log.i("Firebase", "Item Added Successfully!");
+            }
+        }).addOnFailureListener(e ->
+                Log.d("Firebase", "createUserWithEmail:failure")
+        );
     }
 
 

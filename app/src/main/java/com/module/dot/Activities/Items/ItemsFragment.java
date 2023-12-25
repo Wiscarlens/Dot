@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.R;
 
@@ -30,6 +31,14 @@ public class ItemsFragment extends Fragment {
 
     // Hold data from the database
     private final ArrayList<Item> item_for_display = new ArrayList<>();
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseHandler.syncDataFromFirebase("items", getContext());
+
+    }
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -68,7 +77,7 @@ public class ItemsFragment extends Fragment {
         }
 
         // Initialize adapter with the arrays
-        ItemGridAdapter adapter = new ItemGridAdapter(item_for_display);
+        ItemGridAdapter adapter = new ItemGridAdapter(item_for_display, getContext());
 
         itemGridview.setAdapter(adapter);
 

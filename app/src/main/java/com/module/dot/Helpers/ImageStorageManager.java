@@ -12,12 +12,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ImageStorageManager {
-    public static void saveImageLocally(Context context, Drawable drawable, String imageName) {
+    public static void saveImageLocally(Context context, Drawable drawable, String folderName, String imageName) {
         // Convert the drawable to a Bitmap
         Bitmap bitmap = Utils.drawableToBitmap(drawable);
 
         // Save the Bitmap to local storage (you can customize the directory and file name)
-        File directory = context.getDir("Profiles", Context.MODE_PRIVATE);
+        File directory = context.getDir(folderName, Context.MODE_PRIVATE);
         File file = new File(directory, imageName + ".png");
 
         try (FileOutputStream out = new FileOutputStream(file)) {
@@ -28,7 +28,7 @@ public class ImageStorageManager {
         }
     }
 
-    public static Drawable loadImageLocally(Context context, String imageName) {
+    public static Drawable loadImageLocally(Context context, String folder, String imageName) {
         File directory = context.getDir("Profiles", Context.MODE_PRIVATE);
         File file = new File(directory, imageName + ".png");
 

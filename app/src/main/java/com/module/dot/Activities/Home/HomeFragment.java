@@ -104,14 +104,14 @@ public class HomeFragment extends Fragment {
         }
 
 
-        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(item_for_display);
+        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(item_for_display, getContext());
         itemGridview.setAdapter(itemGridAdapter);
 
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
             // Find the selected item
             Item selectedItem = new Item(
-                    item_for_display.get(position).getId(),
+                    item_for_display.get(position).getLocalID(),
                     item_for_display.get(position).getName(),
                     item_for_display.get(position).getPrice(),
                     item_for_display.get(position).getSku(),
@@ -220,7 +220,7 @@ public class HomeFragment extends Fragment {
 
                             try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(getContext())){
                                 for (Item item : selectedItems) {
-                                    orderItemsDatabase.createOrderItems(newOrderID, item.getId(), item.getFrequency());
+                                    orderItemsDatabase.createOrderItems(newOrderID, item.getLocalID(), item.getQuantity());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -357,9 +357,9 @@ public class HomeFragment extends Fragment {
     private void addToSelectedItems(Item newItem) {
         // Check if the item is already in selectedItems
         for (Item item : selectedItems) {
-            if (item.getId() == newItem.getId()) {
+            if (item.getLocalID() == newItem.getLocalID()) {
                 // Item already exists, increase frequency
-                item.setFrequency(item.getFrequency() + 1);
+                item.setQuantity(item.getQuantity() + 1);
 
                 return; // Exit the method since the item was found
             }

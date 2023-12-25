@@ -1,7 +1,6 @@
 package com.module.dot.Activities.Users;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +23,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.UserDatabase;
-import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ public class UsersFragment extends Fragment {
     private LinearLayout noUser;
     private RecyclerView recyclerView;
 
-    private final ArrayList<Users> users_for_display = new ArrayList<>();
+    private final ArrayList<User> user_for_display = new ArrayList<>();
 
     @Override
     public void onStart() {
@@ -52,14 +50,14 @@ public class UsersFragment extends Fragment {
                 userDatabase.showEmptyStateMessage(recyclerView, noUser);
             } else {
                 userDatabase.showStateMessage(recyclerView, noUser);
-                users_for_display.clear(); // Clear the list before updating it
+                user_for_display.clear(); // Clear the list before updating it
 
 
-                userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
+                userDatabase.readUser(user_for_display); // Read data from database and save it the arraylist
 
-                FirebaseHandler.downloadAndSaveImagesLocally(users_for_display, getContext());
+//                FirebaseHandler.downloadAndSaveImagesLocally(user_for_display, getContext());
 
-                UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
+                UserRecyclerAdapter adapter = new UserRecyclerAdapter(user_for_display, getContext());
                 recyclerView.setAdapter(adapter);
             }
 

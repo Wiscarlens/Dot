@@ -1,5 +1,7 @@
 package com.module.dot.Activities.Items;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
+import com.module.dot.Helpers.ImageStorageManager;
 import com.module.dot.Helpers.LocalFormat;
 import com.module.dot.R;
 
@@ -16,8 +19,10 @@ import java.util.ArrayList;
 
 public class ItemGridAdapter extends BaseAdapter {
     private final ArrayList<Item> items;
-    public ItemGridAdapter(ArrayList<Item> items) {
+    private final Context context;
+    public ItemGridAdapter(ArrayList<Item> items, Context context) {
         this.items = items;
+        this.context = context;
     }
 
     @Override
@@ -32,7 +37,7 @@ public class ItemGridAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return items.get(position).getId();
+        return items.get(position).getLocalID();
     }
 
     @Override
@@ -45,7 +50,20 @@ public class ItemGridAdapter extends BaseAdapter {
         TextView unitTypeTextView = view.findViewById(R.id.itemUnitTypeHolderDesign);
         CardView backgroundColor = view.findViewById(R.id.ItemBackgroundColor);
 
-        ItemImageView.setImageDrawable(items.get(position).getImagePath()); // Set the Drawable object
+        // TODO: Set the image
+        if (items.get(position).getImagePath() == null) {
+           // Default image
+
+        } else {
+            Drawable itemImage = ImageStorageManager.loadImageLocally(context, "Items", items.get(position).getImagePath());
+            ItemImageView.setImageDrawable(itemImage);
+        }
+
+
+
+
+//        ItemImageView.setImageDrawable(items.get(position).getImagePath());
+        ItemImageView.setImageDrawable(null); // Set the Drawable object
         ItemNameTextView.setText(items.get(position).getName());
         priceTextView.setText(LocalFormat.getCurrencyFormat(items.get(position).getPrice()));
         unitTypeTextView.setText((items.get(position).getUnitType()));

@@ -4,12 +4,13 @@ package com.module.dot.Activities.Items;
  Created by Wiscarlens Lucius on 3 JUne 2023.
  */
 
-import android.graphics.drawable.Drawable;
-
 public class Item {
-    private Drawable imagePath;
-    private final String name;
-    private final double price;
+    private String globalID;
+    private Long localID;
+    private String creatorID;
+    private String imagePath;
+    private String name;
+    private double price;
     private String category;
     private String sku;
     private String unitType;
@@ -18,14 +19,15 @@ public class Item {
     private double tax;
     private String description;
 
-    private long id;
-    private int frequency = 1;
+    private int quantity = 1;
+
+    public Item() {
+
+    }
 
     // Use for add item to database
-    public Item(Drawable imagePath, String name, double price, String category, String sku,
-                String unitType, int stock, double wholesalePrice, double tax,
-                String description) {
-        this.imagePath = imagePath;
+    public Item(String name, double price, String category, String sku,
+                String unitType, int stock, double wholesalePrice, double tax, String description) {
         this.name = name;
         this.price = price;
         this.category = category;
@@ -38,8 +40,8 @@ public class Item {
     }
 
     // Use for display item in the gridview
-    public Item(long id, String name, Drawable imagePath, double price, String SKU, String unitType) {
-        this.id = id;
+    public Item(long localID, String name, String imagePath, double price, String SKU, String unitType) {
+        this.localID = localID;
         this.name = name;
         this.imagePath = imagePath;
         this.price = price;
@@ -48,28 +50,53 @@ public class Item {
     }
 
     // Selected Item
-    public Item(long id, String name, double price, String SKU, int frequency) {
-        this.id = id;
+    public Item(long localID, String name, double price, String SKU, int quantity) {
+        this.localID = localID;
         this.name = name;
         this.price = price;
         this.sku = SKU;
-        this.frequency = frequency;
+        this.quantity = quantity;
     }
 
     // Use for display order item
-    public Item(Long id, Drawable imagePath, String name, Double price, Integer frequency) {
-        this.id = id;
+    public Item(long localID, String imagePath, String name, double price, int frequency) {
+        this.localID = localID;
         this.imagePath = imagePath;
         this.name = name;
         this.price = price;
-        this.frequency = frequency;
+        this.quantity = frequency;
     }
 
-    public Drawable getImagePath() {
+
+    public String getGlobalID() {
+        return globalID;
+    }
+
+    public void setGlobalID(String globalID) {
+        this.globalID = globalID;
+    }
+
+    public Long getLocalID() {
+        return localID;
+    }
+
+    public void setLocalID(Long localID) {
+        this.localID = localID;
+    }
+
+    public String getCreatorID() {
+        return creatorID;
+    }
+
+    public void setCreatorID(String creatorID) {
+        this.creatorID = creatorID;
+    }
+
+    public String getImagePath() {
         return imagePath;
     }
 
-    public void setImagePath(Drawable imagePath) {
+    public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
 
@@ -77,8 +104,16 @@ public class Item {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public double getPrice() {
         return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public String getCategory() {
@@ -137,20 +172,11 @@ public class Item {
         this.description = description;
     }
 
-    public long getId() {
-        return id;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
-
-    public int getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
-    }
-
 }

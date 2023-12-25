@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.module.dot.Activities.Users.Users;
+import com.module.dot.Activities.Users.User;
 
 import java.util.ArrayList;
 
@@ -78,12 +78,12 @@ public class UserDatabase extends MyDatabaseManager {
     }
 
 
-    public void createUser(Users newUsers) throws SQLiteException {
+    public void createUser(User newUser) throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
             // TODO: This block that check email will be independent from the database
             // Check if the email already exists in the database
-            if (super.isEmailExists(db, newUsers.getEmail(), NAME_TABLE_USERS, EMAIL_COLUMN_USERS)) {
+            if (super.isEmailExists(db, newUser.getEmail(), NAME_TABLE_USERS, EMAIL_COLUMN_USERS)) {
                 Log.i("MyDatabaseManager", "Email already exists.");
 //                Toast.makeText(context, "Email already exists. Please use a different email.", Toast.LENGTH_SHORT).show();
                 return;
@@ -91,18 +91,18 @@ public class UserDatabase extends MyDatabaseManager {
 
             ContentValues cv = new ContentValues();
 
-            cv.put(GLOBAL_ID_COLUMN_USERS, newUsers.getGlobalID());
-            cv.put(CREATOR_ID_COLUMN_USERS, newUsers.getCreatorID());
-            cv.put(FIRST_NAME_COLUMN_USERS, newUsers.getFirstName());
-            cv.put(LAST_NAME_COLUMN_USERS, newUsers.getLastName());
-            cv.put(DOB_COLUMN_USERS, newUsers.getDateOfBirth());
-            cv.put(EMAIL_COLUMN_USERS, newUsers.getEmail());
-            cv.put(PHONE_NUMBER_COLUMN_USERS, newUsers.getPhoneNumber());
-            cv.put(ADDRESS_COLUMN_USERS, newUsers.getAddress());
-            cv.put(PROFILE_IMAGE_PATH_COLUMN_USERS, newUsers.getProfileImagePath());
-            cv.put(POSITION_TITLE_COLUMN_USERS, newUsers.getPositionTitle());
-            cv.put(COMPANY_NAME_COLUMN_USERS, newUsers.getCompanyName());
-            cv.put(PASSWORD_HASH_COLUMN_USERS, hashPassword(newUsers.getPassword_hash()));
+            cv.put(GLOBAL_ID_COLUMN_USERS, newUser.getGlobalID());
+            cv.put(CREATOR_ID_COLUMN_USERS, newUser.getCreatorID());
+            cv.put(FIRST_NAME_COLUMN_USERS, newUser.getFirstName());
+            cv.put(LAST_NAME_COLUMN_USERS, newUser.getLastName());
+            cv.put(DOB_COLUMN_USERS, newUser.getDateOfBirth());
+            cv.put(EMAIL_COLUMN_USERS, newUser.getEmail());
+            cv.put(PHONE_NUMBER_COLUMN_USERS, newUser.getPhoneNumber());
+            cv.put(ADDRESS_COLUMN_USERS, newUser.getAddress());
+            cv.put(PROFILE_IMAGE_PATH_COLUMN_USERS, newUser.getProfileImagePath());
+            cv.put(POSITION_TITLE_COLUMN_USERS, newUser.getPositionTitle());
+            cv.put(COMPANY_NAME_COLUMN_USERS, newUser.getCompanyName());
+            cv.put(PASSWORD_HASH_COLUMN_USERS, hashPassword(newUser.getPassword_hash()));
 
             long result = db.insertOrThrow(NAME_TABLE_USERS, null, cv);
 
@@ -117,13 +117,13 @@ public class UserDatabase extends MyDatabaseManager {
     }
 
 
-    public void readUser(ArrayList<Users> userList) {
+    public void readUser(ArrayList<User> userList) {
         Cursor cursor = super.readAllData(NAME_TABLE_USERS);
 
         try {
             // If users are found, populate the ArrayList with user data
             while (cursor.moveToNext()) {
-                Users newUser = new Users(
+                User newUser = new User(
                         cursor.getString(0),    // local_id
                         cursor.getString(1),    // global_id
                         cursor.getString(2),    // creator_id

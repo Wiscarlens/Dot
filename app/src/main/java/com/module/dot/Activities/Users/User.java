@@ -2,7 +2,7 @@ package com.module.dot.Activities.Users;
 
 import androidx.annotation.NonNull;
 
-public class Users {
+public class User {
     private String globalID;
     private String localID;
     private String creatorID;
@@ -18,13 +18,13 @@ public class Users {
     private String password_hash;
     private String dateRegistered;
 
-    public Users() {
+    public User() {
 
     }
 
     // Constructor for showing the user's profile.
-    public Users(String globalID, String creatorID, String firstName, String lastName,
-                 String email, String companyName, String positionTitle, String profileImagePath) {
+    public User(String globalID, String creatorID, String firstName, String lastName,
+                String email, String companyName, String positionTitle, String profileImagePath) {
         this.globalID = globalID;
         this.creatorID = creatorID;
         this.profileImagePath = profileImagePath;
@@ -35,10 +35,10 @@ public class Users {
         this.positionTitle = positionTitle;
     }
 
-    public Users(String globalID, String localID, String creatorID, String firstName,
-                 String lastName, String dateOfBirth, String email, String phoneNumber,
-                 String address, String profileImagePath, String companyName,
-                 String positionTitle, String password_hash, String dateRegistered) {
+    public User(String globalID, String localID, String creatorID, String firstName,
+                String lastName, String dateOfBirth, String email, String phoneNumber,
+                String address, String profileImagePath, String companyName,
+                String positionTitle, String password_hash, String dateRegistered) {
         this.globalID = globalID;
         this.localID = localID;
         this.creatorID = creatorID;
@@ -56,9 +56,9 @@ public class Users {
     }
 
     // Constructor for the User class.
-    public Users(String firstName, String lastName, String dateOfBirth,
-                 String email, String phoneNumber, String address, String companyName,
-                 String positionTitle, String password_hash) {
+    public User(String firstName, String lastName, String dateOfBirth,
+                String email, String phoneNumber, String address, String companyName,
+                String positionTitle, String password_hash) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;

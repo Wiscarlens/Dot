@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class ItemDatabase extends MyDatabaseManager {
     private static final String NAME_TABLE_ITEMS = "items";
     private static final String ID_COLUMN_ITEMS = "_id";
+    private static final String GLOBAL_ID_COLUMN_ITEMS = "global_id";
     private static final String IMAGE_COLUMN_ITEMS = "image";
     private static final String NAME_COLUMN_ITEMS = "name";
     private static final String PRICE_COLUMN_ITEMS = "price";
@@ -48,7 +49,8 @@ public class ItemDatabase extends MyDatabaseManager {
         // SQL query to create the "items" table
         String query_items = "CREATE TABLE " + NAME_TABLE_ITEMS +
                 " (" + ID_COLUMN_ITEMS + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                IMAGE_COLUMN_ITEMS + " BLOB, " +
+                GLOBAL_ID_COLUMN_ITEMS + " TEXT NOT NULL UNIQUE, " +
+                IMAGE_COLUMN_ITEMS + " TEXT, " +
                 NAME_COLUMN_ITEMS + " TEXT NOT NULL, " +
                 PRICE_COLUMN_ITEMS + " REAL NOT NULL, " +
                 CATEGORY_ID_COLUMN_ITEMS + " TEXT, " +  // TODO: Foreign key to a future table call category
@@ -77,15 +79,17 @@ public class ItemDatabase extends MyDatabaseManager {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues cv = new ContentValues();
 
-            if (newItem.getImagePath() == null) {
-                // Handle the case where the conversion fails
-                Log.e("MyDatabaseManager", "Failed to convert image to byte array");
-                throw new SQLiteException("Failed to convert image to byte array");
-            } else {
-                // Convert the selected image to a byte array (Blob)
-                cv.put(IMAGE_COLUMN_ITEMS, Utils.getByteArrayFromDrawable(newItem.getImagePath()));
-            }
+//            if (newItem.getImagePath() == null) {
+//                // Handle the case where the conversion fails
+//                Log.e("MyDatabaseManager", "Failed to convert image to byte array");
+//                throw new SQLiteException("Failed to convert image to byte array");
+//            } else {
+//                // Convert the selected image to a byte array (Blob)
+//
+//            }
 
+            cv.put(GLOBAL_ID_COLUMN_ITEMS, newItem.getGlobalID());
+            cv.put(IMAGE_COLUMN_ITEMS, newItem.getImagePath());
             cv.put(NAME_COLUMN_ITEMS, newItem.getName());
             cv.put(PRICE_COLUMN_ITEMS, newItem.getPrice());
             cv.put(CATEGORY_ID_COLUMN_ITEMS, newItem.getCategory());
@@ -111,30 +115,30 @@ public class ItemDatabase extends MyDatabaseManager {
     /**
      * Populates an ArrayList with item data from the database.
      *
-     * @param item_for_display The ArrayList to store Item objects for display.
+     * @param itemList The ArrayList to store Item objects for display.
      */
-    public void readItem(ArrayList<Item> item_for_display) {
+    public void readItem(ArrayList<Item> itemList) {
         // Get a cursor to the item data in the database
         Cursor cursor = super.readAllData(NAME_TABLE_ITEMS);
 
         // If the database is not empty, populate the arrays with the item data
         while (cursor.moveToNext()) {
-            // Retrieve item image as byte array
-            byte[] imageData = cursor.getBlob(1);
-
-            // Convert the Bitmap to a Drawable if needed
-            Drawable itemImageDrawable = convertByteArrayToDrawable(imageData);
+//            // Retrieve item image as byte array
+//            byte[] imageData = cursor.getBlob(1);
+//
+//            // Convert the Bitmap to a Drawable if needed
+//            Drawable itemImageDrawable = convertByteArrayToDrawable(imageData);
 
             Item item = new Item(
-                    cursor.getLong(0),      // id
+                    cursor.getLong(0),      // local id
                     cursor.getString(2),    // name
-                    itemImageDrawable,         // imageData
+                    cursor.getString(1),    // imagePath
                     cursor.getDouble(3),    // price
                     cursor.getString(5),    // SKU
                     cursor.getString(6)     // unitType
             );
 
-            item_for_display.add(item); // Add the item to the ArrayList
+            itemList.add(item); // Add the item to the ArrayList
         }
     }
 

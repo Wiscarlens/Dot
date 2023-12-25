@@ -83,7 +83,7 @@ public class OrderItemsDatabase extends MyDatabaseManager {
 
     }
 
-    public ArrayList<Item> readOrderItems(long orderId, Resources resources){
+    public ArrayList<Item> readOrderItems(long orderId){
         // Create an empty list to store the order items.
         ArrayList<Item> orderItemList = new ArrayList<>();
 
@@ -100,16 +100,17 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         if (cursor.moveToFirst()) {
             do {
                 long itemId = cursor.getLong(0);
-                byte[] itemImage = cursor.getBlob(1);
+                String imagePath = cursor.getString(1);
                 String itemName = cursor.getString(2);
                 double itemPrice = cursor.getDouble(3);
                 int quantity = cursor.getInt(12);
 
                 // Convert the Bitmap to a Drawable if needed
-                Drawable itemImageDrawable =  Utils.byteArrayToDrawable(itemImage, resources);
+//                Drawable itemImageDrawable =  Utils.byteArrayToDrawable(itemImage, resources);
 
-                Item item = new Item(itemId, itemImageDrawable, itemName, itemPrice, quantity);
+                Item item = new Item(itemId, imagePath, itemName, itemPrice, quantity);
                 orderItemList.add(item);
+
             } while (cursor.moveToNext());
         }
 

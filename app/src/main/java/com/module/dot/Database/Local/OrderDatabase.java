@@ -107,7 +107,7 @@ public class OrderDatabase extends MyDatabaseManager {
                 if (!orderItemsDatabase.isTableExists("order_items")) {
                     orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
                 } else {
-                    selectedItemArrayList = orderItemsDatabase.readOrderItems(orderNumber, resources);
+                    selectedItemArrayList = orderItemsDatabase.readOrderItems(orderNumber);
                 }
 
             } catch (Exception e) {
@@ -119,7 +119,7 @@ public class OrderDatabase extends MyDatabaseManager {
 
             // Find the total number of items in the order
             for(Item item : selectedItemArrayList){
-                totalItems += item.getFrequency();
+                totalItems += item.getQuantity();
             }
 
             Orders order = new Orders(
@@ -159,18 +159,17 @@ public class OrderDatabase extends MyDatabaseManager {
                 ArrayList<Item> selectedItemArrayList;
 
                 try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
-                    selectedItemArrayList = orderItemsDatabase.readOrderItems(orderNumber, resources);
+                    selectedItemArrayList = orderItemsDatabase.readOrderItems(orderNumber);
                 } catch (Exception e) {
                     Log.e("OrderDatabase", "Failed to read order items: " + e.getMessage());
                     throw e;
                 }
 
-
                 int totalItems = 0 ;
 
                 // Find the total number of items in the order
                 for(Item item : selectedItemArrayList){
-                    totalItems += item.getFrequency();
+                    totalItems += item.getQuantity();
                 }
 
                 Orders order = new Orders(
