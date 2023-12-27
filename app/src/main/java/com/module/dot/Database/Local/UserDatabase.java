@@ -83,7 +83,7 @@ public class UserDatabase extends MyDatabaseManager {
 
             // TODO: This block that check email will be independent from the database
             // Check if the email already exists in the database
-            if (super.isEmailExists(db, newUser.getEmail(), NAME_TABLE_USERS, EMAIL_COLUMN_USERS)) {
+            if (isValueExists(db, NAME_TABLE_USERS, EMAIL_COLUMN_USERS, newUser.getEmail())) {
                 Log.i("MyDatabaseManager", "Email already exists.");
 //                Toast.makeText(context, "Email already exists. Please use a different email.", Toast.LENGTH_SHORT).show();
                 return;

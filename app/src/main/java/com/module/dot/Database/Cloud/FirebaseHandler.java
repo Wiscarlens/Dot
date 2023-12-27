@@ -264,8 +264,11 @@ public class FirebaseHandler {
         // Set the item with the generated key
         newItemRef.setValue(newItem).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                // Save the image to Firebase Storage with the generated key
-                saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
+                if (itemImage != null){
+                    // Save the image to Firebase Storage with the generated key
+                    saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
+                }
+
                 Log.i("Firebase", "Item Added Successfully!");
             }
         }).addOnFailureListener(e ->

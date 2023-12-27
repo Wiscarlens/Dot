@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.module.dot.Helpers.ImageStorageManager;
 import com.module.dot.Helpers.LocalFormat;
@@ -50,25 +51,21 @@ public class ItemGridAdapter extends BaseAdapter {
         TextView unitTypeTextView = view.findViewById(R.id.itemUnitTypeHolderDesign);
         CardView backgroundColor = view.findViewById(R.id.ItemBackgroundColor);
 
-        // TODO: Set the image
+        Drawable itemImage;
+
         if (items.get(position).getImagePath() != null) {
-            Drawable itemImage = ImageStorageManager.loadImageLocally(context, "Items", items.get(position).getImagePath());
-            ItemImageView.setImageDrawable(itemImage);
-
-
+            itemImage = ImageStorageManager.loadImageLocally(context, "Items", items.get(position).getImagePath());
         } else {
             // Default image
+            // TODO: Use category image when item image is not available
+            itemImage = ContextCompat.getDrawable(context, R.drawable.baseline_question_mark_24);
         }
 
-
-
-
-//        ItemImageView.setImageDrawable(items.get(position).getImagePath());
-        ItemImageView.setImageDrawable(null); // Set the Drawable object
+        ItemImageView.setImageDrawable(itemImage);
         ItemNameTextView.setText(items.get(position).getName());
         priceTextView.setText(LocalFormat.getCurrencyFormat(items.get(position).getPrice()));
         unitTypeTextView.setText((items.get(position).getUnitType()));
-        backgroundColor.setBackgroundColor(0); // TDO: Set the background color
+        backgroundColor.setBackgroundColor(0); // TODO: Set the background color
 
         return view;
     }

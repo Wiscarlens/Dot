@@ -70,46 +70,43 @@ public class ItemDatabase extends MyDatabaseManager {
     }
 
     /**
-     * Inserts a new item into the database.
+     * Inserts a new item into the database if the specified column value does not exist.
      *
-     * @param newItem The item object containing information to be added.
+     * @param newItem     The item object containing information to be added.
      * @throws SQLiteException If there is an issue with the SQLite database operations.
      */
     public void createItem(Item newItem) throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            ContentValues cv = new ContentValues();
+            // Check if the specified column value already exists in the database
+            if (!isValueExists(db, NAME_TABLE_ITEMS, GLOBAL_ID_COLUMN_ITEMS, newItem.getGlobalID())) {
+                ContentValues cv = new ContentValues();
 
-//            if (newItem.getImagePath() == null) {
-//                // Handle the case where the conversion fails
-//                Log.e("MyDatabaseManager", "Failed to convert image to byte array");
-//                throw new SQLiteException("Failed to convert image to byte array");
-//            } else {
-//                // Convert the selected image to a byte array (Blob)
-//
-//            }
+                cv.put(GLOBAL_ID_COLUMN_ITEMS, newItem.getGlobalID());
+                cv.put(IMAGE_COLUMN_ITEMS, newItem.getImagePath());
+                cv.put(NAME_COLUMN_ITEMS, newItem.getName());
+                cv.put(PRICE_COLUMN_ITEMS, newItem.getPrice());
+                cv.put(CATEGORY_ID_COLUMN_ITEMS, newItem.getCategory());
+                cv.put(SKU_COLUMN_ITEMS, newItem.getSku());
+                cv.put(UNIT_TYPE_COLUMN_ITEMS, newItem.getUnitType());
+                cv.put(STOCK_QUANTITY_COLUMN_ITEMS, newItem.getStock());
+                cv.put(WS_PRICE_COLUMN_ITEMS, newItem.getWholesalePrice());
+                cv.put(TAX_COLUMN_ITEMS, newItem.getTax());
+                cv.put(DESCRIPTION_COLUMN_ITEMS, newItem.getDescription());
 
-            cv.put(GLOBAL_ID_COLUMN_ITEMS, newItem.getGlobalID());
-            cv.put(IMAGE_COLUMN_ITEMS, newItem.getImagePath());
-            cv.put(NAME_COLUMN_ITEMS, newItem.getName());
-            cv.put(PRICE_COLUMN_ITEMS, newItem.getPrice());
-            cv.put(CATEGORY_ID_COLUMN_ITEMS, newItem.getCategory());
-            cv.put(SKU_COLUMN_ITEMS, newItem.getSku());
-            cv.put(UNIT_TYPE_COLUMN_ITEMS, newItem.getUnitType());
-            cv.put(STOCK_QUANTITY_COLUMN_ITEMS, newItem.getStock());
-            cv.put(WS_PRICE_COLUMN_ITEMS, newItem.getWholesalePrice());
-            cv.put(TAX_COLUMN_ITEMS, newItem.getTax());
-            cv.put(DESCRIPTION_COLUMN_ITEMS, newItem.getDescription());
+                long result = db.insertOrThrow(NAME_TABLE_ITEMS, null, cv);
 
-            long result = db.insertOrThrow(NAME_TABLE_ITEMS, null, cv);
-
-            if (result != -1) {
-                Log.i("MyDatabaseManager", "Item Added Successfully!");
+                if (result != -1) {
+                    Log.i("MyDatabaseManager", "Item Added Successfully!");
+                }
+            } else {
+                Log.i("MyDatabaseManager", "Item with specified value already exists in the column!");
             }
         } catch (SQLiteException e) {
             Log.e("MyDatabaseManager", "Failed to add item: " + e.getMessage());
             throw e;
         }
     }
+
 
 
     /**
@@ -123,11 +120,6 @@ public class ItemDatabase extends MyDatabaseManager {
 
         // If the database is not empty, populate the arrays with the item data
         while (cursor.moveToNext()) {
-//            // Retrieve item image as byte array
-//            byte[] imageData = cursor.getBlob(1);
-//
-//            // Convert the Bitmap to a Drawable if needed
-//            Drawable itemImageDrawable = convertByteArrayToDrawable(imageData);
 
             Item item = new Item(
                     cursor.getLong(0),      // local id

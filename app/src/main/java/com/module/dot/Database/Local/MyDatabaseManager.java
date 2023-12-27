@@ -107,6 +107,28 @@ public abstract class MyDatabaseManager extends SQLiteOpenHelper {
         return exists; // Return the result indicating whether the email exists or not
     }
 
+    /**
+     * Checks if a given value already exists in a specified column of the database table.
+     *
+     * @param db          The SQLiteDatabase object to perform the query on.
+     * @param tableName   The name of the table to check.
+     * @param columnName  The name of the column to check for existence.
+     * @param columnValue The value to check for existence in the specified column.
+     * @return {@code true} if the value exists in the specified column, {@code false} otherwise.
+     */
+    public boolean isValueExists(SQLiteDatabase db, String tableName, String columnName, String columnValue) {
+        // Perform a database query to check for the existence of the value
+        Cursor cursor = db.query(tableName, new String[]{columnName},
+                columnName + "=?", new String[]{columnValue},
+                null, null, null);
+
+        boolean exists = cursor.getCount() > 0; // Check if the value exists in the database
+
+        cursor.close(); // Close the cursor to release resources
+        return exists;  // Return the result indicating whether the value exists or not
+    }
+
+
     public boolean isTableExists(String tableName) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
