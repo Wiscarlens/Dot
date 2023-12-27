@@ -49,7 +49,7 @@ public class FirebaseHandler {
 
 
 
-    public void createUser(User newUser, ImageView profileImage, Context context){
+    public void createUser(User newUser, Drawable profileImage, Context context){
         mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword_hash())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -122,12 +122,12 @@ public class FirebaseHandler {
 
     }
 
-    public static void saveImageToFirebaseStorage(ImageView image, String imagePath) {
-        // Get the data from an ImageView as bytes
-        image.setDrawingCacheEnabled(true);
-        image.buildDrawingCache();
+    public static void saveImageToFirebaseStorage(Drawable image, String imagePath) {
+//        // Get the data from an ImageView as bytes
+//        image.setDrawingCacheEnabled(true);
+//        image.buildDrawingCache();
 
-        byte[] imageData = Utils.getByteArrayFromDrawable(image.getDrawable());
+        byte[] imageData = Utils.getByteArrayFromDrawable(image);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference(imagePath);
@@ -250,7 +250,7 @@ public class FirebaseHandler {
     }
 
 
-    public static void createItem(Item newItem, ImageView itemImage){
+    public static void createItem(Item newItem, Drawable itemImage){
         DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
 
         // Use push to generate a unique key
@@ -259,7 +259,10 @@ public class FirebaseHandler {
         String globalID = newItemRef.getKey(); // Get get item global ID
 
         newItem.setGlobalID(globalID);
-        newItem.setImagePath(globalID);
+
+        if(itemImage != null){
+            newItem.setImagePath(globalID);
+        }
 
         // Set the item with the generated key
         newItemRef.setValue(newItem).addOnCompleteListener(task -> {

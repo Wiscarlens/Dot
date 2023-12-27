@@ -421,7 +421,7 @@ public class SignupFragment extends Fragment {
         );
 
         FirebaseHandler firebaseHandler = new FirebaseHandler();
-        firebaseHandler.createUser(newUser, profileImage, getContext());
+        firebaseHandler.createUser(newUser, profileImage.getDrawable(), getContext());
     }
 
 

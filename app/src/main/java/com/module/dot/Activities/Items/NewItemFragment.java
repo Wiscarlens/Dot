@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -221,8 +223,16 @@ public class NewItemFragment extends Fragment {
         saveButton.setOnClickListener(v -> {
             Item newItem = getItemFromForm();
             newItem.setCreatorID(MainActivity.currentUser.getCreatorID());
-//            createNewItem(newItem); // Save data locally
-            FirebaseHandler.createItem(newItem, itemImage); // Save data to firebase
+
+            Drawable itemImageTemp;
+
+            if (itemImage.getDrawable() != ContextCompat.getDrawable(getContext(), R.drawable.uploading)) {
+                itemImageTemp = itemImage.getDrawable();
+            } else{
+                itemImageTemp = null;
+            }
+
+            FirebaseHandler.createItem(newItem, itemImageTemp); // Save data to firebase
 
             // Replace Add item fragment with Home Fragment
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();

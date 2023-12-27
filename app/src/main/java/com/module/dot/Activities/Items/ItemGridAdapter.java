@@ -58,7 +58,7 @@ public class ItemGridAdapter extends BaseAdapter {
         } else {
             // Default image
             // TODO: Use category image when item image is not available
-            itemImage = ContextCompat.getDrawable(context, R.drawable.baseline_question_mark_24);
+            itemImage = ContextCompat.getDrawable(context, R.drawable.baseline_no_image_24);
         }
 
         ItemImageView.setImageDrawable(itemImage);
