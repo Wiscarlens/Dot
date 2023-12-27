@@ -131,11 +131,11 @@ public class ItemDatabase extends MyDatabaseManager {
 
             Item item = new Item(
                     cursor.getLong(0),      // local id
-                    cursor.getString(2),    // name
-                    cursor.getString(1),    // imagePath
-                    cursor.getDouble(3),    // price
-                    cursor.getString(5),    // SKU
-                    cursor.getString(6)     // unitType
+                    cursor.getString(2),    // imagePath
+                    cursor.getString(3),    // name
+                    cursor.getDouble(4),    // price
+                    cursor.getString(6),    // SKU
+                    cursor.getString(7)     // unitType
             );
 
             itemList.add(item); // Add the item to the ArrayList

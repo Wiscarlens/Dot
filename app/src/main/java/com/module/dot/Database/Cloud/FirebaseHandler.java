@@ -242,10 +242,9 @@ public class FirebaseHandler {
         imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
             Drawable image = Utils.byteArrayToDrawable(bytes, context.getResources());
 
-            ImageStorageManager.saveImageLocally(context, image, "Profiles", fileName);
+            ImageStorageManager.saveImageLocally(context, image, folderName, fileName);
         }).addOnFailureListener(exception -> {
-            Log.e("Firebase", "Error getting profile image", exception);
-            // Handle any errors, e.g., set a default image
+            Log.e("Firebase", "Error getting item image", exception);
         });
 
     }
@@ -260,6 +259,7 @@ public class FirebaseHandler {
         String globalID = newItemRef.getKey(); // Get get item global ID
 
         newItem.setGlobalID(globalID);
+        newItem.setImagePath(globalID);
 
         // Set the item with the generated key
         newItemRef.setValue(newItem).addOnCompleteListener(task -> {

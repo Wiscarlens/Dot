@@ -29,7 +29,7 @@ public class ImageStorageManager {
     }
 
     public static Drawable loadImageLocally(Context context, String folder, String imageName) {
-        File directory = context.getDir("Profiles", Context.MODE_PRIVATE);
+        File directory = context.getDir(folder, Context.MODE_PRIVATE);
         File file = new File(directory, imageName + ".png");
 
         if (file.exists()) {

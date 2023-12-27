@@ -23,6 +23,7 @@ public class Item {
 
     public Item() {
 
+
     }
 
     // Use for add item to database
@@ -40,10 +41,10 @@ public class Item {
     }
 
     // Use for display item in the gridview
-    public Item(long localID, String name, String imagePath, double price, String SKU, String unitType) {
+    public Item(long localID, String imagePath, String name,  double price, String SKU, String unitType) {
         this.localID = localID;
-        this.name = name;
         this.imagePath = imagePath;
+        this.name = name;
         this.price = price;
         this.sku = SKU;
         this.unitType = unitType;

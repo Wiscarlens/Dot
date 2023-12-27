@@ -51,12 +51,13 @@ public class ItemGridAdapter extends BaseAdapter {
         CardView backgroundColor = view.findViewById(R.id.ItemBackgroundColor);
 
         // TODO: Set the image
-        if (items.get(position).getImagePath() == null) {
-           // Default image
-
-        } else {
+        if (items.get(position).getImagePath() != null) {
             Drawable itemImage = ImageStorageManager.loadImageLocally(context, "Items", items.get(position).getImagePath());
             ItemImageView.setImageDrawable(itemImage);
+
+
+        } else {
+            // Default image
         }
 
 
