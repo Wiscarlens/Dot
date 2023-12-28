@@ -31,12 +31,10 @@ import java.util.Objects;
 public class UsersFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     FirebaseAuth auth;
-    FirebaseStorage storage = FirebaseStorage.getInstance(); // TODO: Testing purpose
-
-    StorageReference storageRef;
     private UserDatabase userDatabase;
 
     private LinearLayout noUser;
+    private UserRecyclerAdapter adapter;
     private RecyclerView recyclerView;
 
     private final ArrayList<User> user_for_display = new ArrayList<>();
@@ -45,25 +43,7 @@ public class UsersFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        try {
-            if (userDatabase.isTableEmpty("users")) {
-                userDatabase.showEmptyStateMessage(recyclerView, noUser);
-            } else {
-                userDatabase.showStateMessage(recyclerView, noUser);
-                user_for_display.clear(); // Clear the list before updating it
 
-
-                userDatabase.readUser(user_for_display); // Read data from database and save it the arraylist
-
-//                FirebaseHandler.downloadAndSaveImagesLocally(user_for_display, getContext());
-
-                UserRecyclerAdapter adapter = new UserRecyclerAdapter(user_for_display, getContext());
-                recyclerView.setAdapter(adapter);
-            }
-
-        } catch (Exception e) {
-            Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
-        }
     }
 
     public void onAttach(@NonNull Context context) {
@@ -94,16 +74,31 @@ public class UsersFragment extends Fragment {
 
 
 
-        if(!userDatabase.isTableExists("users")){
+        if (!userDatabase.isTableExists("users")){
             userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
-//            userDatabase.showEmptyStateMessage(recyclerView, noUser);
 
             FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
 
         } else {
             // TODO: just use firebase only
             FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+        }
 
+        try {
+            if (userDatabase.isTableEmpty("users")) {
+                userDatabase.showEmptyStateMessage(recyclerView, noUser);
+            } else {
+                userDatabase.showStateMessage(recyclerView, noUser);
+                user_for_display.clear(); // Clear the list before updating it
+
+                userDatabase.readUser(user_for_display); // Read data from database and save it the arraylist
+
+                adapter = new UserRecyclerAdapter(user_for_display, getContext());
+                recyclerView.setAdapter(adapter);
+            }
+
+        } catch (Exception e) {
+            Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
 
 
@@ -135,6 +130,16 @@ public class UsersFragment extends Fragment {
         });
 
 
+    }
+
+    public int refreshRecyclerView() {
+        user_for_display.clear();
+        userDatabase.readUser(user_for_display);
+        return user_for_display.size() - 1; // return the index of the last item
+    }
+
+    public UserRecyclerAdapter getAdapter() {
+        return adapter;
     }
 
 }

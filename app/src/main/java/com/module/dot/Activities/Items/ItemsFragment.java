@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.module.dot.Activities.MainActivity;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.R;
@@ -82,6 +83,10 @@ public class ItemsFragment extends Fragment {
         itemGridview.setAdapter(adapter);
 
         itemGridview.setOnItemClickListener((parent, view12, position, id) -> Toast.makeText(getContext(), "You selected " + item_for_display.get(position).getName(), Toast.LENGTH_SHORT).show());
+
+        if(!Objects.equals(MainActivity.currentUser.getPositionTitle(), "Administrator")){
+            addItem.setVisibility(View.GONE);
+        }
 
         addItem.setOnClickListener(view1 -> {
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();

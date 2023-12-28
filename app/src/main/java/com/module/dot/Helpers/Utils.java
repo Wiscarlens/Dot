@@ -70,7 +70,7 @@ public class Utils {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         // Compress the bitmap to PNG format and write it to the output stream.
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 25, outputStream);
 
         // Get the byte array from the output stream.
         return outputStream.toByteArray();
@@ -156,6 +156,7 @@ public class Utils {
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
+
         return bitmap;
     }
 

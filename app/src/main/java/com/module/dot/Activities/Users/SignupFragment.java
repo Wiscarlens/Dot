@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import com.module.dot.R;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class SignupFragment extends Fragment {
 
@@ -226,14 +228,19 @@ public class SignupFragment extends Fragment {
         saveButton.setOnClickListener(v -> {
             saveToDatabase();
 
-            // Replace Add item fragment with Home Fragment
-            FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            UsersFragment usersFragment = new UsersFragment();
-            fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
-            fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
-            fragmentTransaction.commit();
+//            // Refresh the recycler view
+//            UserRecyclerAdapter adapter = ((UsersFragment) Objects.requireNonNull(getParentFragmentManager().findFragmentById(R.id.fragment_container))).getAdapter();
+//            int newIndex = ((UsersFragment) Objects.requireNonNull(getParentFragmentManager().findFragmentById(R.id.fragment_container))).refreshRecyclerView();
+//            adapter.notifyItemInserted(newIndex);
+//
+//            // Replace Add item fragment with Home Fragment
+//            FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//            UsersFragment usersFragment = new UsersFragment();
+//            fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
+//            fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
+//            fragmentTransaction.commit();
         });
 
 
@@ -394,18 +401,31 @@ public class SignupFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void showDialogMessage() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-        alertDialog.setTitle("Confirm")
-                .setMessage("Do you want to create a new user?")
-                .setNegativeButton("No", (dialog, which) -> {
-                    // If user click on NO nothing happen
-                })
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    // Open ConfirmationFragment when user click on YES
-
-                }).show();
-    }
+//    private void saveToDatabase() {
+//        User newUser = new User(
+//                String.valueOf(firstName.getText()),
+//                String.valueOf(lastName.getText()),
+//                String.valueOf(DOB.getText()),
+//                String.valueOf(email.getText()),
+//                String.valueOf(phoneNumber.getText()),
+//                String.valueOf(address.getText()),
+//                String.valueOf(companyName.getText()),
+//                String.valueOf(positionTitle.getSelectedItem()),
+//                String.valueOf(password.getText())
+//        );
+//
+//        FirebaseHandler firebaseHandler = new FirebaseHandler();
+//
+//        Drawable profileImageTemp;
+//
+//        if (profileImage.getDrawable() != ContextCompat.getDrawable(requireContext(), R.drawable.uploading)) {
+//            profileImageTemp = profileImage.getDrawable();
+//        } else{
+//            profileImageTemp = null;
+//        }
+//
+//        firebaseHandler.createUser(newUser, profileImageTemp, getContext()); // Save data to firebase
+//    }
 
     private void saveToDatabase() {
         User newUser = new User(
@@ -421,7 +441,33 @@ public class SignupFragment extends Fragment {
         );
 
         FirebaseHandler firebaseHandler = new FirebaseHandler();
-        firebaseHandler.createUser(newUser, profileImage.getDrawable(), getContext());
+
+        Drawable profileImageTemp;
+
+        if (profileImage.getDrawable() != ContextCompat.getDrawable(requireContext(), R.drawable.uploading)) {
+            profileImageTemp = profileImage.getDrawable();
+        } else{
+            profileImageTemp = null;
+        }
+
+        firebaseHandler.createUser(newUser, profileImageTemp, getContext()); // Save data to firebase
+
+        // Refresh the recycler view
+        Fragment currentFragment = getParentFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment instanceof UsersFragment) {
+            UserRecyclerAdapter adapter = ((UsersFragment) currentFragment).getAdapter();
+            int newIndex = ((UsersFragment) currentFragment).refreshRecyclerView();
+            adapter.notifyItemInserted(newIndex);
+        }
+
+        // Replace Add item fragment with Home Fragment
+        FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        UsersFragment usersFragment = new UsersFragment();
+        fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
+        fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
+        fragmentTransaction.commit();
     }
 
 

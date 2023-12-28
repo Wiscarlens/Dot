@@ -1,6 +1,7 @@
 package com.module.dot.Database.Cloud;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.ImageStorageManager;
 import com.module.dot.Helpers.Utils;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -54,10 +56,11 @@ public class FirebaseHandler {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         try {
-                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            assert firebaseUser != null;
-                            String globalID = firebaseUser.getUid(); // Get the user ID
+//                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+//                            assert firebaseUser != null;
+//                            String globalID = firebaseUser.getUid(); // Get the user ID
 
+                            String globalID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                             newUser.setGlobalID(globalID);
 
                             if (MainActivity.currentUser == null){
@@ -66,10 +69,16 @@ public class FirebaseHandler {
                                 newUser.setCreatorID(MainActivity.currentUser.getGlobalID());
                             }
 
-                            mDatabase = FirebaseDatabase.getInstance().getReference();
-                            saveImageToFirebaseStorage(profileImage, "Profiles/" + globalID);
-                            newUser.setProfileImagePath(globalID);
-                            mDatabase.child("users").child(globalID).setValue(newUser);
+                            if (profileImage != null){
+                                newUser.setProfileImagePath(globalID);
+                                saveImageToFirebaseStorage(profileImage, "Profiles/" + globalID);
+                            }
+
+                            DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference();
+                            currentUserDb.child("users").child(globalID).setValue(newUser);
+
+                            Log.i("Firebase", "User Added Successfully!");
+
 
                         } catch (Exception e) {
                             Log.e("Firebase", "Error while adding user to online database", e);
@@ -93,41 +102,20 @@ public class FirebaseHandler {
 
 
     public static void readUser(ArrayList<User> userList){
-        // Firebase database reference
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
-        // Attach a ValueEventListener
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userList.clear(); // Clear the list before populating it again
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    User user = snapshot.getValue(User.class);
-                    userList.add(user);
-                }
-
-                Log.i("Firebase", "Data read successfully");
-
-                // Notify the adapter that the data set has changed
-//                usersAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle the error
-                Log.e("Firebase", "Error: " + databaseError.getMessage());
-            }
-        });
 
     }
 
     public static void saveImageToFirebaseStorage(Drawable image, String imagePath) {
-//        // Get the data from an ImageView as bytes
-//        image.setDrawingCacheEnabled(true);
-//        image.buildDrawingCache();
 
-        byte[] imageData = Utils.getByteArrayFromDrawable(image);
+        Bitmap bitmap = Utils.drawableToBitmap(image);
+
+        // Compress the Bitmap into a ByteArrayOutputStream with 50% quality
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+
+        // Convert the ByteArrayOutputStream to a byte array
+        byte[] imageData = baos.toByteArray();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference(imagePath);
@@ -234,18 +222,23 @@ public class FirebaseHandler {
 
 
     public static void downloadAndSaveImagesLocally(String folderName, String fileName, Context context) {
-        final long ONE_MEGABYTE = 512 * 512;
+        final long ONE_MEGABYTE = 1024 * 1024;
 
         String imagePath = folderName + "/" + fileName;
         StorageReference imageRef = storage.getReference(imagePath);
 
-        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-            Drawable image = Utils.byteArrayToDrawable(bytes, context.getResources());
+        try {
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+                Drawable image = Utils.byteArrayToDrawable(bytes, context.getResources());
 
-            ImageStorageManager.saveImageLocally(context, image, folderName, fileName);
-        }).addOnFailureListener(exception -> {
-            Log.e("Firebase", "Error getting item image", exception);
-        });
+                ImageStorageManager.saveImageLocally(context, image, folderName, fileName);
+            }).addOnFailureListener(exception -> {
+                Log.e("Firebase", "Error downloading item image", exception);
+            });
+
+        } catch (IndexOutOfBoundsException e){
+            Log.e("Firebase", "The maximum allowed buffer size was exceeded.", e);
+        }
 
     }
 
