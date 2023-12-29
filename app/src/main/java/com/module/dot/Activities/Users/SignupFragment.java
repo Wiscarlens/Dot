@@ -7,7 +7,11 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,8 +41,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
+import com.journeyapps.barcodescanner.Util;
 import com.module.dot.Activities.MainActivity;
 import com.module.dot.Database.Cloud.FirebaseHandler;
+import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -401,31 +407,6 @@ public class SignupFragment extends Fragment {
         datePickerDialog.show();
     }
 
-//    private void saveToDatabase() {
-//        User newUser = new User(
-//                String.valueOf(firstName.getText()),
-//                String.valueOf(lastName.getText()),
-//                String.valueOf(DOB.getText()),
-//                String.valueOf(email.getText()),
-//                String.valueOf(phoneNumber.getText()),
-//                String.valueOf(address.getText()),
-//                String.valueOf(companyName.getText()),
-//                String.valueOf(positionTitle.getSelectedItem()),
-//                String.valueOf(password.getText())
-//        );
-//
-//        FirebaseHandler firebaseHandler = new FirebaseHandler();
-//
-//        Drawable profileImageTemp;
-//
-//        if (profileImage.getDrawable() != ContextCompat.getDrawable(requireContext(), R.drawable.uploading)) {
-//            profileImageTemp = profileImage.getDrawable();
-//        } else{
-//            profileImageTemp = null;
-//        }
-//
-//        firebaseHandler.createUser(newUser, profileImageTemp, getContext()); // Save data to firebase
-//    }
 
     private void saveToDatabase() {
         User newUser = new User(
@@ -444,9 +425,9 @@ public class SignupFragment extends Fragment {
 
         Drawable profileImageTemp;
 
-        if (profileImage.getDrawable() != ContextCompat.getDrawable(requireContext(), R.drawable.uploading)) {
+        if (isImageSame(profileImage.getDrawable(), ContextCompat.getDrawable(requireContext(), R.drawable.uploading))) {
             profileImageTemp = profileImage.getDrawable();
-        } else{
+        } else {
             profileImageTemp = null;
         }
 
@@ -454,6 +435,7 @@ public class SignupFragment extends Fragment {
 
         // Refresh the recycler view
         Fragment currentFragment = getParentFragmentManager().findFragmentById(R.id.fragment_container);
+
         if (currentFragment instanceof UsersFragment) {
             UserRecyclerAdapter adapter = ((UsersFragment) currentFragment).getAdapter();
             int newIndex = ((UsersFragment) currentFragment).refreshRecyclerView();
@@ -468,6 +450,32 @@ public class SignupFragment extends Fragment {
         fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
         fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
         fragmentTransaction.commit();
+    }
+
+    private boolean isImageSame(Drawable currentDrawable, Drawable uploadingDrawable) {
+        if (currentDrawable != null && uploadingDrawable != null) {
+            Bitmap bitmapCurrent = getBitmapFromVectorDrawable(currentDrawable);
+            Bitmap bitmapUploading = getBitmapFromVectorDrawable(uploadingDrawable);
+
+            return bitmapCurrent.sameAs(bitmapUploading);
+        }
+
+        return false;
+    }
+
+    private Bitmap getBitmapFromVectorDrawable(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof VectorDrawable) {
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        } else {
+            throw new IllegalArgumentException("unsupported drawable type");
+        }
     }
 
 

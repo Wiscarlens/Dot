@@ -37,7 +37,7 @@ public class ItemsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        FirebaseHandler.syncDataFromFirebase("items", getContext());
+
 
     }
 
@@ -60,10 +60,7 @@ public class ItemsFragment extends Fragment {
         GridView itemGridview = view.findViewById(R.id.itemList); // When list of item will show
         FloatingActionButton addItem = view.findViewById(R.id.addButton); // Add Item floating button
 
-//        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext()); // Local database
-
-        // Save item data from database to the arraylist
-//        MyDatabaseHelper.getItems(myDB, item_for_display, itemGridview, noData, getResources());
+        FirebaseHandler.readItem("items", getContext());
 
         try (ItemDatabase itemDatabase = new ItemDatabase(getContext())) {
             if (itemDatabase.isTableEmpty("items")) {
@@ -89,14 +86,16 @@ public class ItemsFragment extends Fragment {
         }
 
         addItem.setOnClickListener(view1 -> {
-            FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            NewItemFragment new_item_fragment = new NewItemFragment();
-
-            fragmentTransaction.replace(R.id.fragment_container, new_item_fragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+            showFragment(new NewItemFragment());
         });
+    }
+
+    private void showFragment(Fragment fragment) {
+        FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

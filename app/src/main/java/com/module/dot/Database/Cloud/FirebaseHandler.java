@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,7 +29,6 @@ import com.module.dot.Helpers.ImageStorageManager;
 import com.module.dot.Helpers.Utils;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class FirebaseHandler {
@@ -44,21 +42,12 @@ public class FirebaseHandler {
         return firebaseUser.getUid();
     }
 
-    // Check if current user is administrator
-    public interface AdminCheckCallback {
-        void onAdminCheckResult(boolean isAdmin);
-    }
-
-
 
     public void createUser(User newUser, Drawable profileImage, Context context){
         mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword_hash())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         try {
-//                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-//                            assert firebaseUser != null;
-//                            String globalID = firebaseUser.getUid(); // Get the user ID
 
                             String globalID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                             newUser.setGlobalID(globalID);
@@ -100,19 +89,13 @@ public class FirebaseHandler {
     }
 
 
-
-    public static void readUser(ArrayList<User> userList){
-
-
-    }
-
     public static void saveImageToFirebaseStorage(Drawable image, String imagePath) {
 
         Bitmap bitmap = Utils.drawableToBitmap(image);
 
         // Compress the Bitmap into a ByteArrayOutputStream with 50% quality
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 25, baos);
 
         // Convert the ByteArrayOutputStream to a byte array
         byte[] imageData = baos.toByteArray();
@@ -135,7 +118,7 @@ public class FirebaseHandler {
         });
     }
 
-    public static void syncDataFromFirebase(String tableName, Context context){
+    public static void readItem(String tableName, Context context){
         DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
         firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -174,7 +157,7 @@ public class FirebaseHandler {
 
 
     // Synchronize user data from Firebase to SQLite
-    public static void syncUserDataFromFirebase(Context context, String tableName){
+    public static void readUser(String tableName, Context context){
         DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
 
         // Fetch data from Firebase

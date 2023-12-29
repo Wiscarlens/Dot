@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.R;
@@ -71,17 +69,14 @@ public class UsersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-
-
-
         if (!userDatabase.isTableExists("users")){
             userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
 
-            FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+            FirebaseHandler.readUser("users", getContext());
 
         } else {
             // TODO: just use firebase only
-            FirebaseHandler.syncUserDataFromFirebase(getContext(), "users");
+            FirebaseHandler.readUser("users", getContext());
         }
 
         try {

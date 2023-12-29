@@ -84,7 +84,6 @@ public class ReceiptFragment extends Fragment {
                     try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
                         orderDatabase.getOrdersDetails(
                                 orders,
-                                getResources(),
                                 result.getLong("orderNumber") // Order Number
                         );
                     } catch (Exception e) {
@@ -144,110 +143,6 @@ public class ReceiptFragment extends Fragment {
         shareButton.setOnClickListener(v -> Toast.makeText(getContext(), "Share Button Works", Toast.LENGTH_SHORT).show());
 
         }
-
-
-    //    private void printPDF(File pdfFile) {
-//        if (orders.isEmpty()) {
-//            // Handle the case where there are no orders to print
-//            return;
-//        }
-//
-//        try {
-//            // Print the generated PDF file
-//            printHelper.printPdfFile(pdfFile);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            // Handle any exceptions that may occur during printing
-//        }
-//    }
-//
-//    private File generatePDF() {
-//        File pdfFile = null;
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
-//
-//            // Create a file in the app's private storage directory
-//            pdfFile = new File(requireContext().getFilesDir(), "Receipt_" + orderNumberString + ".pdf");
-//
-//            // Create a ContentValues object to store the file's metadata
-//            ContentValues contentValues = new ContentValues();
-//            contentValues.put(MediaStore.Downloads.DISPLAY_NAME, "Receipt_" + orderNumberString + ".pdf");
-//
-//            // Get the content resolver and insert the file into the Downloads directory
-//            ContentResolver contentResolver = getContext().getContentResolver();
-//            Uri uri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
-//
-//            try {
-//                // Open an output stream using the document's URI
-//                OutputStream outputStream = contentResolver.openOutputStream(uri);
-//
-//                if (outputStream != null) {
-//                    // Define the page width and height in points (1/72 inch)
-//                    int pageWidth = 1280; // 8.5 inches (8.5 * 72 points)
-//                    int pageHeight = 1920; // 11 inches (11 * 72 points)
-//
-//                    // Create the PDF document
-//                    PdfDocument document = new PdfDocument();
-//                    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
-//                    PdfDocument.Page page = document.startPage(pageInfo);
-//                    Canvas canvas = page.getCanvas();
-//
-//                    // Inflate the XML layout into a view
-//                    View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_receipt, null);
-//
-//                    LinearLayout receiptLayout = view.findViewById(R.id.receiptFooter);
-//
-//                    // Update the view elements with data
-//                    RecyclerView receiptItems = view.findViewById(R.id.receiptItems);
-//                    TextView date = view.findViewById(R.id.receiptDate);
-//                    TextView time = view.findViewById(R.id.receiptTime);
-//                    TextView total = view.findViewById(R.id.receiptTotal);
-//                    TextView orderNumber = view.findViewById(R.id.receiptOrderNumber);
-//
-//                    receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
-//
-//                    if (!orders.isEmpty()) {
-//                        date.setText(orders.get(0).getOrderDate());
-//                        time.setText(orders.get(0).getOrderTime());
-//                        total.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount()));
-//                        orderNumber.setText(orderNumberString);
-//
-//                        ArrayList<Item> selectedItems = orders.get(0).getSelectedItem();
-//
-//                        // Create the adapter and set it to the RecyclerView
-//                        BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());
-//                        receiptItems.setAdapter(receiptAdapter);
-//                        receiptLayout.setVisibility(View.GONE);
-//                    }
-//
-//                    // Measure and draw the updated view onto the PDF canvas
-//                    view.measure(View.MeasureSpec.makeMeasureSpec(pageWidth, View.MeasureSpec.EXACTLY),
-//                            View.MeasureSpec.makeMeasureSpec(pageHeight, View.MeasureSpec.EXACTLY));
-//                    view.layout(0, 0, pageWidth, pageHeight);
-//                    view.draw(canvas);
-//
-//                    document.finishPage(page);
-//
-//                    // Write the PDF content to the output stream
-//                    document.writeTo(outputStream);
-//
-//                    // Close the output stream and the PDF document
-//                    outputStream.close();
-//                    document.close();
-//
-//                    Log.i("PDF", "PDF Created Successfully!");
-//
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            // Handle versions prior to Android 10 if needed
-//        }
-//        return pdfFile;
-//    }
-//
-//
 
 
 

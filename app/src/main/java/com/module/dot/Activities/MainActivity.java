@@ -36,6 +36,7 @@ import com.module.dot.Activities.Transactions.TransactionsFragment;
 import com.module.dot.Activities.Users.User;
 import com.module.dot.Activities.Users.UsersFragment;
 import com.module.dot.Database.Cloud.FirebaseHandler;
+import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        loadData(); // Load data from the database
 
         // Find views in the navigation header
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -250,6 +253,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }).show();
 
 
+    }
+
+    private void loadData() {
+        try (UserDatabase userDatabase = new UserDatabase(this)){
+            if (!userDatabase.isTableExists("users")){
+                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
+            }
+        }
+
+        try (ItemDatabase itemDatabase = new ItemDatabase(this)){
+            if (!itemDatabase.isTableExists("items")){
+                itemDatabase.onCreate(itemDatabase.getWritableDatabase()); // Create the database
+            }
+        }
+
+        FirebaseHandler.readItem("items", this);
+        FirebaseHandler.readUser( "users", this);
     }
 
 }

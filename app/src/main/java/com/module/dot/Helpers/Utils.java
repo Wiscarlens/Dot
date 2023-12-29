@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -158,6 +159,32 @@ public class Utils {
         drawable.draw(canvas);
 
         return bitmap;
+    }
+
+    public static boolean isImageSame(Drawable currentDrawable, Drawable uploadingDrawable) {
+        if (currentDrawable != null && uploadingDrawable != null) {
+            Bitmap bitmapCurrent = getBitmapFromVectorDrawable(currentDrawable);
+            Bitmap bitmapUploading = getBitmapFromVectorDrawable(uploadingDrawable);
+
+            return bitmapCurrent.sameAs(bitmapUploading);
+        }
+
+        return false;
+    }
+
+    private static Bitmap getBitmapFromVectorDrawable(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof VectorDrawable) {
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        } else {
+            throw new IllegalArgumentException("unsupported drawable type");
+        }
     }
 
 

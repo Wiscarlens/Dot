@@ -5,7 +5,11 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -31,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -38,9 +43,11 @@ import com.module.dot.Activities.MainActivity;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Helpers.ScannerManager;
+import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class NewItemFragment extends Fragment {
@@ -207,16 +214,15 @@ public class NewItemFragment extends Fragment {
                         });
 
         // Click on Image Item
-        itemImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                imagePickerLauncher.launch(intent);
+        itemImage.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            imagePickerLauncher.launch(intent);
 
-            }
+
         });
+
 
 
 
@@ -226,13 +232,15 @@ public class NewItemFragment extends Fragment {
 
             Drawable itemImageTemp;
 
-            if (itemImage.getDrawable() != ContextCompat.getDrawable(getContext(), R.drawable.uploading)) {
+            if (isImageSame(itemImage.getDrawable(), ContextCompat.getDrawable(getContext(), R.drawable.uploading))) {
                 itemImageTemp = itemImage.getDrawable();
             } else{
                 itemImageTemp = null;
             }
 
             FirebaseHandler.createItem(newItem, itemImageTemp); // Save data to firebase
+
+            Toast.makeText(getContext(), "Item created!", Toast.LENGTH_SHORT).show();
 
             // Replace Add item fragment with Home Fragment
             FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
@@ -376,12 +384,6 @@ public class NewItemFragment extends Fragment {
         }
 
     }
-    private void createNewItem(Item newItem) {
-
-        try (ItemDatabase itemDB = new ItemDatabase(getContext())) {
-            itemDB.createItem(newItem);
-        }
-    }
 
     private Item getItemFromForm() {
         return new Item(
@@ -395,6 +397,32 @@ public class NewItemFragment extends Fragment {
                 Double.parseDouble(String.valueOf(itemTax.getText()).trim()),
                 String.valueOf(itemDescription.getText())
         );
+    }
+
+    private boolean isImageSame(Drawable currentDrawable, Drawable uploadingDrawable) {
+        if (currentDrawable != null && uploadingDrawable != null) {
+            Bitmap bitmapCurrent = getBitmapFromVectorDrawable(currentDrawable);
+            Bitmap bitmapUploading = getBitmapFromVectorDrawable(uploadingDrawable);
+
+            return bitmapCurrent.sameAs(bitmapUploading);
+        }
+
+        return false;
+    }
+
+    private Bitmap getBitmapFromVectorDrawable(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof VectorDrawable) {
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        } else {
+            throw new IllegalArgumentException("unsupported drawable type");
+        }
     }
 
 }
