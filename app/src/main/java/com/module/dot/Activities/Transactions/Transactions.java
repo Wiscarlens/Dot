@@ -2,18 +2,19 @@ package com.module.dot.Activities.Transactions;
 
 
 public class Transactions {
+    private String globalID;
     private String transactionID;
     private String transactionDate;
     private String transactionTime;
     private final long orderNumber;
     private final String transactionStatus;
     private final double transactionTotal;
-    private final int paymentMethod;
+    private final String paymentMethod;
 
     // Constructor for displaying transactions
     public Transactions(String transactionDate, String transactionTime, long orderNumber,
                         String transactionID, String transactionStatus,
-                        double transactionTotal, int paymentMethod) {
+                        double transactionTotal, String paymentMethod) {
         this.transactionDate = transactionDate;
         this.transactionTime = transactionTime;
         this.orderNumber = orderNumber;
@@ -25,27 +26,49 @@ public class Transactions {
 
     // Constructor for creating a new transaction
     public Transactions(long orderNumber, String transactionStatus,
-                        double transactionTotal, int paymentMethod) {
+                        double transactionTotal, String paymentMethod, String date, String time) {
         this.orderNumber = orderNumber;
         this.transactionStatus = transactionStatus;
         this.transactionTotal = transactionTotal;
         this.paymentMethod = paymentMethod;
+        this.transactionDate = date;
+        this.transactionTime = time;
+    }
+
+    public String getGlobalID() {
+        return globalID;
+    }
+
+    public void setGlobalID(String globalID) {
+        this.globalID = globalID;
+    }
+
+    public String getTransactionID() {
+        return transactionID;
+    }
+
+    public void setTransactionID(String transactionID) {
+        this.transactionID = transactionID;
     }
 
     public String getTransactionDate() {
         return transactionDate;
     }
 
+    public void setTransactionDate(String transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
     public String getTransactionTime() {
         return transactionTime;
     }
 
-    public long getOrderNumber() {
-        return orderNumber;
+    public void setTransactionTime(String transactionTime) {
+        this.transactionTime = transactionTime;
     }
 
-    public String getTransactionID() {
-        return transactionID;
+    public long getOrderNumber() {
+        return orderNumber;
     }
 
     public String getTransactionStatus() {
@@ -56,7 +79,7 @@ public class Transactions {
         return transactionTotal;
     }
 
-    public int getPaymentMethod() {
+    public String getPaymentMethod() {
         return paymentMethod;
     }
 }

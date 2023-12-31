@@ -2,6 +2,7 @@ package com.module.dot.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -37,7 +38,9 @@ import com.module.dot.Activities.Users.User;
 import com.module.dot.Activities.Users.UsersFragment;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
+import com.module.dot.Database.Local.OrderItemsDatabase;
 import com.module.dot.Database.Local.UserDatabase;
+import com.module.dot.Helpers.FileManager;
 import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
+        createTables(); // Load data from the database
         loadData(); // Load data from the database
 
         // Find views in the navigation header
@@ -233,11 +237,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // TODO: Delete all tables and images from the local database
                     // Delete Image folder from local storage
                     // Clean user local database
-                    try(UserDatabase userDatabase = new UserDatabase(this)){
-                        userDatabase.deleteAllUsers();
-                    } catch (Exception e){
-                        Log.e("MainActivity", "Error deleting all users", e);
-                    }
+//                    try(UserDatabase userDatabase = new UserDatabase(this)){
+//                        userDatabase.deleteAllUsers();
+//                    } catch (Exception e){
+//                        Log.e("MainActivity", "Error deleting all users", e);
+//                    }
+
+                    FileManager.clearAppCache(this); // Clear the app cache (local storage
 
                     loginActivity = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(loginActivity);
@@ -255,19 +261,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private void loadData() {
-        try (UserDatabase userDatabase = new UserDatabase(this)){
-            if (!userDatabase.isTableExists("users")){
-                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
-            }
-        }
-
+    private void createTables() {
         try (ItemDatabase itemDatabase = new ItemDatabase(this)){
             if (!itemDatabase.isTableExists("items")){
                 itemDatabase.onCreate(itemDatabase.getWritableDatabase()); // Create the database
             }
         }
 
+        try (UserDatabase userDatabase = new UserDatabase(this)){
+            if (!userDatabase.isTableExists("users")){
+                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
+            }
+        }
+
+        try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(this)){
+            if (!orderItemsDatabase.isTableExists("order_items")) {
+                orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
+            }
+        }
+
+    }
+
+    private void loadData(){
         FirebaseHandler.readItem("items", this);
         FirebaseHandler.readUser( "users", this);
     }

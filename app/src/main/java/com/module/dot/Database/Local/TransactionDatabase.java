@@ -125,7 +125,7 @@ public class TransactionDatabase extends MyDatabaseManager {
                         cursor.getString(0), // Transaction ID
                         cursor.getString(5), // Transaction Status
                         cursor.getDouble(4), // Transaction Total
-                        cursor.getInt(6) // Payment Method
+                        cursor.getString(6) // Payment Method
                 );
 
                 transactions_for_display.add(transaction); // Add the order to the ArrayList

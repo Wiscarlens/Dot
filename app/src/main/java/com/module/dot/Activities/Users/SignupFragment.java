@@ -425,7 +425,7 @@ public class SignupFragment extends Fragment {
 
         Drawable profileImageTemp;
 
-        if (isImageSame(profileImage.getDrawable(), ContextCompat.getDrawable(requireContext(), R.drawable.uploading))) {
+        if (!isImageSame(profileImage.getDrawable(), ContextCompat.getDrawable(requireContext(), R.drawable.uploading))) {
             profileImageTemp = profileImage.getDrawable();
         } else {
             profileImageTemp = null;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Orders {
     private long orderNumber;
+    private String globalID;
     private String orderDate;
     private String orderTime;
     private final String orderStatus;
@@ -35,16 +36,37 @@ public class Orders {
         this.orderTotalAmount = orderTotalAmount;
     }
 
+
     public long getOrderNumber() {
         return orderNumber;
+    }
+
+    public void setOrderNumber(long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public String getGlobalID() {
+        return globalID;
+    }
+
+    public void setGlobalID(String globalID) {
+        this.globalID = globalID;
     }
 
     public String getOrderDate() {
         return orderDate;
     }
 
+    public void setOrderDate(String orderDate) {
+        this.orderDate = orderDate;
+    }
+
     public String getOrderTime() {
         return orderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
     }
 
     public String getOrderStatus() {
@@ -55,6 +77,10 @@ public class Orders {
         return orderTotalItems;
     }
 
+    public void setOrderTotalItems(int orderTotalItems) {
+        this.orderTotalItems = orderTotalItems;
+    }
+
     public double getOrderTotalAmount() {
         return orderTotalAmount;
     }
@@ -63,7 +89,15 @@ public class Orders {
         return creatorID;
     }
 
+    public void setCreatorID(String creatorID) {
+        this.creatorID = creatorID;
+    }
+
     public ArrayList<Item> getSelectedItem() {
         return selectedItem;
+    }
+
+    public void setSelectedItem(ArrayList<Item> selectedItem) {
+        this.selectedItem = selectedItem;
     }
 }

@@ -1,14 +1,17 @@
 package com.module.dot.Activities.Items;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.module.dot.Helpers.FileManager;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -37,8 +40,17 @@ public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdap
 
     @Override
     public void onBindViewHolder(@NonNull DesignViewHolder holder, int position) {
-//        holder.selectedItem_ImageView.setImageDrawable(selectedItems.get(position).getImagePath());
-        holder.selectedItem_ImageView.setImageDrawable(null); // TODO: Set the Drawable object
+        Drawable itemImage;
+
+        if (selectedItems.get(position).getImagePath() != null) {
+            itemImage = FileManager.loadImageLocally(context, "Items", selectedItems.get(position).getImagePath());
+        } else {
+            // Default image
+            // TODO: Use category image when item image is not available
+            itemImage = ContextCompat.getDrawable(context, R.drawable.baseline_no_image_24);
+        }
+
+        holder.selectedItem_ImageView.setImageDrawable(itemImage);
     }
 
     @Override

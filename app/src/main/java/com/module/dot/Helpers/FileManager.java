@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class ImageStorageManager {
+public class FileManager {
     public static void saveImageLocally(Context context, Drawable drawable, String folderName, String imageName) {
         // Convert the drawable to a Bitmap
         Bitmap bitmap = Utils.drawableToBitmap(drawable);
@@ -40,5 +40,41 @@ public class ImageStorageManager {
             return null;
         }
     }
+
+    public static void clearAppCache(Context context) {
+        try {
+            // Clear application cache
+            File cacheDir = context.getCacheDir();
+            if (cacheDir != null && cacheDir.isDirectory()) {
+                deleteDir(cacheDir);
+            }
+
+            // Clear external cache (if applicable)
+            File externalCacheDir = context.getExternalCacheDir();
+            if (externalCacheDir != null && externalCacheDir.isDirectory()) {
+                deleteDir(externalCacheDir);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            assert children != null;
+            for (String child : children) {
+                boolean success = deleteDir(new File(dir, child));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        // The directory is now empty or this is a file, delete it
+        assert dir != null;
+        return dir.delete();
+    }
+
 
 }

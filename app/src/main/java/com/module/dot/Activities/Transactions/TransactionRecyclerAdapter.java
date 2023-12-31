@@ -43,7 +43,10 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.ID_TextView.setText(transactions.get(position).getTransactionID());
         holder.statusTextView.setText(transactions.get(position).getTransactionStatus());
         holder.totalTextView.setText(getCurrencyFormat(transactions.get(position).getTransactionTotal()));
-        holder.paymentTypeImageView.setImageResource(transactions.get(position).getPaymentMethod());
+
+        if(transactions.get(position).getPaymentMethod().equals("visa")){
+            holder.paymentTypeImageView.setImageResource(R.drawable.visa);
+        }
     }
 
     public static class DesignViewHolder extends RecyclerView.ViewHolder {

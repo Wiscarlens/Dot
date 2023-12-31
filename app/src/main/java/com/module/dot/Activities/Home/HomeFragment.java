@@ -4,6 +4,8 @@ package com.module.dot.Activities.Home;
  Created by Wiscarlens Lucius on 1 February 2023.
  */
 
+import static com.module.dot.Helpers.LocalFormat.getCurrentDateTime;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -39,8 +41,10 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import com.module.dot.Activities.ConfirmationFragment;
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.Items.ItemGridAdapter;
+import com.module.dot.Activities.MainActivity;
 import com.module.dot.Activities.Orders.Orders;
 import com.module.dot.Activities.Transactions.Transactions;
+import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.Database.Local.OrderItemsDatabase;
@@ -119,7 +123,7 @@ public class HomeFragment extends Fragment {
             );
 
             // TODO: Optimize - All the line below can be part of addToSElected Item method
-            Double itemSelectedPrice = item_for_display.get(position).getPrice();
+            double itemSelectedPrice = item_for_display.get(position).getPrice();
 
             addToSelectedItems(selectedItem);
             updateAmount(itemSelectedPrice);
@@ -207,10 +211,12 @@ public class HomeFragment extends Fragment {
                             // Create New Order
 
                             Orders newOrder = new Orders(
-                                    "1", // TODO: Replace with the actual user ID
+                                    MainActivity.currentUser.getCreatorID(),   // Creator ID
                                     totalPrice.get(), // Total amount
                                     "Completed" // TODO: replace with the actual Order status
                             );
+
+                            // TODO: Create a new order
 
                             try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
                                 newOrderID = orderDatabase.createOrder(newOrder);
@@ -226,20 +232,26 @@ public class HomeFragment extends Fragment {
                                 e.printStackTrace();
                             }
 
+                            String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
                             // TODO: Create a new transaction
                             Transactions newTransaction = new Transactions(
                                     newOrderID, // Order ID
                                     "APPROVE", // TODO: replace with the actual transaction status
                                     totalPrice.get(),
-                                    R.drawable.visa // TODO: replace with the actual payment method
+                                    "visa", // TODO: replace with the actual payment method
+                                    dateTime[0],
+                                    dateTime[1]
                             );
 
-                            try (TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
-                                transactionDatabase.createTransaction(newTransaction);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            // Save data to firebase
+                            FirebaseHandler.createTransaction(newTransaction);
+
+//                            try (TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
+//                                transactionDatabase.createTransaction(newTransaction);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
 
 
                             // Sending order number to receipt fragment
@@ -357,7 +369,7 @@ public class HomeFragment extends Fragment {
     private void addToSelectedItems(Item newItem) {
         // Check if the item is already in selectedItems
         for (Item item : selectedItems) {
-            if (item.getLocalID() == newItem.getLocalID()) {
+            if (Objects.equals(item.getLocalID(), newItem.getLocalID())) {
                 // Item already exists, increase frequency
                 item.setQuantity(item.getQuantity() + 1);
 

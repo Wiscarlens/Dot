@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class OrdersFragment extends Fragment {
-    private final ArrayList<Orders> orders_for_display = new ArrayList<>();
+    private final ArrayList<Orders> orderList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class OrdersFragment extends Fragment {
                 } else {
                     orderDatabase.showStateMessage(OrderList_RecyclerView, noOrder);
 
-                    orderDatabase.readOrder(orders_for_display, getResources());
+                    orderDatabase.readOrder(orderList);
                 }
             }
 
@@ -53,7 +53,7 @@ public class OrdersFragment extends Fragment {
             Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
 
-        OrdersAdapter ordersAdapter = new OrdersAdapter(orders_for_display, getContext());
+        OrdersAdapter ordersAdapter = new OrdersAdapter(orderList, getContext());
         OrderList_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         OrderList_RecyclerView.setAdapter(ordersAdapter);
     }

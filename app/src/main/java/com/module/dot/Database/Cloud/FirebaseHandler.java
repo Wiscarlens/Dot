@@ -22,10 +22,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.MainActivity;
+import com.module.dot.Activities.Orders.Orders;
+import com.module.dot.Activities.Transactions.Transactions;
 import com.module.dot.Activities.Users.User;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Database.Local.UserDatabase;
-import com.module.dot.Helpers.ImageStorageManager;
+import com.module.dot.Helpers.FileManager;
 import com.module.dot.Helpers.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -83,8 +85,6 @@ public class FirebaseHandler {
                         Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
 
     }
 
@@ -214,7 +214,7 @@ public class FirebaseHandler {
             imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
                 Drawable image = Utils.byteArrayToDrawable(bytes, context.getResources());
 
-                ImageStorageManager.saveImageLocally(context, image, folderName, fileName);
+                FileManager.saveImageLocally(context, image, folderName, fileName);
             }).addOnFailureListener(exception -> {
                 Log.e("Firebase", "Error downloading item image", exception);
             });
@@ -252,6 +252,44 @@ public class FirebaseHandler {
             }
         }).addOnFailureListener(e ->
                 Log.d("Firebase", "createUserWithEmail:failure")
+        );
+    }
+
+
+    public static void createOrder(Orders newOrder){
+        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
+
+        // Use push to generate a unique key
+        DatabaseReference newItemRef = itemsRef.push();
+
+        String globalID = newItemRef.getKey(); // Get get item global ID
+
+        newOrder.setGlobalID(globalID);
+
+
+        // Set the item with the generated key
+        newItemRef.setValue(newOrder).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.i("Firebase", "Order Added Successfully!");
+            }
+        }).addOnFailureListener(e ->
+                Log.d("Firebase", "Order creation failed")
+        );
+    }
+
+    public static void createTransaction(Transactions newTransaction){
+        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("transactions");
+
+        // Use push to generate a unique key
+        DatabaseReference newItemRef = itemsRef.push();
+
+        // Set the item with the generated key
+        newItemRef.setValue(newTransaction).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.i("Firebase", "Transaction Added Successfully!");
+            }
+        }).addOnFailureListener(e ->
+                Log.d("Firebase", "Transaction creation failed")
         );
     }
 

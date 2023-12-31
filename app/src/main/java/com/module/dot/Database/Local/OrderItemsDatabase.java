@@ -99,14 +99,11 @@ public class OrderItemsDatabase extends MyDatabaseManager {
 
         if (cursor.moveToFirst()) {
             do {
-                long itemId = cursor.getLong(0);
-                String imagePath = cursor.getString(1);
-                String itemName = cursor.getString(2);
+                long itemId = cursor.getLong(0); // Local ID
+                String imagePath = cursor.getString(1); // Global ID
+                String itemName = cursor.getString(11); // Get the item name
                 double itemPrice = cursor.getDouble(3);
-                int quantity = cursor.getInt(12);
-
-                // Convert the Bitmap to a Drawable if needed
-//                Drawable itemImageDrawable =  Utils.byteArrayToDrawable(itemImage, resources);
+                int quantity = cursor.getInt(13);
 
                 Item item = new Item(itemId, imagePath, itemName, itemPrice, quantity);
                 orderItemList.add(item);

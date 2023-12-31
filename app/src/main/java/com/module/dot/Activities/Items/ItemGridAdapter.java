@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import com.module.dot.Helpers.ImageStorageManager;
+import com.module.dot.Helpers.FileManager;
 import com.module.dot.Helpers.LocalFormat;
 import com.module.dot.R;
 
@@ -54,7 +54,7 @@ public class ItemGridAdapter extends BaseAdapter {
         Drawable itemImage;
 
         if (items.get(position).getImagePath() != null) {
-            itemImage = ImageStorageManager.loadImageLocally(context, "Items", items.get(position).getImagePath());
+            itemImage = FileManager.loadImageLocally(context, "Items", items.get(position).getImagePath());
         } else {
             // Default image
             // TODO: Use category image when item image is not available

@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.module.dot.Helpers.ImageStorageManager;
+import com.module.dot.Helpers.FileManager;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class UserRecyclerAdapter extends RecyclerView.Adapter<UserRecyclerAdapte
         } else {
             holder.initial.setVisibility(View.GONE);
 
-            Drawable profileImage = ImageStorageManager.loadImageLocally(context, "Profiles", user_for_display.get(position).getProfileImagePath());
+            Drawable profileImage = FileManager.loadImageLocally(context, "Profiles", user_for_display.get(position).getProfileImagePath());
             holder.photoProfile.setImageDrawable(profileImage);
         }
 

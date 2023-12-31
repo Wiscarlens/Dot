@@ -93,7 +93,7 @@ public class OrderDatabase extends MyDatabaseManager {
 
     }
 
-    public void readOrder(ArrayList<Orders> ordersArrayList, Resources resources){
+    public void readOrder(ArrayList<Orders> ordersArrayList){
         // Get a cursor to the order data in the database
         Cursor cursor = super.readAllData(ORDERS_TABLE_NAME);
 
@@ -101,13 +101,13 @@ public class OrderDatabase extends MyDatabaseManager {
         while (cursor.moveToNext()) {
             long orderNumber = cursor.getLong(0);
 
-            ArrayList<Item> selectedItemArrayList = new ArrayList<>();
+            ArrayList<Item> selectedItemList = new ArrayList<>();
 
             try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
                 if (!orderItemsDatabase.isTableExists("order_items")) {
                     orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
                 } else {
-                    selectedItemArrayList = orderItemsDatabase.readOrderItems(orderNumber);
+                    selectedItemList = orderItemsDatabase.readOrderItems(orderNumber);
                 }
 
             } catch (Exception e) {
@@ -118,7 +118,7 @@ public class OrderDatabase extends MyDatabaseManager {
             int totalItems = 0 ;
 
             // Find the total number of items in the order
-            for(Item item : selectedItemArrayList){
+            for(Item item : selectedItemList){
                 totalItems += item.getQuantity();
             }
 
@@ -127,9 +127,9 @@ public class OrderDatabase extends MyDatabaseManager {
                     cursor.getString(2), // Order Date
                     cursor.getString(3), // Order Time
                     cursor.getString(5), // Order Status
-                    totalItems,                     // Total Item
+                    totalItems,             // Total Item
                     cursor.getDouble(4), // Total Amount
-                    selectedItemArrayList // Selected Item
+                    selectedItemList // Selected Item
             );
 
             ordersArrayList.add(order); // Add the order to the ArrayList
