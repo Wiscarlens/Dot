@@ -114,7 +114,7 @@ public class ReceiptFragment extends Fragment {
                         barcode.setImageDrawable(barcodeDrawable);
                         orderNumber.setText(orderNumberString);
 
-                        ArrayList<Item> selectedItems = orders.get(0).getSelectedItem();
+                        ArrayList<Item> selectedItems = orders.get(0).getSelectedItemList();
 
                         // Create the adapter and set it to the RecyclerView
                         BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());

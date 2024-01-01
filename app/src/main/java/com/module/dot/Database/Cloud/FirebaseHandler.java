@@ -31,6 +31,10 @@ import com.module.dot.Helpers.FileManager;
 import com.module.dot.Helpers.Utils;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FirebaseHandler {
@@ -256,26 +260,51 @@ public class FirebaseHandler {
     }
 
 
-    public static void createOrder(Orders newOrder){
-        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
+    public static void createOrder(Orders newOrder) {
+        DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
         // Use push to generate a unique key
-        DatabaseReference newItemRef = itemsRef.push();
+        DatabaseReference newOrderRef = ordersRef.push();
 
-        String globalID = newItemRef.getKey(); // Get get item global ID
+        String globalID = newOrderRef.getKey(); // Get order global ID
 
         newOrder.setGlobalID(globalID);
 
+        // Create a map to represent the order data
+        Map<String, Object> orderData = new HashMap<>();
+        orderData.put("orderNumber", newOrder.getOrderNumber());
+        orderData.put("orderDate", newOrder.getOrderDate());
+        orderData.put("orderTime", newOrder.getOrderTime());
+        orderData.put("orderStatus", newOrder.getOrderStatus());
+        orderData.put("orderTotalItems", newOrder.getOrderTotalItems());
+        orderData.put("orderTotalAmount", newOrder.getOrderTotalAmount());
+        orderData.put("creatorID", newOrder.getCreatorID());
 
-        // Set the item with the generated key
-        newItemRef.setValue(newOrder).addOnCompleteListener(task -> {
+        // Handle the list of items
+        List<Map<String, Object>> itemList = new ArrayList<>();
+        if (newOrder.getSelectedItemList() != null) {
+            for (Item item : newOrder.getSelectedItemList()) {
+                Map<String, Object> itemData = new HashMap<>();
+                itemData.put("itemName", item.getName());
+                itemData.put("itemPrice", item.getPrice());
+                itemData.put("itemQuantity", item.getQuantity());
+
+                itemList.add(itemData);
+            }
+        }
+        orderData.put("selectedItem", itemList);
+
+        // Set the order with the generated key
+        newOrderRef.setValue(orderData).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.i("Firebase", "Order Added Successfully!");
             }
         }).addOnFailureListener(e ->
                 Log.d("Firebase", "Order creation failed")
         );
+
     }
+
 
     public static void createTransaction(Transactions newTransaction){
         DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("transactions");

@@ -210,42 +210,55 @@ public class HomeFragment extends Fragment {
                            // If user click on yes
                             // Create New Order
 
-                            Orders newOrder = new Orders(
-                                    MainActivity.currentUser.getCreatorID(),   // Creator ID
-                                    totalPrice.get(), // Total amount
-                                    "Completed" // TODO: replace with the actual Order status
-                            );
-
-                            // TODO: Create a new order
-
-                            try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
-                                newOrderID = orderDatabase.createOrder(newOrder);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(getContext())){
-                                for (Item item : selectedItems) {
-                                    orderItemsDatabase.createOrderItems(newOrderID, item.getLocalID(), item.getQuantity());
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
                             String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
+//                            Orders newOrder = new Orders(
+//                                    MainActivity.currentUser.getCreatorID(),   // Creator ID
+//                                    dateTime[0],
+//                                    dateTime[1],
+//                                    totalPrice.get(), // Total amount
+//                                    "Completed" // TODO: replace with the actual Order status
+//                            );
+
+                            FirebaseHandler.createOrder( new Orders(
+                                    MainActivity.currentUser.getCreatorID(),   // Creator ID
+                                    dateTime[0],
+                                    dateTime[1],
+                                    totalPrice.get(), // Total amount
+                                    "Completed", // TODO: replace with the actual Order status
+                                    selectedItems
+                            ));
+
+//
+//
+//                            try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
+//                                newOrderID = orderDatabase.createOrder(newOrder);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+
+//                            try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(getContext())){
+//                                for (Item item : selectedItems) {
+//                                    orderItemsDatabase.createOrderItems(newOrderID, item.getLocalID(), item.getQuantity());
+//                                }
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+
+                            dateTime = getCurrentDateTime(); // Get the current date and time
+
                             // TODO: Create a new transaction
-                            Transactions newTransaction = new Transactions(
+
+                            // Save data to firebase
+                            FirebaseHandler.createTransaction( new Transactions(
                                     newOrderID, // Order ID
                                     "APPROVE", // TODO: replace with the actual transaction status
                                     totalPrice.get(),
                                     "visa", // TODO: replace with the actual payment method
+                                    MainActivity.currentUser.getCreatorID(),
                                     dateTime[0],
                                     dateTime[1]
-                            );
-
-                            // Save data to firebase
-                            FirebaseHandler.createTransaction(newTransaction);
+                            ));
 
 //                            try (TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
 //                                transactionDatabase.createTransaction(newTransaction);

@@ -49,7 +49,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
         holder.order_total_items.setText(String.valueOf(ordersArrayList.get(position).getOrderTotalItems()));
         holder.order_total_amount.setText(getCurrencyFormat(ordersArrayList.get(position).getOrderTotalAmount()));
 
-        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(ordersArrayList.get(position).getSelectedItem(), context);
+        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(ordersArrayList.get(position).getSelectedItemList(), context);
 
         holder.selectedItemRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.selectedItemRecyclerView.setAdapter(selectedItemsAdapter);

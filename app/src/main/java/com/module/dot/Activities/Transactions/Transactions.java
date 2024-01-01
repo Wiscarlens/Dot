@@ -4,6 +4,7 @@ package com.module.dot.Activities.Transactions;
 public class Transactions {
     private String globalID;
     private String transactionID;
+    private String creatorID;
     private String transactionDate;
     private String transactionTime;
     private final long orderNumber;
@@ -26,11 +27,12 @@ public class Transactions {
 
     // Constructor for creating a new transaction
     public Transactions(long orderNumber, String transactionStatus,
-                        double transactionTotal, String paymentMethod, String date, String time) {
+                        double transactionTotal, String paymentMethod, String creatorId, String date, String time) {
         this.orderNumber = orderNumber;
         this.transactionStatus = transactionStatus;
         this.transactionTotal = transactionTotal;
         this.paymentMethod = paymentMethod;
+        this.creatorID = creatorId;
         this.transactionDate = date;
         this.transactionTime = time;
     }
@@ -49,6 +51,14 @@ public class Transactions {
 
     public void setTransactionID(String transactionID) {
         this.transactionID = transactionID;
+    }
+
+    public String getCreatorID() {
+        return creatorID;
+    }
+
+    public void setCreatorID(String creatorID) {
+        this.creatorID = creatorID;
     }
 
     public String getTransactionDate() {

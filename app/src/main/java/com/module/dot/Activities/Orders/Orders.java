@@ -6,8 +6,8 @@ import com.module.dot.Activities.Items.Item;
 import java.util.ArrayList;
 
 public class Orders {
-    private long orderNumber;
     private String globalID;
+    private long orderNumber;
     private String orderDate;
     private String orderTime;
     private final String orderStatus;
@@ -15,25 +15,38 @@ public class Orders {
     private final double orderTotalAmount;
     private String creatorID;
 
-    private ArrayList<Item> selectedItem;
+    private ArrayList<Item> selectedItemList;
 
     // Constructor for displaying orders
     public Orders(long orderNumber, String orderDate, String orderTime, String orderStatus,
-                  int orderTotalItems, double orderTotalAmount, ArrayList<Item> selectedItem) {
+                  int orderTotalItems, double orderTotalAmount, ArrayList<Item> selectedItemList) {
         this.orderNumber = orderNumber;
         this.orderDate = orderDate;
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
         this.orderTotalItems = orderTotalItems;
         this.orderTotalAmount = orderTotalAmount;
-        this.selectedItem = selectedItem;
+        this.selectedItemList = selectedItemList;
     }
 
     // Constructor for creating a new order
-    public Orders(String creatorID, double orderTotalAmount, String orderStatus) {
+    public Orders(String creatorID, String date, String time, double orderTotalAmount, String orderStatus) {
         this.creatorID = creatorID;
+        this.orderDate = date;
+        this.orderTime = time;
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
+    }
+
+    // Constructor for creating a new order
+    public Orders(String creatorID, String date, String time, double orderTotalAmount,
+                  String orderStatus, ArrayList<Item> selectedItemList) {
+        this.creatorID = creatorID;
+        this.orderDate = date;
+        this.orderTime = time;
+        this.orderStatus = orderStatus;
+        this.orderTotalAmount = orderTotalAmount;
+        this.selectedItemList = selectedItemList;
     }
 
 
@@ -93,11 +106,11 @@ public class Orders {
         this.creatorID = creatorID;
     }
 
-    public ArrayList<Item> getSelectedItem() {
-        return selectedItem;
+    public ArrayList<Item> getSelectedItemList() {
+        return selectedItemList;
     }
 
-    public void setSelectedItem(ArrayList<Item> selectedItem) {
-        this.selectedItem = selectedItem;
+    public void setSelectedItemList(ArrayList<Item> selectedItemList) {
+        this.selectedItemList = selectedItemList;
     }
 }
