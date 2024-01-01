@@ -4,7 +4,6 @@ import static com.module.dot.Helpers.LocalFormat.getCurrentDateTime;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -13,13 +12,14 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.module.dot.Activities.Items.Item;
-import com.module.dot.Activities.Orders.Orders;
+import com.module.dot.Activities.Orders.Order;
 
 import java.util.ArrayList;
 
 public class OrderDatabase extends MyDatabaseManager {
     // Order Table
     private static final String ORDERS_TABLE_NAME = "orders";
+    private static final String ORDER_COLUMN_GLOBAL_ID = "global_id";
     private static final String ORDER_COLUMN_ID = "_id";
     private static final String ORDER_COLUMN_CREATOR_ID = "order_creator";
     private static final String ORDER_COLUMN_DATE = "order_date";
@@ -48,13 +48,12 @@ public class OrderDatabase extends MyDatabaseManager {
         // SQL query to create the "orders" table
         String query_orders = "CREATE TABLE " + ORDERS_TABLE_NAME +
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                // TODO: Make not null in the future
-                ORDER_COLUMN_CREATOR_ID + " INTEGER, " +
+                ORDER_COLUMN_GLOBAL_ID + " TEXT NOT NULL, " +
+                ORDER_COLUMN_CREATOR_ID + " INTEGER NOT NULL, " +
                 ORDER_COLUMN_DATE + " DATE, " +
                 ORDER_COLUMN_TIME + " TIME, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +
-                // TODO: not null in the future
-                ORDER_COLUMN_STATUS + " TEXT, " +
+                ORDER_COLUMN_STATUS + " TEXT NOT NULL, " +
                 " FOREIGN KEY (" + ORDER_COLUMN_CREATOR_ID
                 + ") REFERENCES " + NAME_TABLE_USERS + " (" + ID_COLUMN_USERS + "));";
 
@@ -63,7 +62,7 @@ public class OrderDatabase extends MyDatabaseManager {
         Log.i("OrderDatabase", "Creating orders table...");
     }
 
-    public long createOrder(Orders newOrder){
+    public long createOrder(Order newOrder){
         long newOrderId = -1;
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
@@ -72,6 +71,7 @@ public class OrderDatabase extends MyDatabaseManager {
 
             String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
+            cv.put(ORDER_COLUMN_GLOBAL_ID, newOrder.getGlobalID());
             cv.put(ORDER_COLUMN_CREATOR_ID, newOrder.getCreatorID());
             cv.put(ORDER_COLUMN_TOTAL_AMOUNT, newOrder.getOrderTotalAmount());
             cv.put(ORDER_COLUMN_STATUS, newOrder.getOrderStatus());
@@ -93,7 +93,7 @@ public class OrderDatabase extends MyDatabaseManager {
 
     }
 
-    public void readOrder(ArrayList<Orders> ordersArrayList){
+    public void readOrder(ArrayList<Order> orderArrayList){
         // Get a cursor to the order data in the database
         Cursor cursor = super.readAllData(ORDERS_TABLE_NAME);
 
@@ -122,7 +122,7 @@ public class OrderDatabase extends MyDatabaseManager {
                 totalItems += item.getQuantity();
             }
 
-            Orders order = new Orders(
+            Order order = new Order(
                     orderNumber, // Order Number
                     cursor.getString(2), // Order Date
                     cursor.getString(3), // Order Time
@@ -132,7 +132,7 @@ public class OrderDatabase extends MyDatabaseManager {
                     selectedItemList // Selected Item
             );
 
-            ordersArrayList.add(order); // Add the order to the ArrayList
+            orderArrayList.add(order); // Add the order to the ArrayList
         }
 
 
@@ -144,10 +144,10 @@ public class OrderDatabase extends MyDatabaseManager {
      * for orders matching the given orderNumber. The retrieved order details are encapsulated
      * into an Orders object, and all matching orders are added to the provided ArrayList.
      *
-     * @param ordersArrayList The ArrayList where the retrieved order details will be stored.
+     * @param orderArrayList The ArrayList where the retrieved order details will be stored.
      * @param orderNumber The specific order number for which details are to be retrieved.
      */
-    public void getOrdersDetails(ArrayList<Orders> ordersArrayList, long orderNumber) {
+    public void getOrdersDetails(ArrayList<Order> orderArrayList, long orderNumber) {
         // Get a cursor to the order data in the database
         Cursor cursor = super.readAllData(ORDERS_TABLE_NAME);
 
@@ -171,7 +171,7 @@ public class OrderDatabase extends MyDatabaseManager {
                     totalItems += item.getQuantity();
                 }
 
-                Orders order = new Orders(
+                Order order = new Order(
                         orderNumber, // Order Number
                         cursor.getString(2), // Order Date
                         cursor.getString(3), // Order Time
@@ -181,7 +181,7 @@ public class OrderDatabase extends MyDatabaseManager {
                         selectedItemArrayList // Selected Item
                 );
 
-                ordersArrayList.add(order); // Add the order to the ArrayList
+                orderArrayList.add(order); // Add the order to the ArrayList
             }
         }
 

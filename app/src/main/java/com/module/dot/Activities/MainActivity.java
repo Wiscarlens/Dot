@@ -38,6 +38,7 @@ import com.module.dot.Activities.Users.User;
 import com.module.dot.Activities.Users.UsersFragment;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
+import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.Database.Local.OrderItemsDatabase;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.FileManager;
@@ -274,6 +275,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
+        try (OrderDatabase orderDatabase = new OrderDatabase(this)){
+            if (!orderDatabase.isTableExists("order_items")) {
+                orderDatabase.getWritableDatabase(); // Create the database
+            }
+        }
+
         try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(this)){
             if (!orderItemsDatabase.isTableExists("order_items")) {
                 orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
@@ -285,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void loadData(){
         FirebaseHandler.readItem("items", this);
         FirebaseHandler.readUser( "users", this);
+        FirebaseHandler.readOrder("orders", this);
     }
 
 }

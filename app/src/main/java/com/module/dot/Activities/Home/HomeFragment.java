@@ -42,13 +42,10 @@ import com.module.dot.Activities.ConfirmationFragment;
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.Items.ItemGridAdapter;
 import com.module.dot.Activities.MainActivity;
-import com.module.dot.Activities.Orders.Orders;
+import com.module.dot.Activities.Orders.Order;
 import com.module.dot.Activities.Transactions.Transactions;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
-import com.module.dot.Database.Local.OrderDatabase;
-import com.module.dot.Database.Local.OrderItemsDatabase;
-import com.module.dot.Database.Local.TransactionDatabase;
 import com.module.dot.Helpers.LocalFormat;
 import com.module.dot.Helpers.ScannerManager;
 import com.module.dot.R;
@@ -220,7 +217,7 @@ public class HomeFragment extends Fragment {
 //                                    "Completed" // TODO: replace with the actual Order status
 //                            );
 
-                            FirebaseHandler.createOrder( new Orders(
+                            FirebaseHandler.createOrder( new Order(
                                     MainActivity.currentUser.getCreatorID(),   // Creator ID
                                     dateTime[0],
                                     dateTime[1],

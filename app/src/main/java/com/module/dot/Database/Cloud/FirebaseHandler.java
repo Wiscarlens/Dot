@@ -22,10 +22,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.MainActivity;
-import com.module.dot.Activities.Orders.Orders;
+import com.module.dot.Activities.Orders.Order;
 import com.module.dot.Activities.Transactions.Transactions;
 import com.module.dot.Activities.Users.User;
 import com.module.dot.Database.Local.ItemDatabase;
+import com.module.dot.Database.Local.OrderDatabase;
+import com.module.dot.Database.Local.OrderItemsDatabase;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.FileManager;
 import com.module.dot.Helpers.Utils;
@@ -260,7 +262,7 @@ public class FirebaseHandler {
     }
 
 
-    public static void createOrder(Orders newOrder) {
+    public static void createOrder(Order newOrder) {
         DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
         // Use push to generate a unique key
@@ -272,7 +274,7 @@ public class FirebaseHandler {
 
         // Create a map to represent the order data
         Map<String, Object> orderData = new HashMap<>();
-        orderData.put("orderNumber", newOrder.getOrderNumber());
+
         orderData.put("orderDate", newOrder.getOrderDate());
         orderData.put("orderTime", newOrder.getOrderTime());
         orderData.put("orderStatus", newOrder.getOrderStatus());
@@ -285,7 +287,7 @@ public class FirebaseHandler {
         if (newOrder.getSelectedItemList() != null) {
             for (Item item : newOrder.getSelectedItemList()) {
                 Map<String, Object> itemData = new HashMap<>();
-                itemData.put("itemName", item.getName());
+                itemData.put("itemGlobalID", item.getGlobalID());
                 itemData.put("itemPrice", item.getPrice());
                 itemData.put("itemQuantity", item.getQuantity());
 
@@ -305,6 +307,75 @@ public class FirebaseHandler {
 
     }
 
+    public static void readOrder(String tableName, Context context){
+        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
+        firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try (OrderDatabase orderDatabase = new OrderDatabase(context)) {
+                    // Iterate through Firebase data
+                    for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                        // Extract order data
+                        Map<String, Object> orderData = (Map<String, Object>) orderSnapshot.getValue();
+
+                        if (orderData != null) {
+                            String orderGlobalID = (String) orderData.get("globalID");
+                            String orderDate = (String) orderData.get("orderDate");
+                            String orderTime = (String) orderData.get("orderTime");
+                            String orderStatus = (String) orderData.get("orderStatus");
+                            long orderTotalItems = ((Long) orderData.get("orderTotalItems")).intValue();
+                            double orderTotalAmount = (double) orderData.get("orderTotalAmount");
+                            String creatorID = (String) orderData.get("creatorID");
+
+                            long newOrderID = orderDatabase.createOrder( new Order(
+                                    orderGlobalID,
+                                    creatorID,
+                                    orderDate,
+                                    orderTime,
+                                    orderTotalAmount,
+                                    orderStatus
+                            ));
+
+
+                            // Extract list of items
+                            List<Map<String, Object>> itemList = (List<Map<String, Object>>) orderData.get("selectedItem");
+
+                            if (itemList != null) {
+                                try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
+                                    for (Map<String, Object> itemData : itemList) {
+                                        String itemGlobalID = (String) itemData.get("itemGlobalID");
+                                        double itemPrice = (double) itemData.get("itemPrice");
+                                        int itemQuantity = ((Long) itemData.get("itemQuantity")).intValue();
+
+                                        orderItemsDatabase.createOrderItems(newOrderID, itemGlobalID, itemPrice, itemQuantity);
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("FirebaseOrderDatabase", "Failed to sync Order data from Firebase: " + e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("UserDatabase", "Firebase data fetch cancelled: " + error.getMessage());
+
+            }
+        });
+
+    }
+
 
     public static void createTransaction(Transactions newTransaction){
         DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("transactions");
@@ -320,6 +391,40 @@ public class FirebaseHandler {
         }).addOnFailureListener(e ->
                 Log.d("Firebase", "Transaction creation failed")
         );
+    }
+
+    public static void readTransaction(String tableName, Context context){
+        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
+        firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try (ItemDatabase itemDatabase = new ItemDatabase(context)) {
+                    // Iterate through Firebase data
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+
+                        Item item = userSnapshot.getValue(Item.class);
+
+                        // Create item in the local database
+                        assert item != null;
+
+                        itemDatabase.createItem(item);
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("FirebaseTransactionDatabase", "Failed to sync transaction data from Firebase: " + e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("UserDatabase", "Firebase data fetch cancelled: " + error.getMessage());
+
+            }
+        });
+
     }
 
 

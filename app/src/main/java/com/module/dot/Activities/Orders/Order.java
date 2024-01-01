@@ -5,7 +5,7 @@ import com.module.dot.Activities.Items.Item;
 
 import java.util.ArrayList;
 
-public class Orders {
+public class Order {
     private String globalID;
     private long orderNumber;
     private String orderDate;
@@ -18,8 +18,8 @@ public class Orders {
     private ArrayList<Item> selectedItemList;
 
     // Constructor for displaying orders
-    public Orders(long orderNumber, String orderDate, String orderTime, String orderStatus,
-                  int orderTotalItems, double orderTotalAmount, ArrayList<Item> selectedItemList) {
+    public Order(long orderNumber, String orderDate, String orderTime, String orderStatus,
+                 int orderTotalItems, double orderTotalAmount, ArrayList<Item> selectedItemList) {
         this.orderNumber = orderNumber;
         this.orderDate = orderDate;
         this.orderTime = orderTime;
@@ -30,7 +30,8 @@ public class Orders {
     }
 
     // Constructor for creating a new order
-    public Orders(String creatorID, String date, String time, double orderTotalAmount, String orderStatus) {
+    public Order(String globalID, String creatorID, String date, String time, double orderTotalAmount, String orderStatus) {
+        this.globalID = globalID;
         this.creatorID = creatorID;
         this.orderDate = date;
         this.orderTime = time;
@@ -39,8 +40,8 @@ public class Orders {
     }
 
     // Constructor for creating a new order
-    public Orders(String creatorID, String date, String time, double orderTotalAmount,
-                  String orderStatus, ArrayList<Item> selectedItemList) {
+    public Order(String creatorID, String date, String time, double orderTotalAmount,
+                 String orderStatus, ArrayList<Item> selectedItemList) {
         this.creatorID = creatorID;
         this.orderDate = date;
         this.orderTime = time;
@@ -95,7 +96,7 @@ public class Orders {
     }
 
     public double getOrderTotalAmount() {
-        return orderTotalAmount;
+        return selectedItemList.size();
     }
 
     public String getCreatorID() {

@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.module.dot.Activities.Home.BottomSheetAdapter;
 import com.module.dot.Activities.Items.Item;
-import com.module.dot.Activities.Orders.Orders;
+import com.module.dot.Activities.Orders.Order;
 import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.Helpers.BarcodeManager;
 import com.module.dot.Helpers.PDFManager;
@@ -47,7 +47,7 @@ public class ReceiptFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ArrayList<Orders> orders = new ArrayList<>();
+        ArrayList<Order> orders = new ArrayList<>();
 
         LinearLayout receiptLayout = view.findViewById(R.id.receiptFooter);
 

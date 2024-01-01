@@ -23,11 +23,11 @@ import java.util.ArrayList;
  */
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignViewHolder> {
-    private  final ArrayList<Orders> ordersArrayList;
+    private  final ArrayList<Order> orderArrayList;
     private final Context context;
 
-    public OrdersAdapter(ArrayList<Orders> ordersArrayList, Context context) {
-        this.ordersArrayList = ordersArrayList;
+    public OrdersAdapter(ArrayList<Order> orderArrayList, Context context) {
+        this.orderArrayList = orderArrayList;
         this.context = context;
     }
 
@@ -42,14 +42,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
 
     @Override
     public void onBindViewHolder(@NonNull OrdersAdapter.DesignViewHolder holder, int position) {
-        holder.order_number.setText(Utils.formatOrderNumber(ordersArrayList.get(position).getOrderNumber()));
-        holder.order_date.setText(ordersArrayList.get(position).getOrderDate());
-        holder.order_time.setText(ordersArrayList.get(position).getOrderTime());
-        holder.order_status.setText(ordersArrayList.get(position).getOrderStatus());
-        holder.order_total_items.setText(String.valueOf(ordersArrayList.get(position).getOrderTotalItems()));
-        holder.order_total_amount.setText(getCurrencyFormat(ordersArrayList.get(position).getOrderTotalAmount()));
+        holder.order_number.setText(Utils.formatOrderNumber(orderArrayList.get(position).getOrderNumber()));
+        holder.order_date.setText(orderArrayList.get(position).getOrderDate());
+        holder.order_time.setText(orderArrayList.get(position).getOrderTime());
+        holder.order_status.setText(orderArrayList.get(position).getOrderStatus());
+        holder.order_total_items.setText(String.valueOf(orderArrayList.get(position).getOrderTotalItems()));
+        holder.order_total_amount.setText(getCurrencyFormat(orderArrayList.get(position).getOrderTotalAmount()));
 
-        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(ordersArrayList.get(position).getSelectedItemList(), context);
+        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(orderArrayList.get(position).getSelectedItemList(), context);
 
         holder.selectedItemRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.selectedItemRecyclerView.setAdapter(selectedItemsAdapter);
@@ -58,7 +58,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
 
     @Override
     public int getItemCount() {
-        return ordersArrayList.size();
+        return orderArrayList.size();
     }
 
     public static class DesignViewHolder extends RecyclerView.ViewHolder {

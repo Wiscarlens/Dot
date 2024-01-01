@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class OrdersFragment extends Fragment {
-    private final ArrayList<Orders> orderList = new ArrayList<>();
+    private final ArrayList<Order> orderList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

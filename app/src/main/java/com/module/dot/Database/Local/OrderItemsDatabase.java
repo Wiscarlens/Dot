@@ -22,6 +22,7 @@ public class OrderItemsDatabase extends MyDatabaseManager {
     private static final String ORDER_ITEM_COLUMN_ID = "_id";
     private static final String ORDER_ITEM_COLUMN_ORDER_ID = "order_id";
     private static final String ORDER_ITEM_COLUMN_ITEM_ID = "item_id";
+    private static final String ORDER_ITEM_COLUMN_ITEM_PRICE = "item_price";
     private static final String ORDER_ITEM_COLUMN_QUANTITY = "item_quantity";
 
     private static final String NAME_TABLE_ITEMS = "items";
@@ -50,7 +51,8 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         String query_order_items = "CREATE TABLE " + ORDER_ITEMS_TABLE_NAME +
                 " (" + ORDER_ITEM_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ORDER_ITEM_COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
-                ORDER_ITEM_COLUMN_ITEM_ID + " INTEGER NOT NULL, " + // Add the item ID column
+                ORDER_ITEM_COLUMN_ITEM_ID + " TEXT NOT NULL, " + // Add the item ID column
+                ORDER_ITEM_COLUMN_ITEM_PRICE + " REAL, " +
                 ORDER_ITEM_COLUMN_QUANTITY + " INTEGER NOT NULL, " +
                 " FOREIGN KEY (" + ORDER_ITEM_COLUMN_ORDER_ID +
                 ") REFERENCES " + ORDERS_TABLE_NAME + " (" + ORDER_COLUMN_ID + "), " +
@@ -62,13 +64,14 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         Log.i("OrderItemDatabase", "Creating orderItem table...");
     }
 
-    public void createOrderItems (long orderId, long itemId, int quantity) throws SQLiteException {
+    public void createOrderItems (long orderGlobalID, String itemGlobalId, double itemPrice, int quantity) throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
             ContentValues cv = new ContentValues();
 
-            cv.put(ORDER_ITEM_COLUMN_ORDER_ID, orderId);
-            cv.put(ORDER_ITEM_COLUMN_ITEM_ID, itemId); // Make sure to provide the correct item ID
+            cv.put(ORDER_ITEM_COLUMN_ORDER_ID, orderGlobalID);
+            cv.put(ORDER_ITEM_COLUMN_ITEM_ID, itemGlobalId); // Make sure to provide the correct item ID
+            cv.put(ORDER_ITEM_COLUMN_ITEM_PRICE, itemPrice);
             cv.put(ORDER_ITEM_COLUMN_QUANTITY, quantity);
 
             long result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
