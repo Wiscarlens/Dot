@@ -139,8 +139,12 @@ public class FirebaseHandler {
                         assert item != null;
 
                         if (Objects.equals(MainActivity.currentUser.getCreatorID(), item.getCreatorID())){
-                            downloadAndSaveImagesLocally("Items", item.getImagePath(), context);
                             itemDatabase.createItem(item);
+
+                            if (item.getImagePath() != null){
+                                downloadAndSaveImagesLocally("Items", item.getImagePath(), context);
+                            }
+
                         }
 
                     }

@@ -293,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FirebaseHandler.readItem("items", this);
         FirebaseHandler.readUser( "users", this);
         FirebaseHandler.readOrder("orders", this);
+        FirebaseHandler.readTransaction("transactions", this);
     }
 
 }
