@@ -14,10 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.module.dot.Activities.Users.UserRecyclerAdapter;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.TransactionDatabase;
-import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.R;
 
 import java.util.ArrayList;
@@ -25,8 +23,7 @@ import java.util.Objects;
 
 public class TransactionsFragment extends Fragment {
 
-    private final ArrayList<Transactions> transactions_for_display = new ArrayList<>();
-    private TransactionDatabase transactionDatabase;
+    private final ArrayList<Transaction> transaction_for_display = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,41 +38,38 @@ public class TransactionsFragment extends Fragment {
         LinearLayout noTransaction = view.findViewById(R.id.noTransactionFragmentLL); // When users Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.transactionList);
 
-       transactionDatabase = new TransactionDatabase(getContext());
 
-        try {
-            if(!transactionDatabase.isTableExists("transactions")){
-                transactionDatabase.onCreate(transactionDatabase.getWritableDatabase()); // Create the database
-            }
 
-            FirebaseHandler.readTransaction("transactions", getContext());
-
-        } catch (Exception e) {
-            Log.i("TransactionFragment", Objects.requireNonNull(e.getMessage()));
-        }
-
-        if (transactionDatabase.isTableEmpty("transactions")) {
-            transactionDatabase.showEmptyStateMessage(recyclerView, noTransaction);
-        } else {
-            transactionDatabase.showStateMessage(recyclerView, noTransaction);
-
+        try(TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
             try {
-                transactionDatabase.readTransaction(transactions_for_display); // Read data from database and save it the arraylist
+                if(!transactionDatabase.isTableExists("transactions")){
+                    transactionDatabase.onCreate(transactionDatabase.getWritableDatabase()); // Create the database
+                }
 
-                TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactions_for_display);
+                FirebaseHandler.readTransaction("transactions", getContext());
 
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-                recyclerView.setAdapter(adapter);
             } catch (Exception e) {
                 Log.i("TransactionFragment", Objects.requireNonNull(e.getMessage()));
             }
+
+            if (transactionDatabase.isTableEmpty("transactions")) {
+                transactionDatabase.showEmptyStateMessage(recyclerView, noTransaction);
+            } else {
+                transactionDatabase.showStateMessage(recyclerView, noTransaction);
+
+                try {
+                    transactionDatabase.readTransaction(transaction_for_display); // Read data from database and save it the arraylist
+
+                    TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transaction_for_display);
+
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                    recyclerView.setAdapter(adapter);
+                } catch (Exception e) {
+                    Log.i("TransactionFragment", Objects.requireNonNull(e.getMessage()));
+                }
+            }
         }
-
-
-
-
-
 
 
     }

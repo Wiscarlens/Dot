@@ -17,9 +17,9 @@ import com.module.dot.R;
 import java.util.ArrayList;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.DesignViewHolder> {
-    private final ArrayList<Transactions> transactions;
+    private final ArrayList<Transaction> transactions;
 
-    public TransactionRecyclerAdapter(ArrayList<Transactions> transactions) {
+    public TransactionRecyclerAdapter(ArrayList<Transaction> transactions) {
         this.transactions = transactions;
     }
 
@@ -37,16 +37,30 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     }
 
     public void onBindViewHolder(@NonNull DesignViewHolder holder, int position) {
+        holder.ID_TextView.setText(transactions.get(position).getGlobalID());
+        holder.orderNumberTextView.setText(Utils.formatOrderNumber(transactions.get(position).getOrderNumber()));
         holder.dateTextView.setText(transactions.get(position).getTransactionDate());
         holder.timeTextView.setText(transactions.get(position).getTransactionTime());
-        holder.orderNumberTextView.setText(Utils.formatOrderNumber(transactions.get(position).getOrderNumber()));
-        holder.ID_TextView.setText(transactions.get(position).getTransactionID());
         holder.statusTextView.setText(transactions.get(position).getTransactionStatus());
         holder.totalTextView.setText(getCurrencyFormat(transactions.get(position).getTransactionTotal()));
+
+        if(transactions.get(position).getPaymentMethod().equals("cash")){
+            holder.paymentTypeImageView.setImageResource(R.drawable.baseline_money_24);
+        }
 
         if(transactions.get(position).getPaymentMethod().equals("visa")){
             holder.paymentTypeImageView.setImageResource(R.drawable.visa);
         }
+
+        if(transactions.get(position).getPaymentMethod().equals("mastercard")){
+            holder.paymentTypeImageView.setImageResource(R.drawable.mastercard);
+        }
+
+        if(transactions.get(position).getPaymentMethod().equals("discover")){
+            holder.paymentTypeImageView.setImageResource(R.drawable.discover);
+        }
+
+
     }
 
     public static class DesignViewHolder extends RecyclerView.ViewHolder {

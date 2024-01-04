@@ -8,21 +8,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.module.dot.Activities.Transactions.Transactions;
+import com.module.dot.Activities.Transactions.Transaction;
 import com.module.dot.Helpers.Utils;
 
 import java.util.ArrayList;
 
 public class TransactionDatabase extends MyDatabaseManager {
-    private static final String TRANSACTION_TABLE = "transactions";
-    private static final String TRANSACTION_COLUMN_ID = "_id";
+    private static final String TRANSACTION_TABLE_NAME = "transactions";
+    private  static final String TRANSACTION_COLUMN_GLOBAL_ID = "global_id";
+    private static final String TRANSACTION_COLUMN_CREATOR_ID = "creator_id";
     private static final String TRANSACTION_COLUMN_ORDER_NUMBER = "order_id";
     private static final String TRANSACTION_COLUMN_PAYMENT_DATE = "payment_date";
     private static final String TRANSACTION_COLUMN_PAYMENT_TIME = "payment_time";
@@ -48,8 +45,9 @@ public class TransactionDatabase extends MyDatabaseManager {
 
     protected void createTable(SQLiteDatabase db) {
         // SQL query to create the "transactions" table
-        String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE +
-                " (" + TRANSACTION_COLUMN_ID + " TEXT PRIMARY KEY, " +
+        String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE_NAME +
+                " (" + TRANSACTION_COLUMN_GLOBAL_ID + " TEXT PRIMARY KEY, " +
+                TRANSACTION_COLUMN_CREATOR_ID + " TEXT NOT NULL, " +
                 TRANSACTION_COLUMN_ORDER_NUMBER + " INTEGER NOT NULL, " +
                 TRANSACTION_COLUMN_PAYMENT_DATE + " DATE, " +
                 TRANSACTION_COLUMN_PAYMENT_TIME + " TIME, " +
@@ -70,25 +68,22 @@ public class TransactionDatabase extends MyDatabaseManager {
      * @param newTransaction The transaction object containing information to be added.
      * @throws SQLiteException If there is an issue with the SQLite database operations.
      */
-    public void createTransaction(Transactions newTransaction)
+    public void createTransaction(Transaction newTransaction)
             throws SQLiteException {
         {
             try (SQLiteDatabase db = this.getWritableDatabase()) {
+                // TODO: This block that check email will be independent from the database
+                // Check if the email already exists in the database
+                if (isValueExists(db, TRANSACTION_TABLE_NAME, TRANSACTION_COLUMN_GLOBAL_ID, newTransaction.getGlobalID())) {
+                    return;
+                }
 
                 ContentValues cv = new ContentValues();
 
-                String transactionId;
-
-                // Generate a new Transaction ID and check if it exists in the database
-                do {
-                    transactionId = Utils.generateTransactionNumber();
-                } while (doesTransactionIdExist(db, transactionId));
-
-                Log.d("MyDatabaseManager", "Transaction ID: " + transactionId);
-
                 String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
-                cv.put(TRANSACTION_COLUMN_ID, transactionId);
+                cv.put(TRANSACTION_COLUMN_GLOBAL_ID, newTransaction.getGlobalID());
+                cv.put(TRANSACTION_COLUMN_CREATOR_ID, newTransaction.getCreatorID());
                 cv.put(TRANSACTION_COLUMN_PAYMENT_DATE, dateTime[0]);
                 cv.put(TRANSACTION_COLUMN_PAYMENT_TIME, dateTime[1]);
                 cv.put(TRANSACTION_COLUMN_ORDER_NUMBER, newTransaction.getOrderNumber());
@@ -96,7 +91,7 @@ public class TransactionDatabase extends MyDatabaseManager {
                 cv.put(TRANSACTION_COLUMN_AMOUNT, newTransaction.getTransactionTotal());
                 cv.put(TRANSACTION_COLUMN_PAYMENT_METHOD, newTransaction.getPaymentMethod());
 
-                long result = db.insertOrThrow(TRANSACTION_TABLE, null, cv);
+                long result = db.insertOrThrow(TRANSACTION_TABLE_NAME, null, cv);
 
                 if (result != -1) {
                     Log.i("MyDatabaseManager", "Transaction Added Successfully!");
@@ -111,25 +106,34 @@ public class TransactionDatabase extends MyDatabaseManager {
     /**
      * Retrieves transaction data from the provided database and populates an ArrayList with Transactions objects.
      *
-     * @param transactions_for_display The ArrayList to populate with Transactions objects.
+     * @param transaction_for_display The ArrayList to populate with Transactions objects.
      */
-    public void readTransaction(ArrayList<Transactions> transactions_for_display) {
+    public void readTransaction(ArrayList<Transaction> transaction_for_display) {
             // Get a cursor to the order data in the database
-            Cursor cursor = super.readAllData(TRANSACTION_TABLE);
+            Cursor cursor = super.readAllData(TRANSACTION_TABLE_NAME);
 
-            while (cursor.moveToNext()) {
-                Transactions transaction = new Transactions(
-                        cursor.getString(2), // Transaction Date
-                        cursor.getString(3), // Transaction Time
-                        cursor.getLong(1), // Order Number
-                        cursor.getString(0), // Transaction ID
-                        cursor.getString(5), // Transaction Status
-                        cursor.getDouble(4), // Transaction Total
-                        cursor.getString(6) // Payment Method
-                );
+            try {
+                while (cursor.moveToNext()) {
+                    Transaction transaction = new Transaction(
+                            cursor.getString(0), // Global ID
+                            cursor.getLong(1), // Order Number
+                            cursor.getString(2), // Transaction Date
+                            cursor.getString(3), // Transaction Time
+                            cursor.getString(5), // Transaction Status
+                            cursor.getDouble(4), // Transaction Total Amount
+                            cursor.getString(6) // Payment Method
+                    );
 
-                transactions_for_display.add(transaction); // Add the order to the ArrayList
+                    transaction_for_display.add(transaction); // Add the order to the ArrayList
+                }
+            } finally {
+                // Ensure the Cursor is closed to free up resources
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
             }
+
+
 
         }
 
@@ -141,30 +145,6 @@ public class TransactionDatabase extends MyDatabaseManager {
 
         }
 
-
-        // TODO: This method can be merge with emailExists() method in UserDatabase.java
-
-        /**
-         * Checks if a transaction ID already exists in the "transactions" table.
-         *
-         * @param db            The SQLiteDatabase instance.
-         * @param transactionId The transaction ID to check for existence.
-         * @return true if the transaction ID exists in the "transactions" table, false otherwise.
-         */
-        private boolean doesTransactionIdExist (SQLiteDatabase db, String transactionId){
-            Cursor cursor = null;
-
-            try {
-                String query = "SELECT 1 FROM " + TRANSACTION_TABLE +
-                        " WHERE " + TRANSACTION_COLUMN_ID + " = ?";
-                cursor = db.rawQuery(query, new String[]{transactionId});
-                return cursor.moveToFirst();
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
-            }
-        }
 
 
 }

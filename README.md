@@ -16,7 +16,7 @@ Dot is an Inventory Management mobile app developed in Java and XML for Android 
 
 - **Inventory Tracking**: Keep a close eye on your inventory levels, ensuring you never run out of stock.
 - **Order Management**: Efficiently process and manage orders from customers.
-- **Invoice Generation**: Generate invoices for completed orders, making your business transactions seamless.
+- **Invoice Generation**: Generate invoices for completed orders, making your business transaction seamless.
 - **Sales Insights**: Get valuable insights into your inventory and sales trends.
 - **Barcode Scanning**: Easily update inventory using barcode scanning capabilities.
 
@@ -42,7 +42,7 @@ Dot is an Inventory Management mobile app developed in Java and XML for Android 
 
 4. Manage orders by creating new orders, updating existing ones, and processing completed orders.
 
-5. Generate invoices for completed orders, making your financial transactions smoother.
+5. Generate invoices for completed orders, making your financial transaction smoother.
 
 6. Gain insights into your inventory and sales trends by exploring the analytics and reports sections.
 

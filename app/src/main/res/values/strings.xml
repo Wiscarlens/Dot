@@ -19,7 +19,7 @@
     <string name="leads">Leads</string>
     <string name="home">Home</string>
     <string name="users">Users</string>
-    <string name="transactions">Transactions</string>
+    <string name="transaction">Transactions</string>
     <string name="recent_transactions">Recent Transactions</string>
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>

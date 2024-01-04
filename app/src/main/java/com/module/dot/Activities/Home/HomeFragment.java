@@ -43,7 +43,7 @@ import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.Items.ItemGridAdapter;
 import com.module.dot.Activities.MainActivity;
 import com.module.dot.Activities.Orders.Order;
-import com.module.dot.Activities.Transactions.Transactions;
+import com.module.dot.Activities.Transactions.Transaction;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Helpers.LocalFormat;
@@ -247,7 +247,7 @@ public class HomeFragment extends Fragment {
                             // TODO: Create a new transaction
 
                             // Save data to firebase
-                            FirebaseHandler.createTransaction( new Transactions(
+                            FirebaseHandler.createTransaction( new Transaction(
                                     newOrderID, // Order ID
                                     "APPROVE", // TODO: replace with the actual transaction status
                                     totalPrice.get(),

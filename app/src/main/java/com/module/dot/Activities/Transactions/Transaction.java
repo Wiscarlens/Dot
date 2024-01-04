@@ -1,33 +1,36 @@
 package com.module.dot.Activities.Transactions;
 
 
-public class Transactions {
+public class Transaction {
     private String globalID;
-    private String transactionID;
+    private String localID;
     private String creatorID;
     private String transactionDate;
     private String transactionTime;
-    private final long orderNumber;
-    private final String transactionStatus;
-    private final double transactionTotal;
-    private final String paymentMethod;
+    private long orderNumber;
+    private String transactionStatus;
+    private double transactionTotal;
+    private String paymentMethod;
+
+    public Transaction() {
+    }
 
     // Constructor for displaying transactions
-    public Transactions(String transactionDate, String transactionTime, long orderNumber,
-                        String transactionID, String transactionStatus,
-                        double transactionTotal, String paymentMethod) {
+    public Transaction( String globalID, long orderNumber, String transactionDate,
+                        String transactionTime, String transactionStatus,
+                       double transactionTotal, String paymentMethod) {
+        this.globalID = globalID;
+        this.orderNumber = orderNumber;
         this.transactionDate = transactionDate;
         this.transactionTime = transactionTime;
-        this.orderNumber = orderNumber;
-        this.transactionID = transactionID;
         this.transactionStatus = transactionStatus;
         this.transactionTotal = transactionTotal;
         this.paymentMethod = paymentMethod;
     }
 
     // Constructor for creating a new transaction
-    public Transactions(long orderNumber, String transactionStatus,
-                        double transactionTotal, String paymentMethod, String creatorId, String date, String time) {
+    public Transaction(long orderNumber, String transactionStatus,
+                       double transactionTotal, String paymentMethod, String creatorId, String date, String time) {
         this.orderNumber = orderNumber;
         this.transactionStatus = transactionStatus;
         this.transactionTotal = transactionTotal;
@@ -45,12 +48,12 @@ public class Transactions {
         this.globalID = globalID;
     }
 
-    public String getTransactionID() {
-        return transactionID;
+    public String getLocalID() {
+        return localID;
     }
 
-    public void setTransactionID(String transactionID) {
-        this.transactionID = transactionID;
+    public void setLocalID(String localID) {
+        this.localID = localID;
     }
 
     public String getCreatorID() {

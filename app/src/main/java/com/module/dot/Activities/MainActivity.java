@@ -40,6 +40,7 @@ import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.Database.Local.OrderItemsDatabase;
+import com.module.dot.Database.Local.TransactionDatabase;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.FileManager;
 import com.module.dot.Helpers.Utils;
@@ -284,6 +285,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(this)){
             if (!orderItemsDatabase.isTableExists("order_items")) {
                 orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
+            }
+        }
+
+        try (TransactionDatabase transactionDatabase = new TransactionDatabase(this)){
+            if (!transactionDatabase.isTableExists("transactions")) {
+                transactionDatabase.onCreate(transactionDatabase.getWritableDatabase()); // Create the database
             }
         }
 

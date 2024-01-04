@@ -10,12 +10,15 @@ public class Order {
     private long orderNumber;
     private String orderDate;
     private String orderTime;
-    private final String orderStatus;
+    private String orderStatus;
     private int orderTotalItems;
-    private final double orderTotalAmount;
+    private double orderTotalAmount;
     private String creatorID;
 
     private ArrayList<Item> selectedItemList;
+
+    public Order() {
+    }
 
     // Constructor for displaying orders
     public Order(long orderNumber, String orderDate, String orderTime, String orderStatus,

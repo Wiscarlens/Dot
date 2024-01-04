@@ -118,19 +118,26 @@ public class ItemDatabase extends MyDatabaseManager {
         // Get a cursor to the item data in the database
         Cursor cursor = super.readAllData(NAME_TABLE_ITEMS);
 
-        // If the database is not empty, populate the arrays with the item data
-        while (cursor.moveToNext()) {
+        try {
+            // If the database is not empty, populate the arrays with the item data
+            while (cursor.moveToNext()) {
 
-            Item item = new Item(
-                    cursor.getLong(0),      // local id
-                    cursor.getString(2),    // imagePath
-                    cursor.getString(3),    // name
-                    cursor.getDouble(4),    // price
-                    cursor.getString(6),    // SKU
-                    cursor.getString(7)     // unitType
-            );
+                Item item = new Item(
+                        cursor.getLong(0),      // local id
+                        cursor.getString(2),    // imagePath
+                        cursor.getString(3),    // name
+                        cursor.getDouble(4),    // price
+                        cursor.getString(6),    // SKU
+                        cursor.getString(7)     // unitType
+                );
 
-            itemList.add(item); // Add the item to the ArrayList
+                itemList.add(item); // Add the item to the ArrayList
+            }
+        } finally {
+            // Ensure the Cursor is closed to free up resources
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
         }
     }
 

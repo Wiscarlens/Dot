@@ -23,11 +23,12 @@ import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.MainActivity;
 import com.module.dot.Activities.Orders.Order;
-import com.module.dot.Activities.Transactions.Transactions;
+import com.module.dot.Activities.Transactions.Transaction;
 import com.module.dot.Activities.Users.User;
 import com.module.dot.Database.Local.ItemDatabase;
 import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.Database.Local.OrderItemsDatabase;
+import com.module.dot.Database.Local.TransactionDatabase;
 import com.module.dot.Database.Local.UserDatabase;
 import com.module.dot.Helpers.FileManager;
 import com.module.dot.Helpers.Utils;
@@ -187,8 +188,11 @@ public class FirebaseHandler {
                             Log.i("FirebaseUserDatabase", "Skipping current user: " + firebaseUser.getFullName());
                         } else {
                             if (Objects.equals(MainActivity.currentUser.getCreatorID(), firebaseUser.getCreatorID())){
-                                downloadAndSaveImagesLocally("Profiles", firebaseUser.getProfileImagePath(), context);
                                 userDatabase.createUser(firebaseUser);
+
+                                if (firebaseUser.getProfileImagePath() != null){
+                                    downloadAndSaveImagesLocally("Profiles", firebaseUser.getProfileImagePath(), context);
+                                }
 
                                 Log.i("FirebaseUserDatabase", "User with email " + firebaseUser.getEmail() + " added to SQLite.");
                             }
@@ -381,7 +385,7 @@ public class FirebaseHandler {
     }
 
 
-    public static void createTransaction(Transactions newTransaction){
+    public static void createTransaction(Transaction newTransaction){
         DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("transactions");
 
         // Use push to generate a unique key
@@ -402,16 +406,18 @@ public class FirebaseHandler {
         firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                try (ItemDatabase itemDatabase = new ItemDatabase(context)) {
+                try (TransactionDatabase transactionDatabase = new TransactionDatabase(context)) {
                     // Iterate through Firebase data
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
 
-                        Item item = userSnapshot.getValue(Item.class);
+                        Transaction transaction = userSnapshot.getValue(Transaction.class);
 
                         // Create item in the local database
-                        assert item != null;
+                        assert transaction != null;
 
-                        itemDatabase.createItem(item);
+                        transaction.setGlobalID(userSnapshot.getKey());
+
+                        transactionDatabase.createTransaction(transaction);
 
                     }
 
@@ -424,7 +430,7 @@ public class FirebaseHandler {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("UserDatabase", "Firebase data fetch cancelled: " + error.getMessage());
+                Log.e("TransactionDatabase", "Firebase data fetch cancelled: " + error.getMessage());
 
             }
         });
