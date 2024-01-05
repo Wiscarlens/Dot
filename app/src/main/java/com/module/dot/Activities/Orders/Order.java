@@ -91,7 +91,7 @@ public class Order {
     }
 
     public int getOrderTotalItems() {
-        return orderTotalItems;
+        return selectedItemList.size();
     }
 
     public void setOrderTotalItems(int orderTotalItems) {
@@ -99,7 +99,8 @@ public class Order {
     }
 
     public double getOrderTotalAmount() {
-        return selectedItemList.size();
+        selectedItemList.get(0).getPrice();
+        return orderTotalAmount;
     }
 
     public String getCreatorID() {

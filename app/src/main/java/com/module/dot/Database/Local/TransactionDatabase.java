@@ -115,13 +115,13 @@ public class TransactionDatabase extends MyDatabaseManager {
             try {
                 while (cursor.moveToNext()) {
                     Transaction transaction = new Transaction(
-                            cursor.getString(0), // Global ID
-                            cursor.getLong(1), // Order Number
-                            cursor.getString(2), // Transaction Date
-                            cursor.getString(3), // Transaction Time
-                            cursor.getString(5), // Transaction Status
-                            cursor.getDouble(4), // Transaction Total Amount
-                            cursor.getString(6) // Payment Method
+                            cursor.getString(0),    // Global ID
+                            cursor.getLong(2),      // Order Number
+                            cursor.getString(3),    // Transaction Date
+                            cursor.getString(4),    // Transaction Time
+                            cursor.getString(6),    // Transaction Status
+                            cursor.getDouble(5),    // Transaction Total Amount
+                            cursor.getString(7)     // Payment Method
                     );
 
                     transaction_for_display.add(transaction); // Add the order to the ArrayList

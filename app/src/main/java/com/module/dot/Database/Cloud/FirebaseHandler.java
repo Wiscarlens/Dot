@@ -280,6 +280,7 @@ public class FirebaseHandler {
 
         newOrder.setGlobalID(globalID);
 
+
         // Create a map to represent the order data
         Map<String, Object> orderData = new HashMap<>();
 

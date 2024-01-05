@@ -209,38 +209,16 @@ public class HomeFragment extends Fragment {
 
                             String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
-//                            Orders newOrder = new Orders(
-//                                    MainActivity.currentUser.getCreatorID(),   // Creator ID
-//                                    dateTime[0],
-//                                    dateTime[1],
-//                                    totalPrice.get(), // Total amount
-//                                    "Completed" // TODO: replace with the actual Order status
-//                            );
-
-                            FirebaseHandler.createOrder( new Order(
+                            Order newOrder = new Order(
                                     MainActivity.currentUser.getCreatorID(),   // Creator ID
                                     dateTime[0],
                                     dateTime[1],
                                     totalPrice.get(), // Total amount
                                     "Completed", // TODO: replace with the actual Order status
                                     selectedItems
-                            ));
+                            );
 
-//
-//
-//                            try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
-//                                newOrderID = orderDatabase.createOrder(newOrder);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-
-//                            try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(getContext())){
-//                                for (Item item : selectedItems) {
-//                                    orderItemsDatabase.createOrderItems(newOrderID, item.getLocalID(), item.getQuantity());
-//                                }
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
+                            FirebaseHandler.createOrder(newOrder);
 
                             dateTime = getCurrentDateTime(); // Get the current date and time
 
@@ -256,12 +234,6 @@ public class HomeFragment extends Fragment {
                                     dateTime[0],
                                     dateTime[1]
                             ));
-
-//                            try (TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
-//                                transactionDatabase.createTransaction(newTransaction);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
 
 
                             // Sending order number to receipt fragment
