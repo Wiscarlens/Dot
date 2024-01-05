@@ -218,7 +218,7 @@ public class HomeFragment extends Fragment {
                                     selectedItems
                             );
 
-                            FirebaseHandler.createOrder(newOrder);
+                           String orderGlobalID = FirebaseHandler.createOrder(newOrder);
 
                             dateTime = getCurrentDateTime(); // Get the current date and time
 
@@ -226,7 +226,7 @@ public class HomeFragment extends Fragment {
 
                             // Save data to firebase
                             FirebaseHandler.createTransaction( new Transaction(
-                                    newOrderID, // Order ID
+                                    orderGlobalID, // Order ID
                                     "APPROVE", // TODO: replace with the actual transaction status
                                     totalPrice.get(),
                                     "visa", // TODO: replace with the actual payment method

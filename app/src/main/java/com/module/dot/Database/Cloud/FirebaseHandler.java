@@ -270,7 +270,7 @@ public class FirebaseHandler {
     }
 
 
-    public static void createOrder(Order newOrder) {
+    public static String createOrder(Order newOrder) {
         DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
         // Use push to generate a unique key
@@ -313,6 +313,8 @@ public class FirebaseHandler {
         }).addOnFailureListener(e ->
                 Log.d("Firebase", "Order creation failed")
         );
+
+        return globalID;
 
     }
 

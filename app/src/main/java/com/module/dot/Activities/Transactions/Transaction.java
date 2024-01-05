@@ -7,6 +7,7 @@ public class Transaction {
     private String creatorID;
     private String transactionDate;
     private String transactionTime;
+    private String orderGlobalID;
     private long orderNumber;
     private String transactionStatus;
     private double transactionTotal;
@@ -29,9 +30,9 @@ public class Transaction {
     }
 
     // Constructor for creating a new transaction
-    public Transaction(long orderNumber, String transactionStatus,
+    public Transaction(String orderGlobalID, String transactionStatus,
                        double transactionTotal, String paymentMethod, String creatorId, String date, String time) {
-        this.orderNumber = orderNumber;
+        this.orderGlobalID = orderGlobalID;
         this.transactionStatus = transactionStatus;
         this.transactionTotal = transactionTotal;
         this.paymentMethod = paymentMethod;
@@ -80,19 +81,43 @@ public class Transaction {
         this.transactionTime = transactionTime;
     }
 
+    public String getOrderGlobalID() {
+        return orderGlobalID;
+    }
+
+    public void setOrderGlobalID(String orderGlobalID) {
+        this.orderGlobalID = orderGlobalID;
+    }
+
     public long getOrderNumber() {
         return orderNumber;
+    }
+
+    public void setOrderNumber(long orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public String getTransactionStatus() {
         return transactionStatus;
     }
 
+    public void setTransactionStatus(String transactionStatus) {
+        this.transactionStatus = transactionStatus;
+    }
+
     public double getTransactionTotal() {
         return transactionTotal;
     }
 
+    public void setTransactionTotal(double transactionTotal) {
+        this.transactionTotal = transactionTotal;
+    }
+
     public String getPaymentMethod() {
         return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }
