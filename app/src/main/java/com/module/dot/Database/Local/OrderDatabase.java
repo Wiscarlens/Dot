@@ -67,23 +67,29 @@ public class OrderDatabase extends MyDatabaseManager {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-            ContentValues cv = new ContentValues();
+            if (!isValueExists(db, ORDERS_TABLE_NAME, ORDER_COLUMN_GLOBAL_ID, newOrder.getGlobalID())) {
+                ContentValues cv = new ContentValues();
 
-            String[] dateTime = getCurrentDateTime(); // Get the current date and time
+                String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
-            cv.put(ORDER_COLUMN_GLOBAL_ID, newOrder.getGlobalID());
-            cv.put(ORDER_COLUMN_CREATOR_ID, newOrder.getCreatorID());
-            cv.put(ORDER_COLUMN_TOTAL_AMOUNT, newOrder.getOrderTotalAmount());
-            cv.put(ORDER_COLUMN_STATUS, newOrder.getOrderStatus());
-            cv.put(ORDER_COLUMN_DATE, dateTime[0]);
-            cv.put(ORDER_COLUMN_TIME, dateTime[1]);
+                cv.put(ORDER_COLUMN_GLOBAL_ID, newOrder.getGlobalID());
+                cv.put(ORDER_COLUMN_CREATOR_ID, newOrder.getCreatorID());
+                cv.put(ORDER_COLUMN_TOTAL_AMOUNT, newOrder.getOrderTotalAmount());
+                cv.put(ORDER_COLUMN_STATUS, newOrder.getOrderStatus());
+                cv.put(ORDER_COLUMN_DATE, dateTime[0]);
+                cv.put(ORDER_COLUMN_TIME, dateTime[1]);
 
-            // Insert the order into the database
-            newOrderId = db.insertOrThrow(ORDERS_TABLE_NAME, null, cv);
+                // Insert the order into the database
+                newOrderId = db.insertOrThrow(ORDERS_TABLE_NAME, null, cv);
 
-            if (newOrderId != -1) {
-                Log.i("MyDatabaseManager", "Order Added Successfully!");
+                if (newOrderId != -1) {
+                    Log.i("MyDatabaseManager", "Order Added Successfully!");
+                } else {
+                    Log.i("MyDatabaseManager", "Failed to add order!");
+                }
             }
+
+
         } catch (SQLiteException e) {
             Log.e("MyDatabaseManager", "Failed to add order: " + e.getMessage());
             throw e;
@@ -124,11 +130,11 @@ public class OrderDatabase extends MyDatabaseManager {
 
             Order order = new Order(
                     orderNumber, // Order Number
-                    cursor.getString(2), // Order Date
-                    cursor.getString(3), // Order Time
-                    cursor.getString(5), // Order Status
+                    cursor.getString(3), // Order Date
+                    cursor.getString(4), // Order Time
+                    cursor.getString(6), // Order Status
                     totalItems,             // Total Item
-                    cursor.getDouble(4), // Total Amount
+                    cursor.getDouble(5), // Total Amount
                     selectedItemList // Selected Item
             );
 

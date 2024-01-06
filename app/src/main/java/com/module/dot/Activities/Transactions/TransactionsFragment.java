@@ -23,12 +23,20 @@ import java.util.Objects;
 
 public class TransactionsFragment extends Fragment {
 
-    private final ArrayList<Transaction> transaction_for_display = new ArrayList<>();
+    private final ArrayList<Transaction> transactionList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_transations, container, false);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseHandler.readTransaction("transactions", getContext());
+
     }
 
     @Override
@@ -40,14 +48,11 @@ public class TransactionsFragment extends Fragment {
 
 
 
-        try(TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
+        try (TransactionDatabase transactionDatabase = new TransactionDatabase(getContext())){
             try {
                 if(!transactionDatabase.isTableExists("transactions")){
                     transactionDatabase.onCreate(transactionDatabase.getWritableDatabase()); // Create the database
                 }
-
-                FirebaseHandler.readTransaction("transactions", getContext());
-
             } catch (Exception e) {
                 Log.i("TransactionFragment", Objects.requireNonNull(e.getMessage()));
             }
@@ -58,12 +63,10 @@ public class TransactionsFragment extends Fragment {
                 transactionDatabase.showStateMessage(recyclerView, noTransaction);
 
                 try {
-                    transactionDatabase.readTransaction(transaction_for_display); // Read data from database and save it the arraylist
+                    transactionDatabase.readTransaction(transactionList); // Read data from database and save it the arraylist
 
-                    TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transaction_for_display);
-
+                    TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(transactionList);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
                     recyclerView.setAdapter(adapter);
                 } catch (Exception e) {
                     Log.i("TransactionFragment", Objects.requireNonNull(e.getMessage()));

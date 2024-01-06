@@ -330,7 +330,7 @@ public class FirebaseHandler {
                         Map<String, Object> orderData = (Map<String, Object>) orderSnapshot.getValue();
 
                         if (orderData != null) {
-                            String orderGlobalID = (String) orderData.get("globalID");
+                            String orderGlobalID = orderSnapshot.getKey();
                             String orderDate = (String) orderData.get("orderDate");
                             String orderTime = (String) orderData.get("orderTime");
                             String orderStatus = (String) orderData.get("orderStatus");

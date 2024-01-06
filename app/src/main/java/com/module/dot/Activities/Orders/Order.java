@@ -99,10 +99,6 @@ public class Order {
     }
 
     public double getOrderTotalAmount() {
-        for (int i = 0; i < selectedItemList.size(); i++){
-            orderTotalAmount += selectedItemList.get(i).getPrice();
-        }
-
         return orderTotalAmount;
     }
 

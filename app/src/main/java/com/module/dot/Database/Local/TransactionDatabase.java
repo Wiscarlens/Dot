@@ -73,7 +73,7 @@ public class TransactionDatabase extends MyDatabaseManager {
         {
             try (SQLiteDatabase db = this.getWritableDatabase()) {
                 // TODO: This block that check email will be independent from the database
-                // Check if the email already exists in the database
+                // Check if the global id already exists in the database
                 if (isValueExists(db, TRANSACTION_TABLE_NAME, TRANSACTION_COLUMN_GLOBAL_ID, newTransaction.getGlobalID())) {
                     return;
                 }

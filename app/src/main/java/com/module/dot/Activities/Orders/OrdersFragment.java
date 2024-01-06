@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.R;
 
@@ -29,11 +30,18 @@ public class OrdersFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseHandler.readOrder("orders", getContext());
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         LinearLayout noOrder = view.findViewById(R.id.noOrderFragmentLL); // When Database is empty
-        RecyclerView OrderList_RecyclerView = view.findViewById(R.id.ordersList);  // Connect to Recyclerview in fragment_orders
+        RecyclerView orderRecyclerView = view.findViewById(R.id.ordersList);  // Connect to Recyclerview in fragment_orders
 
         try (OrderDatabase orderDatabase = new OrderDatabase(getContext())) {
             if(!orderDatabase.isTableExists("orders")){
@@ -41,11 +49,15 @@ public class OrdersFragment extends Fragment {
                 return;
             } else {
                 if (orderDatabase.isTableEmpty("orders")) {
-                    orderDatabase.showEmptyStateMessage(OrderList_RecyclerView, noOrder);
+                    orderDatabase.showEmptyStateMessage(orderRecyclerView, noOrder);
                 } else {
-                    orderDatabase.showStateMessage(OrderList_RecyclerView, noOrder);
+                    orderDatabase.showStateMessage(orderRecyclerView, noOrder);
 
                     orderDatabase.readOrder(orderList);
+
+                    OrdersAdapter ordersAdapter = new OrdersAdapter(orderList, getContext());
+                    orderRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    orderRecyclerView.setAdapter(ordersAdapter);
                 }
             }
 
@@ -53,8 +65,6 @@ public class OrdersFragment extends Fragment {
             Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
 
-        OrdersAdapter ordersAdapter = new OrdersAdapter(orderList, getContext());
-        OrderList_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        OrderList_RecyclerView.setAdapter(ordersAdapter);
+
     }
 }

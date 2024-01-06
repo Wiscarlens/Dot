@@ -209,16 +209,14 @@ public class HomeFragment extends Fragment {
 
                             String[] dateTime = getCurrentDateTime(); // Get the current date and time
 
-                            Order newOrder = new Order(
-                                    MainActivity.currentUser.getCreatorID(),   // Creator ID
-                                    dateTime[0],
-                                    dateTime[1],
-                                    totalPrice.get(), // Total amount
-                                    "Completed", // TODO: replace with the actual Order status
-                                    selectedItems
-                            );
-
-                           String orderGlobalID = FirebaseHandler.createOrder(newOrder);
+                           String orderGlobalID = FirebaseHandler.createOrder(new Order(
+                                   MainActivity.currentUser.getCreatorID(),   // Creator ID
+                                   dateTime[0],
+                                   dateTime[1],
+                                   totalPrice.get(), // Total amount
+                                   "Completed", // TODO: replace with the actual Order status
+                                   selectedItems
+                           ));
 
                             dateTime = getCurrentDateTime(); // Get the current date and time
 
