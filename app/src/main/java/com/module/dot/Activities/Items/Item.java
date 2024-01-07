@@ -10,7 +10,7 @@ public class Item {
     private String creatorID;
     private String imagePath;
     private String name;
-    private double price;
+    private Double price;
     private String category;
     private String sku;
     private String unitType;
@@ -19,7 +19,7 @@ public class Item {
     private double tax;
     private String description;
 
-    private int quantity = 1;
+    private Integer quantity = 1;
 
     public Item() {
 
@@ -41,8 +41,9 @@ public class Item {
     }
 
     // Use for display item in the gridview
-    public Item(long localID, String imagePath, String name,  double price, String SKU, String unitType) {
+    public Item(long localID, String globalID, String imagePath, String name,  double price, String SKU, String unitType) {
         this.localID = localID;
+        this.globalID = globalID;
         this.imagePath = imagePath;
         this.name = name;
         this.price = price;
@@ -51,8 +52,8 @@ public class Item {
     }
 
     // Selected Item
-    public Item(long localID, String name, double price, String SKU, int quantity) {
-        this.localID = localID;
+    public Item(String globalID, String name, double price, String SKU, int quantity) {
+        this.globalID = globalID;
         this.name = name;
         this.price = price;
         this.sku = SKU;
@@ -68,6 +69,11 @@ public class Item {
         this.quantity = frequency;
     }
 
+    public Item(String globalID, Double price, Integer quantity) {
+        this.globalID = globalID;
+        this.price = price;
+        this.quantity = quantity;
+    }
 
     public String getGlobalID() {
         return globalID;

@@ -3,6 +3,7 @@ package com.module.dot.Activities.Orders;
 import static com.module.dot.Helpers.LocalFormat.getCurrencyFormat;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -23,11 +24,11 @@ import java.util.ArrayList;
  */
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignViewHolder> {
-    private  final ArrayList<Order> orderArrayList;
+    private  final ArrayList<Order> orderList;
     private final Context context;
 
-    public OrdersAdapter(ArrayList<Order> orderArrayList, Context context) {
-        this.orderArrayList = orderArrayList;
+    public OrdersAdapter(ArrayList<Order> orderList, Context context) {
+        this.orderList = orderList;
         this.context = context;
     }
 
@@ -42,14 +43,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
 
     @Override
     public void onBindViewHolder(@NonNull OrdersAdapter.DesignViewHolder holder, int position) {
-        holder.order_number.setText(Utils.formatOrderNumber(orderArrayList.get(position).getOrderNumber()));
-        holder.order_date.setText(orderArrayList.get(position).getOrderDate());
-        holder.order_time.setText(orderArrayList.get(position).getOrderTime());
-        holder.order_status.setText(orderArrayList.get(position).getOrderStatus());
-        holder.order_total_items.setText(String.valueOf(orderArrayList.get(position).getOrderTotalItems()));
-        holder.order_total_amount.setText(getCurrencyFormat(orderArrayList.get(position).getOrderTotalAmount()));
+        holder.order_number.setText(Utils.formatOrderNumber(orderList.get(position).getOrderNumber()));
+        holder.order_date.setText(orderList.get(position).getOrderDate());
+        holder.order_time.setText(orderList.get(position).getOrderTime());
+        holder.order_status.setText(orderList.get(position).getOrderStatus());
+        holder.order_total_items.setText(String.valueOf(orderList.get(position).getOrderTotalItems()));
+        holder.order_total_amount.setText(getCurrencyFormat(orderList.get(position).getOrderTotalAmount()));
 
-        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(orderArrayList.get(position).getSelectedItemList(), context);
+        Log.d("SelectedItemsAdapter", "onBindViewHolder: " +orderList.get(position).getSelectedItemList().size());
+
+        SelectedItemsAdapter selectedItemsAdapter = new SelectedItemsAdapter(orderList.get(position).getSelectedItemList(), context);
 
         holder.selectedItemRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         holder.selectedItemRecyclerView.setAdapter(selectedItemsAdapter);
@@ -58,7 +61,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.DesignView
 
     @Override
     public int getItemCount() {
-        return orderArrayList.size();
+        return orderList.size();
     }
 
     public static class DesignViewHolder extends RecyclerView.ViewHolder {

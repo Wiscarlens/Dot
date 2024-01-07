@@ -64,15 +64,15 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         Log.i("OrderItemDatabase", "Creating orderItem table...");
     }
 
-    public void createOrderItems (long orderGlobalID, String itemGlobalId, double itemPrice, int quantity) throws SQLiteException {
+    public void createOrderItems (long orderGlobalID, Item item) throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
             ContentValues cv = new ContentValues();
 
             cv.put(ORDER_ITEM_COLUMN_ORDER_ID, orderGlobalID);
-            cv.put(ORDER_ITEM_COLUMN_ITEM_ID, itemGlobalId); // Make sure to provide the correct item ID
-            cv.put(ORDER_ITEM_COLUMN_ITEM_PRICE, itemPrice);
-            cv.put(ORDER_ITEM_COLUMN_QUANTITY, quantity);
+            cv.put(ORDER_ITEM_COLUMN_ITEM_ID, item.getGlobalID()); // Make sure to provide the correct item ID
+            cv.put(ORDER_ITEM_COLUMN_ITEM_PRICE, item.getPrice());
+            cv.put(ORDER_ITEM_COLUMN_QUANTITY, item.getQuantity());
 
             long result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
 

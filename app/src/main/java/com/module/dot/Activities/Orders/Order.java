@@ -11,8 +11,8 @@ public class Order {
     private String orderDate;
     private String orderTime;
     private String orderStatus;
-    private int orderTotalItems;
-    private double orderTotalAmount;
+    private Integer orderTotalItems;
+    private Double orderTotalAmount;
     private String creatorID;
 
     private ArrayList<Item> selectedItemList;
@@ -22,7 +22,7 @@ public class Order {
 
     // Constructor for displaying orders
     public Order(long orderNumber, String orderDate, String orderTime, String orderStatus,
-                 int orderTotalItems, double orderTotalAmount, ArrayList<Item> selectedItemList) {
+                 Integer orderTotalItems, Double orderTotalAmount, ArrayList<Item> selectedItemList) {
         this.orderNumber = orderNumber;
         this.orderDate = orderDate;
         this.orderTime = orderTime;
@@ -33,33 +33,27 @@ public class Order {
     }
 
     // Constructor for creating a new order
-    public Order(String globalID, String creatorID, String date, String time, double orderTotalAmount, String orderStatus) {
+    public Order(String globalID, String creatorID, String date, String time, Double orderTotalAmount,
+                 Integer orderTotalItems, String orderStatus) {
         this.globalID = globalID;
         this.creatorID = creatorID;
         this.orderDate = date;
         this.orderTime = time;
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
+        this.orderTotalItems = orderTotalItems;
     }
 
     // Constructor for creating a new order
     public Order(String creatorID, String date, String time, double orderTotalAmount,
-                 String orderStatus, ArrayList<Item> selectedItemList) {
+                 Integer orderTotalItems, String orderStatus, ArrayList<Item> selectedItemList) {
         this.creatorID = creatorID;
         this.orderDate = date;
         this.orderTime = time;
-        this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
+        this.orderTotalItems = orderTotalItems;
+        this.orderStatus = orderStatus;
         this.selectedItemList = selectedItemList;
-    }
-
-
-    public long getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(long orderNumber) {
-        this.orderNumber = orderNumber;
     }
 
     public String getGlobalID() {
@@ -68,6 +62,14 @@ public class Order {
 
     public void setGlobalID(String globalID) {
         this.globalID = globalID;
+    }
+
+    public long getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(long orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public String getOrderDate() {
@@ -90,16 +92,24 @@ public class Order {
         return orderStatus;
     }
 
-    public int getOrderTotalItems() {
-        return selectedItemList.size();
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
-    public void setOrderTotalItems(int orderTotalItems) {
+    public Integer getOrderTotalItems() {
+        return orderTotalItems;
+    }
+
+    public void setOrderTotalItems(Integer orderTotalItems) {
         this.orderTotalItems = orderTotalItems;
     }
 
-    public double getOrderTotalAmount() {
+    public Double getOrderTotalAmount() {
         return orderTotalAmount;
+    }
+
+    public void setOrderTotalAmount(Double orderTotalAmount) {
+        this.orderTotalAmount = orderTotalAmount;
     }
 
     public String getCreatorID() {

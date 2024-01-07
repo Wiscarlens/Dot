@@ -25,6 +25,7 @@ public class OrderDatabase extends MyDatabaseManager {
     private static final String ORDER_COLUMN_DATE = "order_date";
     private static final String ORDER_COLUMN_TIME = "order_time";
     private static final String ORDER_COLUMN_TOTAL_AMOUNT = "total_amount";
+    private static final String ORDER_COLUMN_TOTAL_ITEM = "total_item";
     private static final String ORDER_COLUMN_STATUS = "order_status";
 
     private static final String NAME_TABLE_USERS = "users";
@@ -48,11 +49,12 @@ public class OrderDatabase extends MyDatabaseManager {
         // SQL query to create the "orders" table
         String query_orders = "CREATE TABLE " + ORDERS_TABLE_NAME +
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ORDER_COLUMN_GLOBAL_ID + " TEXT NOT NULL, " +
+                ORDER_COLUMN_GLOBAL_ID + " TEXT NOT NULL UNIQUE, " +
                 ORDER_COLUMN_CREATOR_ID + " INTEGER NOT NULL, " +
                 ORDER_COLUMN_DATE + " DATE, " +
                 ORDER_COLUMN_TIME + " TIME, " +
                 ORDER_COLUMN_TOTAL_AMOUNT + " REAL NOT NULL, " +
+                ORDER_COLUMN_TOTAL_ITEM + " INTEGER, " +
                 ORDER_COLUMN_STATUS + " TEXT NOT NULL, " +
                 " FOREIGN KEY (" + ORDER_COLUMN_CREATOR_ID
                 + ") REFERENCES " + NAME_TABLE_USERS + " (" + ID_COLUMN_USERS + "));";
@@ -75,6 +77,7 @@ public class OrderDatabase extends MyDatabaseManager {
                 cv.put(ORDER_COLUMN_GLOBAL_ID, newOrder.getGlobalID());
                 cv.put(ORDER_COLUMN_CREATOR_ID, newOrder.getCreatorID());
                 cv.put(ORDER_COLUMN_TOTAL_AMOUNT, newOrder.getOrderTotalAmount());
+                cv.put(ORDER_COLUMN_TOTAL_ITEM, newOrder.getOrderTotalItems());
                 cv.put(ORDER_COLUMN_STATUS, newOrder.getOrderStatus());
                 cv.put(ORDER_COLUMN_DATE, dateTime[0]);
                 cv.put(ORDER_COLUMN_TIME, dateTime[1]);
@@ -132,8 +135,8 @@ public class OrderDatabase extends MyDatabaseManager {
                     orderNumber, // Order Number
                     cursor.getString(3), // Order Date
                     cursor.getString(4), // Order Time
-                    cursor.getString(6), // Order Status
-                    totalItems,             // Total Item
+                    cursor.getString(7), // Order Status
+                    cursor.getInt(6),    // Total Item
                     cursor.getDouble(5), // Total Amount
                     selectedItemList // Selected Item
             );

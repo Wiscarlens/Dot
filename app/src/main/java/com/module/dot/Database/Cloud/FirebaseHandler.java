@@ -334,16 +334,18 @@ public class FirebaseHandler {
                             String orderDate = (String) orderData.get("orderDate");
                             String orderTime = (String) orderData.get("orderTime");
                             String orderStatus = (String) orderData.get("orderStatus");
-                            long orderTotalItems = ((Long) orderData.get("orderTotalItems")).intValue();
-                            double orderTotalAmount = (double) orderData.get("orderTotalAmount");
+                            Long orderTotalItems = ((Long) orderData.get("orderTotalItems"));
+                            Double orderTotalAmount = (Double) orderData.get("orderTotalAmount");
                             String creatorID = (String) orderData.get("creatorID");
 
+                            assert orderTotalItems != null;
                             long newOrderID = orderDatabase.createOrder( new Order(
                                     orderGlobalID,
                                     creatorID,
                                     orderDate,
                                     orderTime,
                                     orderTotalAmount,
+                                    orderTotalItems.intValue(),
                                     orderStatus
                             ));
 
@@ -351,14 +353,22 @@ public class FirebaseHandler {
                             // Extract list of items
                             List<Map<String, Object>> itemList = (List<Map<String, Object>>) orderData.get("selectedItem");
 
+                            Log.d("FirebaseTEST", "onDataChange: " + itemList);
+
                             if (itemList != null) {
                                 try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
                                     for (Map<String, Object> itemData : itemList) {
                                         String itemGlobalID = (String) itemData.get("itemGlobalID");
-                                        double itemPrice = (double) itemData.get("itemPrice");
-                                        int itemQuantity = ((Long) itemData.get("itemQuantity")).intValue();
+                                        Double itemPrice = (Double) itemData.get("itemPrice");
+                                        Integer itemQuantity = ((Integer) itemData.get("itemQuantity"));
 
-                                        orderItemsDatabase.createOrderItems(newOrderID, itemGlobalID, itemPrice, itemQuantity);
+                                        Log.d("FirebaseTEST", "onDataChange: " + itemGlobalID + " " + itemPrice + " " + itemQuantity);
+
+                                        orderItemsDatabase.createOrderItems(newOrderID, new Item(
+                                                itemGlobalID,
+                                                itemPrice,
+                                                itemQuantity
+                                        ));
                                     }
 
                                 } catch (Exception e) {

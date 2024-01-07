@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // Check if user is an administrator
                     if(!Objects.equals(dataSnapshot.child("positionTitle").getValue(String.class), "Administrator")){
                         navigationView.getMenu().findItem(R.id.nav_users).setVisible(false);
+                        navigationView.getMenu().findItem(R.id.nav_transactions).setVisible(false);
                     }
 
                     if (dataSnapshot.exists()) {

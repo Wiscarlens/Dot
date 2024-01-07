@@ -2,6 +2,7 @@ package com.module.dot.Activities.Items;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class SelectedItemsAdapter extends RecyclerView.Adapter<SelectedItemsAdap
         Drawable itemImage;
 
         if (selectedItems.get(position).getImagePath() != null) {
-            itemImage = FileManager.loadImageLocally(context, "Items", selectedItems.get(position).getImagePath());
+            itemImage = FileManager.loadImageLocally(context, "Items", selectedItems.get(position).getGlobalID());
         } else {
             // Default image
             // TODO: Use category image when item image is not available

@@ -58,13 +58,15 @@ public class HomeFragment extends Fragment {
     private FragmentActivity fragmentActivity;
     private Button chargeButton;
 
-    private final ArrayList<Item> item_for_display = new ArrayList<>();
+    private final ArrayList<Item> itemList = new ArrayList<>();
+
+    // TODO: Make selectedItem a set instead of an arraylist
     private final ArrayList<Item> selectedItems =  new ArrayList<>();
 
     // Select item total
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
     private String currentCharge;
-    private long newOrderID;
+    private int totalItem = 0;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -98,29 +100,31 @@ public class HomeFragment extends Fragment {
                 itemDatabase.showEmptyStateMessage(itemGridview, noData);
             } else {
                 itemDatabase.showStateMessage(itemGridview, noData);
-                itemDatabase.readItem(item_for_display); // Read data from database and save it the arraylist
+                itemDatabase.readItem(itemList); // Read data from database and save it the arraylist
             }
         } catch (Exception e) {
             Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
 
 
-        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(item_for_display, getContext());
+        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(itemList, getContext());
         itemGridview.setAdapter(itemGridAdapter);
 
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
             // Find the selected item
             Item selectedItem = new Item(
-                    item_for_display.get(position).getLocalID(),
-                    item_for_display.get(position).getName(),
-                    item_for_display.get(position).getPrice(),
-                    item_for_display.get(position).getSku(),
+                    itemList.get(position).getGlobalID(),
+                    itemList.get(position).getName(),
+                    itemList.get(position).getPrice(),
+                    itemList.get(position).getSku(),
                     1
             );
 
             // TODO: Optimize - All the line below can be part of addToSElected Item method
-            double itemSelectedPrice = item_for_display.get(position).getPrice();
+            double itemSelectedPrice = itemList.get(position).getPrice();
+
+            totalItem ++;
 
             addToSelectedItems(selectedItem);
             updateAmount(itemSelectedPrice);
@@ -139,13 +143,13 @@ public class HomeFragment extends Fragment {
 
         // When user click on scanner button
         scanButton.setOnClickListener(v -> {
-                if (item_for_display.isEmpty()) {
+                if (itemList.isEmpty()) {
                     Toast.makeText(fragmentActivity, "No item in database", Toast.LENGTH_SHORT).show();
                 } else {
                     scannerManager.startBarcodeScanning(); // Scan barcode
                     String barcode = scannerManager.getScanItem(); // get barcode
 
-                    for (Item item : item_for_display) {
+                    for (Item item : itemList) {
                         if (barcode.equals(item.getSku())) {
                             addToSelectedItems(item); // Add the item to the selectedItems list
                             updateAmount(item.getPrice()); // Update Selected Item amount
@@ -168,7 +172,7 @@ public class HomeFragment extends Fragment {
     }
 
     public Dialog showButtonDialog(){
-        final Dialog bottomSheetDialog = new Dialog(getContext());
+        final Dialog bottomSheetDialog = new Dialog(requireContext());
 
         bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         bottomSheetDialog.setContentView(R.layout.bottomsheet_layout);
@@ -214,6 +218,7 @@ public class HomeFragment extends Fragment {
                                    dateTime[0],
                                    dateTime[1],
                                    totalPrice.get(), // Total amount
+                                   totalItem, // Total item
                                    "Completed", // TODO: replace with the actual Order status
                                    selectedItems
                            ));
@@ -236,7 +241,7 @@ public class HomeFragment extends Fragment {
 
                             // Sending order number to receipt fragment
                             Bundle orderNumberBundle = new Bundle();
-                            orderNumberBundle.putLong("orderNumber", newOrderID);
+                            orderNumberBundle.putString("orderNumber", orderGlobalID);
                             getParentFragmentManager().setFragmentResult("orderNumberData", orderNumberBundle);
 
                             // Open Confirmation fragment
@@ -312,7 +317,7 @@ public class HomeFragment extends Fragment {
     ActivityResultLauncher<ScanOptions>  scannerLauncher = registerForActivityResult(new ScanContract(), result -> {
         String scanItem = result.getContents();
 
-        for (Item item : item_for_display) {
+        for (Item item : itemList) {
              if (scanItem.equals(item.getSku())) {
                  addToSelectedItems(item); // Add the item to the selectedItems list
                  updateAmount(item.getPrice()); // Update Selected Item amount
@@ -349,7 +354,7 @@ public class HomeFragment extends Fragment {
     private void addToSelectedItems(Item newItem) {
         // Check if the item is already in selectedItems
         for (Item item : selectedItems) {
-            if (Objects.equals(item.getLocalID(), newItem.getLocalID())) {
+            if (Objects.equals(item.getGlobalID(), newItem.getGlobalID())) {
                 // Item already exists, increase frequency
                 item.setQuantity(item.getQuantity() + 1);
 

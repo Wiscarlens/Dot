@@ -124,6 +124,7 @@ public class ItemDatabase extends MyDatabaseManager {
 
                 Item item = new Item(
                         cursor.getLong(0),      // local id
+                        cursor.getString(1),    // global id
                         cursor.getString(2),    // imagePath
                         cursor.getString(3),    // name
                         cursor.getDouble(4),    // price
