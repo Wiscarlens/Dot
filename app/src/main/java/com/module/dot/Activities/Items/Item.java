@@ -61,12 +61,12 @@ public class Item {
     }
 
     // Use for display order item
-    public Item(long localID, String imagePath, String name, double price, int frequency) {
-        this.localID = localID;
+    public Item(String globalID, String imagePath, String name, double price, int quantity) {
+        this.globalID = globalID;
         this.imagePath = imagePath;
         this.name = name;
         this.price = price;
-        this.quantity = frequency;
+        this.quantity = quantity;
     }
 
     public Item(String globalID, Double price, Integer quantity) {

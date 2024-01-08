@@ -223,6 +223,8 @@ public class HomeFragment extends Fragment {
                                    selectedItems
                            ));
 
+                           Log.d("HomeFragmentTEST", selectedItems.get(0).getGlobalID());
+
                             dateTime = getCurrentDateTime(); // Get the current date and time
 
                             // TODO: Create a new transaction
@@ -297,19 +299,6 @@ public class HomeFragment extends Fragment {
         return displayMetrics.heightPixels;
     }
 
-//    /**
-//     * Initiates a barcode scanning process using the specified scan options.
-//     */
-//    private void scanCode(){
-//        ScanOptions options = new ScanOptions();
-//
-//        options.setPrompt("Press Volume Up to Turn Flash On");
-//        options.setBeepEnabled(true);
-//        options.setOrientationLocked(true);
-//        options.setCaptureActivity(CaptureAct.class);
-//
-//        scannerLauncher.launch(options);
-//    }
 
     /**
      * Result launcher for initiating barcode scanning and handling the scanning result.

@@ -15,6 +15,7 @@ import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.Orders.Order;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class OrderDatabase extends MyDatabaseManager {
     // Order Table
@@ -108,15 +109,16 @@ public class OrderDatabase extends MyDatabaseManager {
 
         // If the database is not empty, populate the ArrayList with order data
         while (cursor.moveToNext()) {
-            long orderNumber = cursor.getLong(0);
+            String orderGlobalID = cursor.getString(1);
 
             ArrayList<Item> selectedItemList = new ArrayList<>();
 
             try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
                 if (!orderItemsDatabase.isTableExists("order_items")) {
                     orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
+                    return;
                 } else {
-                    selectedItemList = orderItemsDatabase.readOrderItems(orderNumber);
+                    selectedItemList = orderItemsDatabase.readOrderItems(orderGlobalID);
                 }
 
             } catch (Exception e) {
@@ -131,8 +133,10 @@ public class OrderDatabase extends MyDatabaseManager {
                 totalItems += item.getQuantity();
             }
 
+            Log.d("OrderDatabaseTEST", selectedItemList.get(0).getName());
+
             Order order = new Order(
-                    orderNumber, // Order Number
+                    orderGlobalID, // Order Number
                     cursor.getString(3), // Order Date
                     cursor.getString(4), // Order Time
                     cursor.getString(7), // Order Status
@@ -140,6 +144,7 @@ public class OrderDatabase extends MyDatabaseManager {
                     cursor.getDouble(5), // Total Amount
                     selectedItemList // Selected Item
             );
+
 
             orderArrayList.add(order); // Add the order to the ArrayList
         }
@@ -156,14 +161,14 @@ public class OrderDatabase extends MyDatabaseManager {
      * @param orderArrayList The ArrayList where the retrieved order details will be stored.
      * @param orderNumber The specific order number for which details are to be retrieved.
      */
-    public void getOrdersDetails(ArrayList<Order> orderArrayList, long orderNumber) {
+    public void getOrdersDetails(ArrayList<Order> orderArrayList, String orderNumber) {
         // Get a cursor to the order data in the database
         Cursor cursor = super.readAllData(ORDERS_TABLE_NAME);
 
         while (cursor.moveToNext()) {
-            long currentOrderNumber = cursor.getLong(0);
+            String currentOrderNumber = cursor.getString(1);
 
-            if (currentOrderNumber == orderNumber) {
+            if (Objects.equals(currentOrderNumber, orderNumber)) {
                 ArrayList<Item> selectedItemArrayList;
 
                 try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){

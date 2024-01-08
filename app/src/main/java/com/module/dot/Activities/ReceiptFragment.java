@@ -84,7 +84,7 @@ public class ReceiptFragment extends Fragment {
                     try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
                         orderDatabase.getOrdersDetails(
                                 orders,
-                                result.getLong("orderNumber") // Order Number
+                                result.getString("orderNumber") // Order Number
                         );
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -102,7 +102,7 @@ public class ReceiptFragment extends Fragment {
                     // Update UI elements with order data here
                     if (!orders.isEmpty()) {
                         // logo.setImageDrawable();
-                        companyName.setText("Dot");
+                        companyName.setText(MainActivity.currentUser.getCompanyName());
                         companyAddress.setText("PO BOX 568153");
                         companyCity.setText("Orlando, FL 32856");
                         subtotal.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount())); // TODO: Replace with subtotal

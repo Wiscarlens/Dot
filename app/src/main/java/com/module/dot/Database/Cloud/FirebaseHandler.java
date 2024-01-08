@@ -353,8 +353,6 @@ public class FirebaseHandler {
                             // Extract list of items
                             List<Map<String, Object>> itemList = (List<Map<String, Object>>) orderData.get("selectedItem");
 
-                            Log.d("FirebaseTEST", "onDataChange: " + itemList);
-
                             if (itemList != null) {
                                 try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
                                     for (Map<String, Object> itemData : itemList) {
@@ -364,7 +362,7 @@ public class FirebaseHandler {
 
                                         Log.d("FirebaseTEST", "onDataChange: " + itemGlobalID + " " + itemPrice + " " + itemQuantity);
 
-                                        orderItemsDatabase.createOrderItems(newOrderID, new Item(
+                                        orderItemsDatabase.createOrderItems(orderGlobalID, new Item(
                                                 itemGlobalID,
                                                 itemPrice,
                                                 itemQuantity

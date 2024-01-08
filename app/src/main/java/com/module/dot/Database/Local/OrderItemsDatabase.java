@@ -20,8 +20,8 @@ public class OrderItemsDatabase extends MyDatabaseManager {
     // Order Item Table
     private static final String ORDER_ITEMS_TABLE_NAME = "order_items";
     private static final String ORDER_ITEM_COLUMN_ID = "_id";
-    private static final String ORDER_ITEM_COLUMN_ORDER_ID = "order_id";
-    private static final String ORDER_ITEM_COLUMN_ITEM_ID = "item_id";
+    private static final String ORDER_COLUMN_GLOBAL_ID = "order_global_id";
+    private static final String GLOBAL_ID_COLUMN_ITEMS = "item_global_id";
     private static final String ORDER_ITEM_COLUMN_ITEM_PRICE = "item_price";
     private static final String ORDER_ITEM_COLUMN_QUANTITY = "item_quantity";
 
@@ -50,13 +50,13 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         // SQL query to create the "selected_items" table
         String query_order_items = "CREATE TABLE " + ORDER_ITEMS_TABLE_NAME +
                 " (" + ORDER_ITEM_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ORDER_ITEM_COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
-                ORDER_ITEM_COLUMN_ITEM_ID + " TEXT NOT NULL, " + // Add the item ID column
+                ORDER_COLUMN_GLOBAL_ID + " TEXT NOT NULL, " +
+                GLOBAL_ID_COLUMN_ITEMS + " TEXT NOT NULL, " + // Add the item ID column
                 ORDER_ITEM_COLUMN_ITEM_PRICE + " REAL, " +
                 ORDER_ITEM_COLUMN_QUANTITY + " INTEGER NOT NULL, " +
-                " FOREIGN KEY (" + ORDER_ITEM_COLUMN_ORDER_ID +
+                " FOREIGN KEY (" + ORDER_COLUMN_GLOBAL_ID +
                 ") REFERENCES " + ORDERS_TABLE_NAME + " (" + ORDER_COLUMN_ID + "), " +
-                " FOREIGN KEY (" + ORDER_ITEM_COLUMN_ITEM_ID +
+                " FOREIGN KEY (" + GLOBAL_ID_COLUMN_ITEMS +
                 ") REFERENCES " + NAME_TABLE_ITEMS + " (" + ID_COLUMN_ITEMS + "));";
 
         db.execSQL(query_order_items);
@@ -64,13 +64,13 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         Log.i("OrderItemDatabase", "Creating orderItem table...");
     }
 
-    public void createOrderItems (long orderGlobalID, Item item) throws SQLiteException {
+    public void createOrderItems (String orderGlobalID, Item item) throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
             ContentValues cv = new ContentValues();
 
-            cv.put(ORDER_ITEM_COLUMN_ORDER_ID, orderGlobalID);
-            cv.put(ORDER_ITEM_COLUMN_ITEM_ID, item.getGlobalID()); // Make sure to provide the correct item ID
+            cv.put(ORDER_COLUMN_GLOBAL_ID, orderGlobalID);
+            cv.put(GLOBAL_ID_COLUMN_ITEMS, item.getGlobalID()); // Make sure to provide the correct item ID
             cv.put(ORDER_ITEM_COLUMN_ITEM_PRICE, item.getPrice());
             cv.put(ORDER_ITEM_COLUMN_QUANTITY, item.getQuantity());
 
@@ -86,7 +86,7 @@ public class OrderItemsDatabase extends MyDatabaseManager {
 
     }
 
-    public ArrayList<Item> readOrderItems(long orderId){
+    public ArrayList<Item> readOrderItems(String orderGlobalID){
         // Create an empty list to store the order items.
         ArrayList<Item> orderItemList = new ArrayList<>();
 
@@ -95,20 +95,20 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         String query = "SELECT i.*, oi." + ORDER_ITEM_COLUMN_QUANTITY +
                 " FROM " + ORDER_ITEMS_TABLE_NAME + " oi" +
                 " INNER JOIN " + NAME_TABLE_ITEMS + " i" +
-                " ON oi." + ORDER_ITEM_COLUMN_ITEM_ID + " = i." + ID_COLUMN_ITEMS +
-                " WHERE oi." + ORDER_ITEM_COLUMN_ORDER_ID + " = " + orderId;
+                " ON oi." + GLOBAL_ID_COLUMN_ITEMS + " = i." + ID_COLUMN_ITEMS +
+                " WHERE oi." + ORDER_COLUMN_GLOBAL_ID + " = '" + orderGlobalID + "'";
 
         Cursor cursor = db.rawQuery(query, null);   // Execute the query.
 
         if (cursor.moveToFirst()) {
             do {
-                long itemId = cursor.getLong(0); // Local ID
+                String itemGlobalID = cursor.getString(1); // Local ID
                 String imagePath = cursor.getString(1); // Global ID
                 String itemName = cursor.getString(11); // Get the item name
                 double itemPrice = cursor.getDouble(3);
                 int quantity = cursor.getInt(13);
 
-                Item item = new Item(itemId, imagePath, itemName, itemPrice, quantity);
+                Item item = new Item(itemGlobalID, imagePath, itemName, itemPrice, quantity);
                 orderItemList.add(item);
 
             } while (cursor.moveToNext());
