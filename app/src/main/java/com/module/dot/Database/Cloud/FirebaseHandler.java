@@ -318,9 +318,88 @@ public class FirebaseHandler {
 
     }
 
+//    public static void readOrder(String tableName, Context context){
+//        DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
+//        firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @SuppressWarnings("unchecked")
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                try (OrderDatabase orderDatabase = new OrderDatabase(context)) {
+//                    // Iterate through Firebase data
+//                    for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+//                        // Extract order data
+//                        Map<String, Object> orderData = (Map<String, Object>) orderSnapshot.getValue();
+//
+//                        if (orderData != null) {
+//                            String orderGlobalID = orderSnapshot.getKey();
+//                            String orderDate = (String) orderData.get("orderDate");
+//                            String orderTime = (String) orderData.get("orderTime");
+//                            String orderStatus = (String) orderData.get("orderStatus");
+//                            Long orderTotalItems = ((Long) orderData.get("orderTotalItems"));
+//                            Double orderTotalAmount = (Double) orderData.get("orderTotalAmount");
+//                            String creatorID = (String) orderData.get("creatorID");
+//
+//                            assert orderTotalItems != null;
+//                            long newOrderID = orderDatabase.createOrder( new Order(
+//                                    orderGlobalID,
+//                                    creatorID,
+//                                    orderDate,
+//                                    orderTime,
+//                                    orderTotalAmount,
+//                                    orderTotalItems.intValue(),
+//                                    orderStatus
+//                            ));
+//
+//
+//                            // Extract list of items
+//                            List<Map<String, Object>> itemList = (List<Map<String, Object>>) orderData.get("selectedItem");
+//
+//                            if (itemList != null) {
+//                                try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
+//                                    for (Map<String, Object> itemData : itemList) {
+//                                        String itemGlobalID = (String) itemData.get("itemGlobalID");
+//                                        Double itemPrice = (Double) itemData.get("itemPrice");
+//                                        Integer itemQuantity = ((Integer) itemData.get("itemQuantity"));
+//
+//                                        Log.d("FirebaseTEST", "onDataChange: " + itemGlobalID + " " + itemPrice + " " + itemQuantity);
+//
+//                                        orderItemsDatabase.createOrderItems(orderGlobalID, new Item(
+//                                                itemGlobalID,
+//                                                itemPrice,
+//                                                itemQuantity
+//                                        ));
+//                                    }
+//
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//
+//                            }
+//
+//                        }
+//                    }
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.e("FirebaseOrderDatabase", "Failed to sync Order data from Firebase: " + e.getMessage());
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("UserDatabase", "Firebase data fetch cancelled: " + error.getMessage());
+//
+//            }
+//        });
+//
+//    }
+
     public static void readOrder(String tableName, Context context){
         DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference(tableName);
         firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressWarnings("unchecked")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try (OrderDatabase orderDatabase = new OrderDatabase(context)) {
@@ -351,29 +430,27 @@ public class FirebaseHandler {
 
 
                             // Extract list of items
-                            List<Map<String, Object>> itemList = (List<Map<String, Object>>) orderData.get("selectedItem");
-
-                            if (itemList != null) {
+                            Object itemListObject = orderData.get("selectedItem");
+                            if (itemListObject != null) {
+                                List<Map<String, Object>> itemList = (List<Map<String, Object>>) itemListObject;
                                 try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
                                     for (Map<String, Object> itemData : itemList) {
-                                        String itemGlobalID = (String) itemData.get("itemGlobalID");
-                                        Double itemPrice = (Double) itemData.get("itemPrice");
-                                        Integer itemQuantity = ((Integer) itemData.get("itemQuantity"));
-
-                                        Log.d("FirebaseTEST", "onDataChange: " + itemGlobalID + " " + itemPrice + " " + itemQuantity);
+//                                        String itemGlobalID = (String) itemData.get("itemGlobalID");
+//                                        Double itemPrice = (Double) itemData.get("itemPrice");
+//                                        Long itemQuantity = ((Long) itemData.get("itemQuantity"));
+//
+//                                        Log.d("FirebaseTEST", "FirebaseHandlerZZZ: " + itemGlobalID + " " + itemPrice + " " + itemQuantity);
 
                                         orderItemsDatabase.createOrderItems(orderGlobalID, new Item(
-                                                itemGlobalID,
-                                                itemPrice,
-                                                itemQuantity
+                                                (String) itemData.get("itemGlobalID"),
+                                                (Double) itemData.get("itemPrice"),
+                                                (Long) itemData.get("itemQuantity")
                                         ));
                                     }
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
-
                             }
 
                         }

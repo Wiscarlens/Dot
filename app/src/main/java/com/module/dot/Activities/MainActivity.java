@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         try (OrderDatabase orderDatabase = new OrderDatabase(this)){
-            if (!orderDatabase.isTableExists("order_items")) {
+            if (!orderDatabase.isTableExists("order")) {
                 orderDatabase.getWritableDatabase(); // Create the database
             }
         }

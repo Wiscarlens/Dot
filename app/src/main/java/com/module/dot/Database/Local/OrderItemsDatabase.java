@@ -65,6 +65,9 @@ public class OrderItemsDatabase extends MyDatabaseManager {
     }
 
     public void createOrderItems (String orderGlobalID, Item item) throws SQLiteException {
+
+        Log.d("FirebaseTEST", "OrderGlobalID: " + orderGlobalID);
+        Log.d("FirebaseTEST", "OrderItem: " + item.getGlobalID() + " " + item.getPrice() + " " + item.getQuantity());
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
             ContentValues cv = new ContentValues();
@@ -106,7 +109,12 @@ public class OrderItemsDatabase extends MyDatabaseManager {
                 String imagePath = cursor.getString(1); // Global ID
                 String itemName = cursor.getString(11); // Get the item name
                 double itemPrice = cursor.getDouble(3);
-                int quantity = cursor.getInt(13);
+                Long quantity = cursor.getLong(13);
+
+                Log.d("OrderItemDB", "ItemGlobalID: " + itemGlobalID);
+                Log.d("OrderItemDB", "ItemName: " + itemName);
+                Log.d("OrderItemDB", "ItemPrice: " + itemPrice);
+                Log.d("OrderItemDB", "ItemQuantity: " + quantity);
 
                 Item item = new Item(itemGlobalID, imagePath, itemName, itemPrice, quantity);
                 orderItemList.add(item);

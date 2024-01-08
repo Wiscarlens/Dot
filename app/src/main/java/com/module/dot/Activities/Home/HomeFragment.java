@@ -118,7 +118,7 @@ public class HomeFragment extends Fragment {
                     itemList.get(position).getName(),
                     itemList.get(position).getPrice(),
                     itemList.get(position).getSku(),
-                    1
+                    1L
             );
 
             // TODO: Optimize - All the line below can be part of addToSElected Item method

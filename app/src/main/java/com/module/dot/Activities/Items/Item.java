@@ -19,7 +19,7 @@ public class Item {
     private double tax;
     private String description;
 
-    private Integer quantity = 1;
+    private Long quantity = 1L;
 
     public Item() {
 
@@ -52,7 +52,7 @@ public class Item {
     }
 
     // Selected Item
-    public Item(String globalID, String name, double price, String SKU, int quantity) {
+    public Item(String globalID, String name, double price, String SKU, Long quantity) {
         this.globalID = globalID;
         this.name = name;
         this.price = price;
@@ -61,7 +61,7 @@ public class Item {
     }
 
     // Use for display order item
-    public Item(String globalID, String imagePath, String name, double price, int quantity) {
+    public Item(String globalID, String imagePath, String name, double price, Long quantity) {
         this.globalID = globalID;
         this.imagePath = imagePath;
         this.name = name;
@@ -69,7 +69,7 @@ public class Item {
         this.quantity = quantity;
     }
 
-    public Item(String globalID, Double price, Integer quantity) {
+    public Item(String globalID, Double price, Long quantity) {
         this.globalID = globalID;
         this.price = price;
         this.quantity = quantity;
@@ -179,11 +179,11 @@ public class Item {
         this.description = description;
     }
 
-    public int getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
 }

@@ -46,7 +46,7 @@ public class OrderDatabase extends MyDatabaseManager {
 
     }
 
-    protected void createTable(SQLiteDatabase db){
+    public void createTable(SQLiteDatabase db){
         // SQL query to create the "orders" table
         String query_orders = "CREATE TABLE " + ORDERS_TABLE_NAME +
                 " (" + ORDER_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
