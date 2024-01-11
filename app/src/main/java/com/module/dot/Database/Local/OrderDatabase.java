@@ -111,7 +111,7 @@ public class OrderDatabase extends MyDatabaseManager {
         while (cursor.moveToNext()) {
             String orderGlobalID = cursor.getString(1);
 
-            ArrayList<Item> selectedItemList = new ArrayList<>();
+            ArrayList<Item> selectedItemList;
 
             try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
                 if (!orderItemsDatabase.isTableExists("order_items")) {
@@ -119,6 +119,7 @@ public class OrderDatabase extends MyDatabaseManager {
                     return;
                 } else {
                     selectedItemList = orderItemsDatabase.readOrderItems(orderGlobalID);
+                    Log.d("OrderDatabaseTEST", "readOrder: " + selectedItemList.size());
                 }
 
             } catch (Exception e) {
@@ -126,14 +127,10 @@ public class OrderDatabase extends MyDatabaseManager {
                 throw e;
             }
 
-            int totalItems = 0 ;
-
-            // Find the total number of items in the order
-            for(Item item : selectedItemList){
-                totalItems += item.getQuantity();
-            }
-
-            Log.d("OrderDatabaseTEST", selectedItemList.get(0).getName());
+            // Log selectedItemList
+//            for(Item item : selectedItemList){
+//                Log.i("OrderDatabaseTEST", "Item: " + item.getName());
+//            }
 
             Order order = new Order(
                     orderGlobalID, // Order Number
@@ -150,6 +147,17 @@ public class OrderDatabase extends MyDatabaseManager {
         }
 
 
+    }
+
+    int getTotalItems(ArrayList<Item> selectedItemList){
+        int totalItems = 0 ;
+
+        // Find the total number of items in the order
+        for(Item item : selectedItemList){
+            totalItems += item.getQuantity();
+        }
+
+        return totalItems;
     }
 
     /**

@@ -277,15 +277,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
-        try (OrderDatabase orderDatabase = new OrderDatabase(this)){
-            if (!orderDatabase.isTableExists("order")) {
-                orderDatabase.getWritableDatabase(); // Create the database
-            }
-        }
-
         try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(this)){
             if (!orderItemsDatabase.isTableExists("order_items")) {
                 orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
+            }
+        }
+
+        try (OrderDatabase orderDatabase = new OrderDatabase(this)){
+            if (!orderDatabase.isTableExists("order")) {
+                orderDatabase.onCreate(orderDatabase.getWritableDatabase()); // Create the database
             }
         }
 
