@@ -140,7 +140,7 @@ public class OrderDatabase extends MyDatabaseManager {
                     cursor.getString(3), // Order Date
                     cursor.getString(4), // Order Time
                     cursor.getString(7), // Order Status
-                    cursor.getInt(6),    // Total Item
+                    cursor.getLong(6),    // Total Item
                     cursor.getDouble(5), // Total Amount
                     selectedItemList // Selected Item
             );
@@ -178,7 +178,7 @@ public class OrderDatabase extends MyDatabaseManager {
                     throw e;
                 }
 
-                int totalItems = 0 ;
+                Long totalItems = 0L ;
 
                 // Find the total number of items in the order
                 for(Item item : selectedItemArrayList){

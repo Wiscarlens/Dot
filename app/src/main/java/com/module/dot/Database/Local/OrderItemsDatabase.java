@@ -49,7 +49,7 @@ public class OrderItemsDatabase extends MyDatabaseManager {
     protected void createTable(SQLiteDatabase db){
         // SQL query to create the "selected_items" table
         String query_order_items = "CREATE TABLE " + ORDER_ITEMS_TABLE_NAME +
-                " (" + ORDER_ITEM_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                " (" + ORDER_ITEM_COLUMN_ID + " TEXT PRIMARY KEY, " +
                 ORDER_COLUMN_GLOBAL_ID + " TEXT NOT NULL, " +
                 GLOBAL_ID_COLUMN_ITEMS + " TEXT NOT NULL, " + // Add the item ID column
                 ORDER_ITEM_COLUMN_ITEM_PRICE + " REAL, " +
@@ -64,24 +64,27 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         Log.i("OrderItemDatabase", "Creating orderItem table...");
     }
 
-    public void createOrderItems (String orderGlobalID, Item item) throws SQLiteException {
-
-        Log.d("FirebaseTEST", "OrderGlobalID: " + orderGlobalID);
-        Log.d("FirebaseTEST", "OrderItem: " + item.getGlobalID() + " " + item.getPrice() + " " + item.getQuantity());
+    public void createOrderItems (String selectedItemID, String orderGlobalID, Item item) throws SQLiteException {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
+            // Check if the specified column value already exists in the database
+            if (!isValueExists(db, ORDER_ITEMS_TABLE_NAME, ORDER_ITEM_COLUMN_ID, selectedItemID)) {
+                ContentValues cv = new ContentValues();
 
-            ContentValues cv = new ContentValues();
+                cv.put(ORDER_ITEM_COLUMN_ID, selectedItemID);
+                cv.put(ORDER_COLUMN_GLOBAL_ID, orderGlobalID);
+                cv.put(GLOBAL_ID_COLUMN_ITEMS, item.getGlobalID()); // Make sure to provide the correct item ID
+                cv.put(ORDER_ITEM_COLUMN_ITEM_PRICE, item.getPrice());
+                cv.put(ORDER_ITEM_COLUMN_QUANTITY, item.getQuantity());
 
-            cv.put(ORDER_COLUMN_GLOBAL_ID, orderGlobalID);
-            cv.put(GLOBAL_ID_COLUMN_ITEMS, item.getGlobalID()); // Make sure to provide the correct item ID
-            cv.put(ORDER_ITEM_COLUMN_ITEM_PRICE, item.getPrice());
-            cv.put(ORDER_ITEM_COLUMN_QUANTITY, item.getQuantity());
+                long result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
 
-            long result = db.insertOrThrow(ORDER_ITEMS_TABLE_NAME, null, cv);
-
-            if (result != -1) {
-                Log.i("MyDatabaseManager", "Order Item Added Successfully!");
+                if (result != -1) {
+                    Log.i("MyDatabaseManager", "Order Item Added Successfully!");
+                }
+            } else {
+                Log.i("MyDatabaseManager", "Order Item Already Exists!");
             }
+
         } catch (SQLiteException e) {
             Log.e("MyDatabaseManager", "Failed to add order item: " + e.getMessage());
             throw e;
@@ -105,7 +108,7 @@ public class OrderItemsDatabase extends MyDatabaseManager {
 
         if (cursor.moveToFirst()) {
             do {
-                String itemGlobalID = cursor.getString(1); // Local ID
+                String itemGlobalID = cursor.getString(1); // Global ID
                 String imagePath = cursor.getString(1); // Global ID
                 String itemName = cursor.getString(11); // Get the item name
                 double itemPrice = cursor.getDouble(3);

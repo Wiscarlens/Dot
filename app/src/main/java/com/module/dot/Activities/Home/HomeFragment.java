@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
     // Select item total
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
     private String currentCharge;
-    private int totalItem = 0;
+    private Long totalItem = 0L;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

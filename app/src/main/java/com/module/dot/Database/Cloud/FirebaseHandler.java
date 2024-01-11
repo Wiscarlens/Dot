@@ -280,7 +280,6 @@ public class FirebaseHandler {
 
         newOrder.setGlobalID(globalID);
 
-
         // Create a map to represent the order data
         Map<String, Object> orderData = new HashMap<>();
 
@@ -336,38 +335,28 @@ public class FirebaseHandler {
 
                         if (orderData != null) {
                             String orderGlobalID = orderSnapshot.getKey();
-                            String orderDate = (String) orderData.get("orderDate");
-                            String orderTime = (String) orderData.get("orderTime");
-                            String orderStatus = (String) orderData.get("orderStatus");
-                            Long orderTotalItems = ((Long) orderData.get("orderTotalItems"));
-                            Double orderTotalAmount = (Double) orderData.get("orderTotalAmount");
-                            String creatorID = (String) orderData.get("creatorID");
 
-                            assert orderTotalItems != null;
                             long newOrderID = orderDatabase.createOrder( new Order(
-                                    orderGlobalID,
-                                    creatorID,
-                                    orderDate,
-                                    orderTime,
-                                    orderTotalAmount,
-                                    orderTotalItems.intValue(),
-                                    orderStatus
+                                    orderSnapshot.getKey(),
+                                    (String) orderData.get("creatorID"),
+                                    (String) orderData.get("orderDate"),
+                                    (String) orderData.get("orderTime"),
+                                    (Double) orderData.get("orderTotalAmount"),
+                                    ((Long) orderData.get("orderTotalItems")),
+                                    (String) orderData.get("orderStatus")
                             ));
 
 
                             // Extract list of items
-                            Object itemListObject = orderData.get("selectedItem");
-                            if (itemListObject != null) {
-                                List<Map<String, Object>> itemList = (List<Map<String, Object>>) itemListObject;
+                            DataSnapshot itemListSnapshot = orderSnapshot.child("selectedItem");
+                            if (itemListSnapshot.exists()) {
                                 try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
-                                    for (Map<String, Object> itemData : itemList) {
-//                                        String itemGlobalID = (String) itemData.get("itemGlobalID");
-//                                        Double itemPrice = (Double) itemData.get("itemPrice");
-//                                        Long itemQuantity = ((Long) itemData.get("itemQuantity"));
-//
-//                                        Log.d("FirebaseTEST", "FirebaseHandlerZZZ: " + itemGlobalID + " " + itemPrice + " " + itemQuantity);
+                                    for (DataSnapshot itemSnapshot : itemListSnapshot.getChildren()) {
+                                        String selectedItemID = itemSnapshot.getKey(); // This is the key for each item
+                                        Map<String, Object> itemData = (Map<String, Object>) itemSnapshot.getValue();
 
-                                        orderItemsDatabase.createOrderItems(orderGlobalID, new Item(
+                                        assert itemData != null;
+                                        orderItemsDatabase.createOrderItems(selectedItemID,orderGlobalID, new Item(
                                                 (String) itemData.get("itemGlobalID"),
                                                 (Double) itemData.get("itemPrice"),
                                                 (Long) itemData.get("itemQuantity")

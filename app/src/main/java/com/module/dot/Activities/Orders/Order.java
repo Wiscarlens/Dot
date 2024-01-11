@@ -11,7 +11,7 @@ public class Order {
     private String orderDate;
     private String orderTime;
     private String orderStatus;
-    private Integer orderTotalItems;
+    private Long orderTotalItems;
     private Double orderTotalAmount;
     private String creatorID;
 
@@ -22,7 +22,7 @@ public class Order {
 
     // Constructor for displaying orders
     public Order(String globalID, String orderDate, String orderTime, String orderStatus,
-                 Integer orderTotalItems, Double orderTotalAmount, ArrayList<Item> selectedItemList) {
+                 Long orderTotalItems, Double orderTotalAmount, ArrayList<Item> selectedItemList) {
         this.globalID = globalID;
         this.orderDate = orderDate;
         this.orderTime = orderTime;
@@ -34,7 +34,7 @@ public class Order {
 
     // Constructor for creating a new order
     public Order(String globalID, String creatorID, String date, String time, Double orderTotalAmount,
-                 Integer orderTotalItems, String orderStatus) {
+                 Long orderTotalItems, String orderStatus) {
         this.globalID = globalID;
         this.creatorID = creatorID;
         this.orderDate = date;
@@ -46,7 +46,7 @@ public class Order {
 
     // Constructor for creating a new order
     public Order(String creatorID, String date, String time, double orderTotalAmount,
-                 Integer orderTotalItems, String orderStatus, ArrayList<Item> selectedItemList) {
+                 Long orderTotalItems, String orderStatus, ArrayList<Item> selectedItemList) {
         this.creatorID = creatorID;
         this.orderDate = date;
         this.orderTime = time;
@@ -96,11 +96,11 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public Integer getOrderTotalItems() {
+    public Long getOrderTotalItems() {
         return orderTotalItems;
     }
 
-    public void setOrderTotalItems(Integer orderTotalItems) {
+    public void setOrderTotalItems(Long orderTotalItems) {
         this.orderTotalItems = orderTotalItems;
     }
 
