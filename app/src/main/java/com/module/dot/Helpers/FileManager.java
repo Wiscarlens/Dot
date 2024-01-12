@@ -8,11 +8,16 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileManager {
     public static void saveImageLocally(Context context, Drawable drawable, String folderName, String imageName) {
+        if (!isFolderExists(folderName)){
+            createFolder(folderName);
+        }
+
         // Convert the drawable to a Bitmap
         Bitmap bitmap = Utils.drawableToBitmap(drawable);
 
@@ -33,7 +38,12 @@ public class FileManager {
         File file = new File(directory, imageName + ".png");
 
         if (file.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            Bitmap bitmap = null;
+            try (FileInputStream fis = new FileInputStream(file)) {
+                bitmap = BitmapFactory.decodeStream(fis);
+            } catch (IOException e) {
+                Log.e("LocalImage", "Error loading image locally", e);
+            }
             return new BitmapDrawable(context.getResources(), bitmap);
         } else {
             // If the file does not exist, return null or provide a default Drawable
@@ -75,6 +85,19 @@ public class FileManager {
         assert dir != null;
         return dir.delete();
     }
+
+
+    public static boolean isFolderExists(String path) {
+        File file = new File(path);
+        return file.exists() && file.isDirectory();
+    }
+
+    // Create a folder
+    public static boolean createFolder(String path) {
+        File file = new File(path);
+        return file.mkdirs();
+    }
+
 
 
 }

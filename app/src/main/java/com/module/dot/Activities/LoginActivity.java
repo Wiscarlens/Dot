@@ -20,11 +20,12 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.module.dot.Activities.Users.SignupFragment;
+import com.module.dot.Network.NetworkManager;
 import com.module.dot.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+
     private TextInputLayout emailLayout;
     private TextInputEditText email;
     private TextInputLayout passwordLayout;
@@ -32,23 +33,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser != null){
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         TextView loginMessage = findViewById(R.id.loginMessage);
         emailLayout = findViewById(R.id.emailLayout);
@@ -101,14 +90,19 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             loginButton.setClickable(false);
 
-            String userEmail = email.getText().toString().toLowerCase().trim();
-            String userPassword = password.getText().toString().trim();
-
-            // Check if there is internet
+            String userEmail = String.valueOf(email.getText()).toLowerCase().trim();
+            String userPassword = String.valueOf(password.getText());
 
             // Check if email field is empty or format is correct
             if (!userEmail.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
                 if (!userPassword.isEmpty()) {
+                    // Check if there is internet connection
+                    if (!NetworkManager.isNetworkAvailable(LoginActivity.this)) {
+                        Toast.makeText(LoginActivity.this, messages[7], Toast.LENGTH_SHORT).show();
+                        loginButton.setClickable(true);
+                        return;
+                    }
+
                     mAuth.signInWithEmailAndPassword(userEmail, userPassword)
                             .addOnSuccessListener(authResult -> {
                                 Toast.makeText(LoginActivity.this, messages[0], Toast.LENGTH_SHORT).show();

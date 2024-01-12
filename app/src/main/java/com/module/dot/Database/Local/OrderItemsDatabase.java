@@ -123,48 +123,4 @@ public class OrderItemsDatabase extends MyDatabaseManager {
         return db.rawQuery(query, new String[]{orderGlobalId});
     }
 
-//    public ArrayList<Item> readOrderItems(String orderGlobalID){
-//        // Create an empty list to store the order items.
-//        ArrayList<Item> orderItemList = new ArrayList<>();
-//
-//        Log.d("OrderItemDB", "readOrderItems: " + orderGlobalID);
-//
-//        SQLiteDatabase db = getReadableDatabase(); // Get the database.
-//
-//        String query = "SELECT i.*, oi." + ORDER_ITEM_COLUMN_QUANTITY +
-//                " FROM " + ORDER_ITEMS_TABLE_NAME + " oi" +
-//                " INNER JOIN " + NAME_TABLE_ITEMS + " i" +
-//                " ON oi." + GLOBAL_ID_COLUMN_ITEMS + " = i." + ID_COLUMN_ITEMS +
-//                " WHERE oi." + ORDER_COLUMN_GLOBAL_ID + " = '" + orderGlobalID + "'";
-//
-//        Cursor cursor = db.rawQuery(query, null);   // Execute the query.
-//
-//        if (cursor.moveToFirst()) {
-//            do {
-//                String itemGlobalID = cursor.getString(1); // Global ID
-//                String imagePath = cursor.getString(1); // Global ID
-//                String itemName = cursor.getString(11); // Get the item name
-//                double itemPrice = cursor.getDouble(3);
-//                Long quantity = cursor.getLong(13);
-//
-//                Log.d("OrderItemDB", "ItemGlobalID: " + itemGlobalID);
-//                Log.d("OrderItemDB", "ItemName: " + itemName);
-//                Log.d("OrderItemDB", "ItemPrice: " + itemPrice);
-//                Log.d("OrderItemDB", "ItemQuantity: " + quantity);
-//
-//                Item item = new Item(itemGlobalID, imagePath, itemName, itemPrice, quantity);
-//                orderItemList.add(item);
-//
-//            } while (cursor.moveToNext());
-//        }
-//
-//        // Close the cursor and database.
-//        cursor.close();
-//        db.close();
-//
-//        Log.d("OrderItemDB", "readOrderItems: " + orderItemList.size());
-//
-//        return orderItemList;
-//
-//    }
 }

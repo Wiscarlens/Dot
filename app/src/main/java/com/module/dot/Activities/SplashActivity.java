@@ -19,18 +19,29 @@ public class SplashActivity extends AppCompatActivity {
     // Screen can be controlled and customized.
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        int SPLASH_TIMER = 3000;
+        FirebaseAuth  mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        new Handler().postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-            startActivity(intent);
+        if (currentUser != null){
+            startActivity(new Intent(this, MainActivity.class));
             finish();
+        } else {
+            int SPLASH_TIMER = 3000;
 
-        }, SPLASH_TIMER);
+            new Handler().postDelayed(() -> {
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+
+            }, SPLASH_TIMER);
+        }
+
+
     }
 }
