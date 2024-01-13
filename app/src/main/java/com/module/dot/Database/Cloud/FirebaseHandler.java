@@ -3,6 +3,7 @@ package com.module.dot.Database.Cloud;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.module.dot.Activities.Items.Item;
@@ -217,28 +219,55 @@ public class FirebaseHandler {
         });
     }
 
-
     public static void downloadAndSaveImagesLocally(String folderName, String fileName, Context context) {
-        final long ONE_MEGABYTE = 1024 * 1024;
+        final long FIVE_MEGABYTES = 1024 * 1024 * 5;
 
         String imagePath = folderName + "/" + fileName;
         StorageReference imageRef = storage.getReference(imagePath);
 
         try {
-            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+            imageRef.getBytes(FIVE_MEGABYTES).addOnSuccessListener(bytes -> {
                 Drawable image = Utils.byteArrayToDrawable(bytes, context.getResources());
 
                 FileManager.saveImageLocally(context, image, folderName, fileName);
             }).addOnFailureListener(exception -> {
-                Log.e("Firebase", "Error downloading item image", exception);
+                if (exception instanceof StorageException) {
+                    int errorCode = ((StorageException) exception).getErrorCode();
+                    if (errorCode == StorageException.ERROR_OBJECT_NOT_FOUND || errorCode == StorageException.ERROR_RETRY_LIMIT_EXCEEDED) {
+                        // If the error is due to object not found or retry limit exceeded, retry after 5 seconds
+                        new Handler().postDelayed(() -> downloadAndSaveImagesLocally(folderName, fileName, context), 5000);
+                    }
+                } else {
+                    Log.e("Firebase", "Error downloading item image", exception);
+                }
             });
 
         } catch (IndexOutOfBoundsException e){
             Log.e("Firebase", "The maximum allowed buffer size was exceeded.", e);
         }
-
     }
 
+
+//    public static void downloadAndSaveImagesLocally(String folderName, String fileName, Context context) {
+//        final long ONE_MEGABYTE = 1024 * 1024;
+//
+//        String imagePath = folderName + "/" + fileName;
+//        StorageReference imageRef = storage.getReference(imagePath);
+//
+//        try {
+//            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+//                Drawable image = Utils.byteArrayToDrawable(bytes, context.getResources());
+//
+//                FileManager.saveImageLocally(context, image, folderName, fileName);
+//            }).addOnFailureListener(exception -> {
+//                Log.e("Firebase", "Error downloading item image", exception);
+//            });
+//
+//        } catch (IndexOutOfBoundsException e){
+//            Log.e("Firebase", "The maximum allowed buffer size was exceeded.", e);
+//        }
+//
+//    }
 
     public static void createItem(Item newItem, Drawable itemImage){
         DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
@@ -250,24 +279,63 @@ public class FirebaseHandler {
 
         newItem.setGlobalID(globalID);
 
-        if(itemImage != null){
-            newItem.setImagePath(globalID);
-        }
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            // Set the creatorID of the item to the uid of the currently authenticated user
+            newItem.setCreatorID(currentUser.getUid());
 
-        // Set the item with the generated key
-        newItemRef.setValue(newItem).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (itemImage != null){
-                    // Save the image to Firebase Storage with the generated key
-                    saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
-                }
-
-                Log.i("Firebase", "Item Added Successfully!");
+            if(itemImage != null){
+                newItem.setImagePath(globalID);
             }
-        }).addOnFailureListener(e ->
-                Log.d("Firebase", "createUserWithEmail:failure")
-        );
+
+            // Set the item with the generated key
+            newItemRef.setValue(newItem).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (itemImage != null){
+                        // Save the image to Firebase Storage with the generated key
+                        saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
+                    }
+
+                    Log.i("Firebase", "Item Added Successfully!");
+                }
+            }).addOnFailureListener(e ->
+                    Log.d("Firebase", "createUserWithEmail:failure")
+            );
+        } else {
+            // User is not authenticated
+            Log.w("Firebase", "User is not authenticated. Cannot create item.");
+        }
     }
+
+
+//    public static void createItem(Item newItem, Drawable itemImage){
+//        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
+//
+//        // Use push to generate a unique key
+//        DatabaseReference newItemRef = itemsRef.push();
+//
+//        String globalID = newItemRef.getKey(); // Get get item global ID
+//
+//        newItem.setGlobalID(globalID);
+//
+//        if(itemImage != null){
+//            newItem.setImagePath(globalID);
+//        }
+//
+//        // Set the item with the generated key
+//        newItemRef.setValue(newItem).addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                if (itemImage != null){
+//                    // Save the image to Firebase Storage with the generated key
+//                    saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
+//                }
+//
+//                Log.i("Firebase", "Item Added Successfully!");
+//            }
+//        }).addOnFailureListener(e ->
+//                Log.d("Firebase", "createUserWithEmail:failure")
+//        );
+//    }
 
 
     public static String createOrder(Order newOrder) {
