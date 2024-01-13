@@ -307,6 +307,17 @@ public class FirebaseHandler {
         }
     }
 
+    public String getUserAuthenticationStatus() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            return "Authenticated";
+        } else {
+            return null; // or return "Not Authenticated";
+        }
+    }
+
+
 
 //    public static void createItem(Item newItem, Drawable itemImage){
 //        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
