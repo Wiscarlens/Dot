@@ -316,37 +316,6 @@ public class FirebaseHandler {
     }
 
 
-
-//    public static void createItem(Item newItem, Drawable itemImage){
-//        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("items");
-//
-//        // Use push to generate a unique key
-//        DatabaseReference newItemRef = itemsRef.push();
-//
-//        String globalID = newItemRef.getKey(); // Get get item global ID
-//
-//        newItem.setGlobalID(globalID);
-//
-//        if(itemImage != null){
-//            newItem.setImagePath(globalID);
-//        }
-//
-//        // Set the item with the generated key
-//        newItemRef.setValue(newItem).addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                if (itemImage != null){
-//                    // Save the image to Firebase Storage with the generated key
-//                    saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
-//                }
-//
-//                Log.i("Firebase", "Item Added Successfully!");
-//            }
-//        }).addOnFailureListener(e ->
-//                Log.d("Firebase", "createUserWithEmail:failure")
-//        );
-//    }
-
-
     public static String createOrder(Order newOrder) {
         DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("orders");
 
