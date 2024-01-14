@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -135,6 +137,22 @@ public abstract class MyDatabaseManager extends SQLiteOpenHelper {
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         return exists;
+    }
+
+    public void deleteAll(String tableName) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            // Delete all rows from the table
+            int result = db.delete(tableName, null, null);
+
+            if (result > 0) {
+                Log.i(tableName + " Table", "Successfully deleted all");
+            } else {
+                Log.e(tableName+ " Table", "Failed to delete");
+            }
+        } catch (SQLiteException e) {
+            Log.e(tableName + " Table", "Error deleting: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 

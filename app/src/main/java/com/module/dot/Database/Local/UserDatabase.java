@@ -85,7 +85,6 @@ public class UserDatabase extends MyDatabaseManager {
             // Check if the email already exists in the database
             if (isValueExists(db, NAME_TABLE_USERS, EMAIL_COLUMN_USERS, newUser.getEmail())) {
                 Log.i("MyDatabaseManager", "Email already exists.");
-//                Toast.makeText(context, "Email already exists. Please use a different email.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -166,24 +165,6 @@ public class UserDatabase extends MyDatabaseManager {
             Toast.makeText(context, "Successfully Deleted.", Toast.LENGTH_SHORT).show();
         }
     }
-
-    public void deleteAllUsers() {
-
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
-            // Delete all rows from the "users" table
-            int result = db.delete(NAME_TABLE_USERS, null, null);
-
-            if (result > 0) {
-                Log.i("UserDatabase", "Successfully deleted all users.");
-            } else {
-                Log.e("UserDatabase", "Failed to delete users.");
-            }
-        } catch (SQLiteException e) {
-            Log.e("UserDatabase", "Error deleting users: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
 
 
 }

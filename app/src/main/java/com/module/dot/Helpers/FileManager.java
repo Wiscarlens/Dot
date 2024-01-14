@@ -13,36 +13,35 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileManager {
-    public static void saveImageLocally(Context context, Drawable drawable, String folderName, String imageName) {
+    public static void saveImageLocally(Context context, Drawable drawable, String folderName, String fileName) {
         if (!isFolderExists(folderName)){
             createFolder(folderName);
         }
 
+        File directory = context.getDir(folderName, Context.MODE_PRIVATE);
+        File file = new File(directory, fileName + ".png");
+
         // Convert the drawable to a Bitmap
         Bitmap bitmap = Utils.drawableToBitmap(drawable);
 
-        // Save the Bitmap to local storage (you can customize the directory and file name)
-        File directory = context.getDir(folderName, Context.MODE_PRIVATE);
-        File file = new File(directory, imageName + ".png");
-
         try (FileOutputStream out = new FileOutputStream(file)) {
             bitmap.compress(Bitmap.CompressFormat.PNG, 50, out);
-            Log.i("LocalImage", "Successfully saved image locally: " + file.getAbsolutePath());
+            Log.i("FileManager", "Successfully saved image locally: " + file.getAbsolutePath());
         } catch (IOException e) {
-            Log.e("LocalImage", "Error saving image locally", e);
+            Log.e("FileManager", "Error saving image locally", e);
         }
     }
 
-    public static Drawable loadImageLocally(Context context, String folder, String imageName) {
+    public static Drawable loadImageLocally(Context context, String folder, String fileName) {
         File directory = context.getDir(folder, Context.MODE_PRIVATE);
-        File file = new File(directory, imageName + ".png");
+        File file = new File(directory, fileName + ".png");
 
         if (file.exists()) {
             Bitmap bitmap = null;
             try (FileInputStream fis = new FileInputStream(file)) {
                 bitmap = BitmapFactory.decodeStream(fis);
             } catch (IOException e) {
-                Log.e("LocalImage", "Error loading image locally", e);
+                Log.e("FileManager", "Error loading image locally", e);
             }
             return new BitmapDrawable(context.getResources(), bitmap);
         } else {
@@ -53,38 +52,39 @@ public class FileManager {
 
     public static void clearAppCache(Context context) {
         try {
-            // Clear application cache
-            File cacheDir = context.getCacheDir();
-            if (cacheDir != null && cacheDir.isDirectory()) {
-                deleteDir(cacheDir);
-            }
-
-            // Clear external cache (if applicable)
-            File externalCacheDir = context.getExternalCacheDir();
-            if (externalCacheDir != null && externalCacheDir.isDirectory()) {
-                deleteDir(externalCacheDir);
-            }
+            deleteFolder(context, "Items");
+            deleteFolder(context, "Profiles");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            assert children != null;
-            for (String child : children) {
-                boolean success = deleteDir(new File(dir, child));
-                if (!success) {
-                    return false;
+    private static void deleteFolder(Context context, String folderName) {
+        File directory = context.getDir(folderName, Context.MODE_PRIVATE);
+
+        // Check if the directory exists
+        if (directory.exists()) {
+            // List all files in the directory
+            File[] files = directory.listFiles();
+
+            // Delete each file in the directory
+            if (files != null) {
+                for (File file : files) {
+                    file.delete();
                 }
             }
-        }
 
-        // The directory is now empty or this is a file, delete it
-        assert dir != null;
-        return dir.delete();
+            // Delete the directory itself
+            if (directory.delete()) {
+                Log.i("FileManager", "Successfully deleted folder: " + directory.getAbsolutePath());
+            } else {
+                Log.e("FileManager", "Error deleting folder: " + directory.getAbsolutePath());
+            }
+        } else {
+            Log.i("FileManager", "Folder does not exist: " + directory.getAbsolutePath());
+        }
     }
+
 
 
     public static boolean isFolderExists(String path) {
@@ -93,9 +93,9 @@ public class FileManager {
     }
 
     // Create a folder
-    public static boolean createFolder(String path) {
+    public static void createFolder(String path) {
         File file = new File(path);
-        return file.mkdirs();
+        file.mkdirs();
     }
 
 

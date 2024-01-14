@@ -3,6 +3,7 @@ package com.module.dot.Activities;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,6 +38,7 @@ import com.module.dot.Activities.Users.User;
 import com.module.dot.Activities.Users.UsersFragment;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Database.Local.ItemDatabase;
+import com.module.dot.Database.Local.MyDatabaseManager;
 import com.module.dot.Database.Local.OrderDatabase;
 import com.module.dot.Database.Local.OrderItemsDatabase;
 import com.module.dot.Database.Local.TransactionDatabase;
@@ -237,15 +239,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     // TODO: Make this block code independent from the firebase
                     // TODO: Delete all tables and images from the local database
-                    // Delete Image folder from local storage
-                    // Clean user local database
-//                    try(UserDatabase userDatabase = new UserDatabase(this)){
-//                        userDatabase.deleteAllUsers();
-//                    } catch (Exception e){
-//                        Log.e("MainActivity", "Error deleting all users", e);
-//                    }
 
-                    FileManager.clearAppCache(this); // Clear the app cache (local storage
+                    // Clean table
+                    try (MyDatabaseManager myDatabaseManager = new UserDatabase(this)){
+                        myDatabaseManager.deleteAll("users");
+                        myDatabaseManager.deleteAll("items");
+                        myDatabaseManager.deleteAll("order_items");
+                        myDatabaseManager.deleteAll("transactions");
+                        myDatabaseManager.deleteAll("orders");
+                        myDatabaseManager.deleteAll("sqlite_sequence");
+                        myDatabaseManager.deleteAll("android_metadata");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    FileManager.clearAppCache(this); // Clear the local storage
 
                     loginActivity = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(loginActivity);
@@ -255,8 +263,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     String messages = getResources().getString(R.string.logout);
 
                     Toast.makeText(this, messages + "!", Toast.LENGTH_SHORT).show();
-
-
 
                 }).show();
 
