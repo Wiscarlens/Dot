@@ -72,12 +72,10 @@ public class UsersFragment extends Fragment {
         if (!userDatabase.isTableExists("users")){
             userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
 
-            FirebaseHandler.readUser("users", getContext());
-
-        } else {
-            // TODO: just use firebase only
-            FirebaseHandler.readUser("users", getContext());
         }
+
+        FirebaseHandler.readUser("users", getContext());
+
 
         try {
             if (userDatabase.isTableEmpty("users")) {
@@ -95,22 +93,6 @@ public class UsersFragment extends Fragment {
         } catch (Exception e) {
             Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
-
-
-
-//        if (userDatabase.isTableEmpty("users")) {
-//            userDatabase.showEmptyStateMessage(recyclerView, noUser);
-//        } else {
-//            userDatabase.showStateMessage(recyclerView, noUser);
-//            users_for_display.clear(); // Clear the list before updating it
-//            userDatabase.readUser(users_for_display); // Read data from database and save it the arraylist
-//
-//            // Update the RecyclerView after the data fetch is complete
-//            Log.d("UserFragmentTest", "onStart: " + users_for_display.get(0).getPositionTitle());
-//        }
-
-//        UserRecyclerAdapter adapter = new UserRecyclerAdapter(users_for_display, getContext());
-//        recyclerView.setAdapter(adapter);
 
         // Create new user button
         addUser.setOnClickListener(view1 -> {

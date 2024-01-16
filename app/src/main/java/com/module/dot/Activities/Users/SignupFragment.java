@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -42,6 +43,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.journeyapps.barcodescanner.Util;
+import com.module.dot.Activities.Home.HomeFragment;
+import com.module.dot.Activities.LoginActivity;
 import com.module.dot.Activities.MainActivity;
 import com.module.dot.Database.Cloud.FirebaseHandler;
 import com.module.dot.Helpers.Utils;
@@ -195,7 +198,7 @@ public class SignupFragment extends Fragment {
             positionTitle.setVisibility(View.GONE);
         }
 
-        ArrayAdapter<String> positionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, positionOptions);
+        ArrayAdapter<String> positionAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, positionOptions);
         positionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         positionTitle.setAdapter(positionAdapter);
 
@@ -433,23 +436,32 @@ public class SignupFragment extends Fragment {
 
         firebaseHandler.createUser(newUser, profileImageTemp, getContext()); // Save data to firebase
 
-        // Refresh the recycler view
-        Fragment currentFragment = getParentFragmentManager().findFragmentById(R.id.fragment_container);
+        if (MainActivity.currentUser != null){
+            // Refresh the recycler view
+            Fragment currentFragment = getParentFragmentManager().findFragmentById(R.id.fragment_container);
 
-        if (currentFragment instanceof UsersFragment) {
-            UserRecyclerAdapter adapter = ((UsersFragment) currentFragment).getAdapter();
-            int newIndex = ((UsersFragment) currentFragment).refreshRecyclerView();
-            adapter.notifyItemInserted(newIndex);
+            if (currentFragment instanceof UsersFragment) {
+                UserRecyclerAdapter adapter = ((UsersFragment) currentFragment).getAdapter();
+                int newIndex = ((UsersFragment) currentFragment).refreshRecyclerView();
+                adapter.notifyItemInserted(newIndex);
+            }
+
+            // Replace Add item fragment with UsersFragment
+            FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            UsersFragment usersFragment = new UsersFragment();
+            fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
+            fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
+            fragmentTransaction.commit();
+        } else {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+
+//            Toast.makeText(fragmentActivity, "The user was successfully created!", Toast.LENGTH_SHORT).show();
         }
 
-        // Replace Add item fragment with Home Fragment
-        FragmentManager fragmentManager =  fragmentActivity.getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        UsersFragment usersFragment = new UsersFragment();
-        fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
-        fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
-        fragmentTransaction.commit();
     }
 
     private boolean isImageSame(Drawable currentDrawable, Drawable uploadingDrawable) {

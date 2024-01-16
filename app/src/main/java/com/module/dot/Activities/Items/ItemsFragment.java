@@ -31,15 +31,8 @@ public class ItemsFragment extends Fragment {
     private FragmentActivity fragmentActivity;
 
     // Hold data from the database
-    private final ArrayList<Item> item_for_display = new ArrayList<>();
+    private final ArrayList<Item> itemList = new ArrayList<>();
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-
-
-    }
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -68,18 +61,18 @@ public class ItemsFragment extends Fragment {
             } else {
                 itemDatabase.showStateMessage(itemGridview, noData);
 
-                itemDatabase.readItem(item_for_display); // Read data from database and save it the arraylist
+                itemDatabase.readItem(itemList); // Read data from database and save it the arraylist
             }
         } catch (Exception e) {
             Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
 
         // Initialize adapter with the arrays
-        ItemGridAdapter adapter = new ItemGridAdapter(item_for_display, getContext());
+        ItemGridAdapter adapter = new ItemGridAdapter(itemList, getContext());
 
         itemGridview.setAdapter(adapter);
 
-        itemGridview.setOnItemClickListener((parent, view12, position, id) -> Toast.makeText(getContext(), "You selected " + item_for_display.get(position).getName(), Toast.LENGTH_SHORT).show());
+        itemGridview.setOnItemClickListener((parent, view12, position, id) -> Toast.makeText(getContext(), "You selected " + itemList.get(position).getName(), Toast.LENGTH_SHORT).show());
 
         if(!Objects.equals(MainActivity.currentUser.getPositionTitle(), "Administrator")){
             addItem.setVisibility(View.GONE);

@@ -375,9 +375,8 @@ public class FirebaseHandler {
                         Map<String, Object> orderData = (Map<String, Object>) orderSnapshot.getValue();
 
                         if (orderData != null) {
-                            String orderGlobalID = orderSnapshot.getKey();
 
-                            long newOrderID = orderDatabase.createOrder( new Order(
+                            Order order = new Order(
                                     orderSnapshot.getKey(),
                                     (String) orderData.get("creatorID"),
                                     (String) orderData.get("orderDate"),
@@ -385,27 +384,30 @@ public class FirebaseHandler {
                                     (Double) orderData.get("orderTotalAmount"),
                                     ((Long) orderData.get("orderTotalItems")),
                                     (String) orderData.get("orderStatus")
-                            ));
+                            );
 
+                            if (Objects.equals(MainActivity.currentUser.getCreatorID(), order.getCreatorID())){
+                                long newOrderID = orderDatabase.createOrder(order);
 
-                            // Extract list of items
-                            DataSnapshot itemListSnapshot = orderSnapshot.child("selectedItem");
-                            if (itemListSnapshot.exists()) {
-                                try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
-                                    for (DataSnapshot itemSnapshot : itemListSnapshot.getChildren()) {
-                                        String selectedItemID = itemSnapshot.getKey(); // This is the key for each item
-                                        Map<String, Object> itemData = (Map<String, Object>) itemSnapshot.getValue();
+                                // Extract list of items
+                                DataSnapshot itemListSnapshot = orderSnapshot.child("selectedItem");
+                                if (itemListSnapshot.exists()) {
+                                    try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
+                                        for (DataSnapshot itemSnapshot : itemListSnapshot.getChildren()) {
+                                            String selectedItemID = itemSnapshot.getKey(); // This is the key for each item
+                                            Map<String, Object> itemData = (Map<String, Object>) itemSnapshot.getValue();
 
-                                        assert itemData != null;
-                                        orderItemsDatabase.createOrderItems(selectedItemID,orderGlobalID, new Item(
-                                                (String) itemData.get("itemGlobalID"),
-                                                (Double) itemData.get("itemPrice"),
-                                                (Long) itemData.get("itemQuantity")
-                                        ));
+                                            assert itemData != null;
+                                            orderItemsDatabase.createOrderItems(selectedItemID,order.getGlobalID(), new Item(
+                                                    (String) itemData.get("itemGlobalID"),
+                                                    (Double) itemData.get("itemPrice"),
+                                                    (Long) itemData.get("itemQuantity")
+                                            ));
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
 
@@ -453,20 +455,21 @@ public class FirebaseHandler {
                 try (TransactionDatabase transactionDatabase = new TransactionDatabase(context)) {
                     // Iterate through Firebase data
                     for (DataSnapshot transactionSnapshot : dataSnapshot.getChildren()) {
-
                         Transaction transaction = transactionSnapshot.getValue(Transaction.class);
 
-                        // Create item in the local database
                         assert transaction != null;
 
-                        transaction.setGlobalID(transactionSnapshot.getKey());
+                        if (Objects.equals(MainActivity.currentUser.getCreatorID(), transaction.getCreatorID())){
+                            transaction.setGlobalID(transactionSnapshot.getKey());
 
-                        try(OrderDatabase orderDatabase = new OrderDatabase(context)){
-                            long orderNumber =  orderDatabase.getOrderId(transaction.getOrderGlobalID());
-                            transaction.setOrderNumber(orderNumber);
+                            try(OrderDatabase orderDatabase = new OrderDatabase(context)){
+                                long orderNumber =  orderDatabase.getOrderId(transaction.getOrderGlobalID());
+                                transaction.setOrderNumber(orderNumber);
+                            }
+
+                            transactionDatabase.createTransaction(transaction); // Create item in the local database
                         }
 
-                        transactionDatabase.createTransaction(transaction);
                     }
 
                 } catch (Exception e) {
