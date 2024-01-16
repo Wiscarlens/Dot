@@ -142,6 +142,29 @@ public class ItemDatabase extends MyDatabaseManager {
         }
     }
 
+    public String getItemName(String itemGlobalID) {
+        String itemName = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT " + NAME_COLUMN_ITEMS + " FROM " + NAME_TABLE_ITEMS + " WHERE " + GLOBAL_ID_COLUMN_ITEMS + " = ?";
+            cursor = db.rawQuery(query, new String[]{itemGlobalID});
+
+            if (cursor.moveToFirst()) {
+                itemName = cursor.getString(0);
+            }
+        } catch (Exception e) {
+            Log.e("ItemDatabase", "Failed to get item name: " + e.getMessage());
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return itemName;
+    }
+
     public void updateItem(){
 
     }

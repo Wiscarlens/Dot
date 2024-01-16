@@ -21,9 +21,10 @@ public class Order {
     }
 
     // Constructor for displaying orders
-    public Order(String globalID, String orderDate, String orderTime, String orderStatus,
+    public Order(String globalID, long orderNumber, String orderDate, String orderTime, String orderStatus,
                  Long orderTotalItems, Double orderTotalAmount, ArrayList<Item> selectedItemList) {
         this.globalID = globalID;
+        this.orderNumber = orderNumber;
         this.orderDate = orderDate;
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;

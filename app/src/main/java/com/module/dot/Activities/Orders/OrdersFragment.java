@@ -46,7 +46,6 @@ public class OrdersFragment extends Fragment {
         try (OrderDatabase orderDatabase = new OrderDatabase(getContext())) {
             if(!orderDatabase.isTableExists("orders")){
                 orderDatabase.onCreate(orderDatabase.getWritableDatabase()); // Create the database
-                return;
             } else {
                 if (orderDatabase.isTableEmpty("orders")) {
                     orderDatabase.showEmptyStateMessage(orderRecyclerView, noOrder);

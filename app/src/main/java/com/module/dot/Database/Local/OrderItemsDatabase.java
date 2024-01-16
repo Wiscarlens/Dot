@@ -1,5 +1,7 @@
 package com.module.dot.Database.Local;
 
+import static java.security.AccessController.getContext;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
@@ -92,15 +94,16 @@ public class OrderItemsDatabase extends MyDatabaseManager {
 
     }
 
-    public ArrayList<Item> readOrderItems(String orderGlobalID){
+    public ArrayList<Item> readOrderItems(String orderGlobalID, Context context){
         ArrayList<Item> itemList = new ArrayList<>();
         Cursor cursor = getItemsByOrderGlobalId(orderGlobalID);
+        ItemDatabase itemDatabase = new ItemDatabase(context);
 
         if (cursor.moveToFirst()) {
             do {
                 String itemGlobalID = cursor.getString(2);
                 String imagePath = cursor.getString(2);
-                String itemName = null;
+                String itemName = itemDatabase.getItemName(itemGlobalID); // TODO: Get the item name from the database
                 double itemPrice = cursor.getDouble(3);
                 long quantity = cursor.getLong(4);
 

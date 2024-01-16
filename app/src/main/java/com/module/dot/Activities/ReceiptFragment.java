@@ -5,6 +5,7 @@ import static com.module.dot.Helpers.LocalFormat.getCurrencyFormat;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,8 @@ import com.module.dot.Helpers.Utils;
 import com.module.dot.R;
 
 import java.util.ArrayList;
-
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class ReceiptFragment extends Fragment {
@@ -47,7 +49,8 @@ public class ReceiptFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ArrayList<Order> orders = new ArrayList<>();
+        AtomicReference<Order> order = new AtomicReference<>(new Order());
+
 
         LinearLayout receiptLayout = view.findViewById(R.id.receiptFooter);
 
@@ -73,53 +76,65 @@ public class ReceiptFragment extends Fragment {
 
         receiptItems.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        MyDatabaseHelper myDB = new MyDatabaseHelper(getContext());
+
 
         // Receiving Order  Number from HomeFragment
         getParentFragmentManager().setFragmentResultListener(
                 "orderNumberData",
                 this,
                 (requestKey, result) -> {
-
                     try (OrderDatabase orderDatabase = new OrderDatabase(getContext())){
-                        orderDatabase.getOrdersDetails(
-                                orders,
-                                result.getString("orderNumber") // Order Number
-                        );
+                        Log.d("Order Number", Objects.requireNonNull(result.getString("orderNumber")));
+
+                        // TODO:  the bug happen here
+                        order.set(orderDatabase.getOrderDetails(result.getString("orderNumber"))); // Order Number
+
+                        // Update UI elements with order data here
+                        if (order != null) {
+
+//                        Log.d("Order Number", order.get().getCreatorID());
+
+                            // Format the order number to have at least 5 digits
+                            String orderNumberString = order.get().getGlobalID();
+
+                            // Generate the barcode from order number
+                            Drawable barcodeDrawable = BarcodeManager.generateBarcode(
+                                    orderNumberString,
+                                    getContext()
+                            );
+
+                            // logo.setImageDrawable();
+                            companyName.setText(MainActivity.currentUser.getCompanyName());
+                            companyAddress.setText("PO BOX 568153");
+                            companyCity.setText("Orlando, FL 32856");
+                            subtotal.setText(getCurrencyFormat(order.get().getOrderTotalAmount())); // TODO: Replace with subtotal
+                            tax.setText("0.00");
+                            date.setText(order.get().getOrderDate());
+                            time.setText(order.get().getOrderTime());
+                            // TODO: Make total a string and format it to local currency in order class
+                            total.setText(getCurrencyFormat(order.get().getOrderTotalAmount()));
+                            barcode.setImageDrawable(barcodeDrawable);
+                            orderNumber.setText(orderNumberString);
+
+                            ArrayList<Item> selectedItems = order.get().getSelectedItemList();
+
+                            Log.d("Order Number", "onViewCreated: " + selectedItems.get(0).getName());
+
+                            // Create the adapter and set it to the RecyclerView
+                            BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());
+                            receiptItems.setAdapter(receiptAdapter);
+                        } else {
+                            // TODO: Show error message that receipt could not be generated
+                            Log.e("Order Number", "Order is null");
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    // Format the order number to have at least 5 digits
-                    String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
 
-                    // Generate the barcode from order number
-                    Drawable barcodeDrawable = BarcodeManager.generateBarcode(
-                            orderNumberString,
-                            getContext()
-                    );
 
-                    // Update UI elements with order data here
-                    if (!orders.isEmpty()) {
-                        // logo.setImageDrawable();
-                        companyName.setText(MainActivity.currentUser.getCompanyName());
-                        companyAddress.setText("PO BOX 568153");
-                        companyCity.setText("Orlando, FL 32856");
-                        subtotal.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount())); // TODO: Replace with subtotal
-                        tax.setText("0.00");
-                        date.setText(orders.get(0).getOrderDate());
-                        time.setText(orders.get(0).getOrderTime());
-                        // TODO: Make total a string and format it to local currency in order class
-                        total.setText(getCurrencyFormat(orders.get(0).getOrderTotalAmount()));
-                        barcode.setImageDrawable(barcodeDrawable);
-                        orderNumber.setText(orderNumberString);
 
-                        ArrayList<Item> selectedItems = orders.get(0).getSelectedItemList();
-
-                        // Create the adapter and set it to the RecyclerView
-                        BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());
-                        receiptItems.setAdapter(receiptAdapter);
-                    }
                 }
         );
 
@@ -129,7 +144,7 @@ public class ReceiptFragment extends Fragment {
 
         // When user clicks on print button, print receipt
         printButton.setOnClickListener(v -> {
-                    String orderNumberString = Utils.formatOrderNumber(orders.get(0).getOrderNumber());
+                    String orderNumberString = Utils.formatOrderNumber(order.get().getOrderNumber());
 
                     PDFManager.createPDF(orderNumberString, view, receiptLayout, getContext());
 

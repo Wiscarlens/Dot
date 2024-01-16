@@ -118,7 +118,7 @@ public class OrderDatabase extends MyDatabaseManager {
                     orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
                     return;
                 } else {
-                    selectedItemList = orderItemsDatabase.readOrderItems(orderGlobalID);
+                    selectedItemList = orderItemsDatabase.readOrderItems(orderGlobalID, context);
                     Log.d("OrderDatabaseTEST", "readOrder: " + selectedItemList.size());
                 }
 
@@ -133,7 +133,8 @@ public class OrderDatabase extends MyDatabaseManager {
 //            }
 
             Order order = new Order(
-                    orderGlobalID, // Order Number
+                    orderGlobalID,
+                    cursor.getLong(0), // Order Local ID
                     cursor.getString(3), // Order Date
                     cursor.getString(4), // Order Time
                     cursor.getString(7), // Order Status
@@ -163,51 +164,74 @@ public class OrderDatabase extends MyDatabaseManager {
     /**
      * Retrieves details of orders with a specific order number from a database and populates
      * them into an ArrayList of Orders objects. This method queries the provided database
-     * for orders matching the given orderNumber. The retrieved order details are encapsulated
+     * for orders matching the given orderGlobalID. The retrieved order details are encapsulated
      * into an Orders object, and all matching orders are added to the provided ArrayList.
      *
-     * @param orderArrayList The ArrayList where the retrieved order details will be stored.
-     * @param orderNumber The specific order number for which details are to be retrieved.
+     * @param orderGlobalID The specific order number for which details are to be retrieved.
      */
-    public void getOrdersDetails(ArrayList<Order> orderArrayList, String orderNumber) {
+    public Order getOrderDetails(String orderGlobalID) {
         // Get a cursor to the order data in the database
         Cursor cursor = super.readAllData(ORDERS_TABLE_NAME);
+        Order order = null;
 
         while (cursor.moveToNext()) {
-            String currentOrderNumber = cursor.getString(1);
+            ArrayList<Item> selectedItemList;
 
-            if (Objects.equals(currentOrderNumber, orderNumber)) {
-                ArrayList<Item> selectedItemArrayList;
-
-                try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
-                    selectedItemArrayList = orderItemsDatabase.readOrderItems(orderNumber);
-                } catch (Exception e) {
-                    Log.e("OrderDatabase", "Failed to read order items: " + e.getMessage());
-                    throw e;
-                }
-
-                Long totalItems = 0L ;
-
-                // Find the total number of items in the order
-                for(Item item : selectedItemArrayList){
-                    totalItems += item.getQuantity();
-                }
-
-                Order order = new Order(
-                        orderNumber, // Order Number
-                        cursor.getString(2), // Order Date
-                        cursor.getString(3), // Order Time
-                        cursor.getString(5), // Order Status
-                        totalItems,                     // Total Item
-                        cursor.getDouble(4), // Total Amount
-                        selectedItemArrayList // Selected Item
-                );
-
-                orderArrayList.add(order); // Add the order to the ArrayList
+            try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(context)){
+                selectedItemList = orderItemsDatabase.readOrderItems(orderGlobalID, context);
+            } catch (Exception e) {
+                Log.e("OrderDatabase", "Failed to read order items: " + e.getMessage());
+                throw e;
             }
+
+            Log.d("OrderDatabaseTEST", "readOrder: " + selectedItemList.get(0).getName());
+
+            order = new Order(
+                    orderGlobalID,
+                    cursor.getLong(0), // Order Local ID
+                    cursor.getString(3), // Order Date
+                    cursor.getString(4), // Order Time
+                    cursor.getString(7), // Order Status
+                    cursor.getLong(6),    // Total Item
+                    cursor.getDouble(5), // Total Amount
+                    selectedItemList // Selected Item
+            );
         }
 
+        cursor.close();
+
+        return order;
     }
+
+    public long getOrderId(String orderGlobalID) {
+        long orderId = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {ORDER_COLUMN_ID};
+
+        // Filter results WHERE "global_id" = 'orderGlobalID'
+        String selection = ORDER_COLUMN_GLOBAL_ID + " = ?";
+        String[] selectionArgs = {orderGlobalID};
+
+        Cursor cursor = db.query(
+                ORDERS_TABLE_NAME,   // The table to query
+                projection,             // The array of columns to return (pass null to get all)
+                selection,              // The columns for the WHERE clause
+                selectionArgs,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null               // The sort order
+        );
+
+        if (cursor.moveToFirst()) {
+            orderId = cursor.getLong(cursor.getColumnIndexOrThrow(ORDER_COLUMN_ID));
+        }
+        cursor.close();
+        return orderId;
+    }
+
 
 
     public void updateOrder(){

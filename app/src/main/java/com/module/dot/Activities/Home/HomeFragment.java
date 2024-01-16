@@ -223,7 +223,7 @@ public class HomeFragment extends Fragment {
                                    selectedItems
                            ));
 
-                           Log.d("HomeFragmentTEST", selectedItems.get(0).getGlobalID());
+                            FirebaseHandler.readOrder("orders", getContext());
 
                             dateTime = getCurrentDateTime(); // Get the current date and time
 
@@ -240,6 +240,7 @@ public class HomeFragment extends Fragment {
                                     dateTime[1]
                             ));
 
+                            FirebaseHandler.readTransaction("transactions", getContext());
 
                             // Sending order number to receipt fragment
                             Bundle orderNumberBundle = new Bundle();

@@ -232,7 +232,7 @@ public class NewItemFragment extends Fragment {
 
             Drawable itemImageTemp;
 
-            if (isImageSame(itemImage.getDrawable(), ContextCompat.getDrawable(getContext(), R.drawable.uploading))) {
+            if (!isImageSame(itemImage.getDrawable(), ContextCompat.getDrawable(getContext(), R.drawable.uploading))) {
                 itemImageTemp = itemImage.getDrawable();
             } else{
                 itemImageTemp = null;

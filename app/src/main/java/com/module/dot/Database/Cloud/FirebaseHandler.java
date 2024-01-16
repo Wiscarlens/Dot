@@ -9,8 +9,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,7 +41,6 @@ import java.util.Objects;
 public class FirebaseHandler {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static final FirebaseStorage storage = FirebaseStorage.getInstance();
-    private DatabaseReference mDatabase;
 
     public static String getCurrentUserOnlineID(FirebaseAuth mAuth) {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
@@ -69,7 +66,7 @@ public class FirebaseHandler {
 
                             if (profileImage != null){
                                 newUser.setProfileImagePath(globalID);
-                                saveImageToFirebaseStorage(profileImage, "Profiles/" + globalID);
+                                uploadFile(profileImage, "Profiles/" + globalID);
                             }
 
                             DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference();
@@ -96,11 +93,13 @@ public class FirebaseHandler {
     }
 
 
-    public static void saveImageToFirebaseStorage(Drawable image, String imagePath) {
+    public static void uploadFile(Drawable image, String imagePath) {
+        Log.d("FirebaseHandler", "uploadFile: " + imagePath);
+        Log.d("FirebaseHandler", "uploadFile: " + image);
 
         Bitmap bitmap = Utils.drawableToBitmap(image);
 
-        // Compress the Bitmap into a ByteArrayOutputStream with 50% quality
+        // Compress the Bitmap into a ByteArrayOutputStream with 25% quality
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 25, baos);
 
@@ -111,18 +110,10 @@ public class FirebaseHandler {
         StorageReference storageReference = storage.getReference(imagePath);
 
         UploadTask uploadTask = storageReference.putBytes(imageData);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.e("Firebase", "Error while uploading image to Firebase Storage", exception);
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.i("Firebase", "Image uploaded successfully");
-            }
-        });
+        uploadTask.addOnFailureListener(exception -> {
+            // Handle unsuccessful uploads
+            Log.e("FirebaseHandler", "Error while uploading image to Firebase Storage", exception);
+        }).addOnSuccessListener(taskSnapshot -> Log.i("FirebaseHandler", "Image uploaded successfully"));
     }
 
     public static void readItem(String tableName, Context context){
@@ -284,6 +275,10 @@ public class FirebaseHandler {
 
             if(itemImage != null){
                 newItem.setImagePath(globalID);
+                Log.d("FirebaseHandler", "createItem: " + itemImage);
+            } else {
+                newItem.setImagePath(null);
+                Log.d("FirebaseHandler", "createItem: " + "No image");
             }
 
             // Set the item with the generated key
@@ -291,7 +286,7 @@ public class FirebaseHandler {
                 if (task.isSuccessful()) {
                     if (itemImage != null){
                         // Save the image to Firebase Storage with the generated key
-                        saveImageToFirebaseStorage(itemImage, "Items/" + globalID);
+                        uploadFile(itemImage, "Items/" + globalID);
                     }
 
                     Log.i("Firebase", "Item Added Successfully!");
@@ -435,18 +430,18 @@ public class FirebaseHandler {
 
 
     public static void createTransaction(Transaction newTransaction){
-        DatabaseReference itemsRef = FirebaseDatabase.getInstance().getReference("transactions");
+        DatabaseReference transactionsRef = FirebaseDatabase.getInstance().getReference("transactions");
 
         // Use push to generate a unique key
-        DatabaseReference newItemRef = itemsRef.push();
+        DatabaseReference newTransactionRef = transactionsRef.push();
 
         // Set the item with the generated key
-        newItemRef.setValue(newTransaction).addOnCompleteListener(task -> {
+        newTransactionRef.setValue(newTransaction).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.i("Firebase", "Transaction Added Successfully!");
+                Log.i("FirebaseHandler", "Transaction Added Successfully!");
             }
         }).addOnFailureListener(e ->
-                Log.d("Firebase", "Transaction creation failed")
+                Log.d("FirebaseHandler", "Transaction creation failed")
         );
     }
 
@@ -457,17 +452,21 @@ public class FirebaseHandler {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try (TransactionDatabase transactionDatabase = new TransactionDatabase(context)) {
                     // Iterate through Firebase data
-                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot transactionSnapshot : dataSnapshot.getChildren()) {
 
-                        Transaction transaction = userSnapshot.getValue(Transaction.class);
+                        Transaction transaction = transactionSnapshot.getValue(Transaction.class);
 
                         // Create item in the local database
                         assert transaction != null;
 
-                        transaction.setGlobalID(userSnapshot.getKey());
+                        transaction.setGlobalID(transactionSnapshot.getKey());
+
+                        try(OrderDatabase orderDatabase = new OrderDatabase(context)){
+                            long orderNumber =  orderDatabase.getOrderId(transaction.getOrderGlobalID());
+                            transaction.setOrderNumber(orderNumber);
+                        }
 
                         transactionDatabase.createTransaction(transaction);
-
                     }
 
                 } catch (Exception e) {

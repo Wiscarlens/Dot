@@ -20,6 +20,7 @@ public class TransactionDatabase extends MyDatabaseManager {
     private static final String TRANSACTION_TABLE_NAME = "transactions";
     private  static final String TRANSACTION_COLUMN_GLOBAL_ID = "global_id";
     private static final String TRANSACTION_COLUMN_CREATOR_ID = "creator_id";
+    private static final String TRANSACTION_COLUMN_ORDER_GLOBAL_ID = "order_global_id";
     private static final String TRANSACTION_COLUMN_ORDER_NUMBER = "order_id";
     private static final String TRANSACTION_COLUMN_PAYMENT_DATE = "payment_date";
     private static final String TRANSACTION_COLUMN_PAYMENT_TIME = "payment_time";
@@ -48,6 +49,7 @@ public class TransactionDatabase extends MyDatabaseManager {
         String query_transactions = "CREATE TABLE " + TRANSACTION_TABLE_NAME +
                 " (" + TRANSACTION_COLUMN_GLOBAL_ID + " TEXT PRIMARY KEY, " +
                 TRANSACTION_COLUMN_CREATOR_ID + " TEXT NOT NULL, " +
+                TRANSACTION_COLUMN_ORDER_GLOBAL_ID + " TEXT NOT NULL, " +
                 TRANSACTION_COLUMN_ORDER_NUMBER + " INTEGER NOT NULL, " +
                 TRANSACTION_COLUMN_PAYMENT_DATE + " DATE, " +
                 TRANSACTION_COLUMN_PAYMENT_TIME + " TIME, " +
@@ -86,6 +88,7 @@ public class TransactionDatabase extends MyDatabaseManager {
                 cv.put(TRANSACTION_COLUMN_CREATOR_ID, newTransaction.getCreatorID());
                 cv.put(TRANSACTION_COLUMN_PAYMENT_DATE, dateTime[0]);
                 cv.put(TRANSACTION_COLUMN_PAYMENT_TIME, dateTime[1]);
+                cv.put(TRANSACTION_COLUMN_ORDER_GLOBAL_ID, newTransaction.getOrderGlobalID());
                 cv.put(TRANSACTION_COLUMN_ORDER_NUMBER, newTransaction.getOrderNumber());
                 cv.put(TRANSACTION_COLUMN_STATUS, newTransaction.getTransactionStatus());
                 cv.put(TRANSACTION_COLUMN_AMOUNT, newTransaction.getTransactionTotal());
@@ -116,12 +119,12 @@ public class TransactionDatabase extends MyDatabaseManager {
                 while (cursor.moveToNext()) {
                     Transaction transaction = new Transaction(
                             cursor.getString(0),    // Global ID
-                            cursor.getLong(2),      // Order Number
-                            cursor.getString(3),    // Transaction Date
-                            cursor.getString(4),    // Transaction Time
-                            cursor.getString(6),    // Transaction Status
-                            cursor.getDouble(5),    // Transaction Total Amount
-                            cursor.getString(7)     // Payment Method
+                            cursor.getLong(3),      // Order Number
+                            cursor.getString(4),    // Transaction Date
+                            cursor.getString(5),    // Transaction Time
+                            cursor.getString(7),    // Transaction Status
+                            cursor.getDouble(6),    // Transaction Total Amount
+                            cursor.getString(8)     // Payment Method
                     );
 
                     transaction_for_display.add(transaction); // Add the order to the ArrayList
