@@ -21,11 +21,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ChezElisma"
+        android:theme="@style/Theme.Dot"
         tools:targetApi="31">
-<!--        <activity-->
-<!--            android:name=".SignupFragment"-->
-<!--            android:exported="false" />-->
         <activity
             android:name=".Activities.LoginActivity"
             android:exported="false" />
