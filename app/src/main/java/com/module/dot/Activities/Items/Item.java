@@ -16,7 +16,7 @@ public class Item {
     private String unitType;
     private int stock;
     private double wholesalePrice;
-    private double tax;
+    private Double tax;
     private String description;
 
     private Long quantity = 1L;
@@ -41,21 +41,23 @@ public class Item {
     }
 
     // Use for display item in the gridview
-    public Item(long localID, String globalID, String imagePath, String name,  double price, String SKU, String unitType) {
+    public Item(long localID, String globalID, String imagePath, String name,  double price, Double tax, String SKU, String unitType) {
         this.localID = localID;
         this.globalID = globalID;
         this.imagePath = imagePath;
         this.name = name;
         this.price = price;
+        this.tax = tax;
         this.sku = SKU;
         this.unitType = unitType;
     }
 
     // Selected Item
-    public Item(String globalID, String name, double price, String SKU, Long quantity) {
+    public Item(String globalID, String name, double price, Double tax, String SKU, Long quantity) {
         this.globalID = globalID;
         this.name = name;
         this.price = price;
+        this.tax = tax;
         this.sku = SKU;
         this.quantity = quantity;
     }
@@ -167,7 +169,7 @@ public class Item {
         return tax;
     }
 
-    public void setTax(double tax) {
+    public void setTax(Double tax) {
         this.tax = tax;
     }
 

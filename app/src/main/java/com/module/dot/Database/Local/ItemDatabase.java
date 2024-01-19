@@ -128,6 +128,7 @@ public class ItemDatabase extends MyDatabaseManager {
                         cursor.getString(2),    // imagePath
                         cursor.getString(3),    // name
                         cursor.getDouble(4),    // price
+                        cursor.getDouble(10),    // tax
                         cursor.getString(6),    // SKU
                         cursor.getString(7)     // unitType
                 );

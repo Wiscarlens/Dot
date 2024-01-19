@@ -22,11 +22,11 @@ import com.module.dot.R;
 
 import java.util.ArrayList;
 
-public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.BottomViewHolder>{
+public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.BottomViewHolder>{
     private final ArrayList<Item> items;
     private final Context context;
 
-    public BottomSheetAdapter(ArrayList<Item> items, Context context) {
+    public OrderItemAdapter(ArrayList<Item> items, Context context) {
         this.items = items;
         this.context = context;
     }
@@ -35,7 +35,7 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @Override
     public BottomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.transaction_design_bottom_sheet, parent, false);
+                .inflate(R.layout.order_item_design, parent, false);
         return new BottomViewHolder(view);
     }
 
@@ -47,8 +47,9 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     @Override
     public void onBindViewHolder(@NonNull BottomViewHolder holder, int position) {
         holder.itemNameTextView.setText(items.get(position).getName());
-        holder.priceTextView.setText(getCurrencyFormat(items.get(position).getPrice()));
+        holder.unitPriceTextView.setText(String.valueOf(items.get(position).getPrice()));
         holder.frequencyTextView.setText(String.valueOf(items.get(position).getQuantity()));
+        holder.totalPriceTextView.setText(getCurrencyFormat(items.get(position).getPrice() * items.get(position).getQuantity()));
 
         // When User click in a product in bottom sheet
         holder.cardView.setOnClickListener(v -> Toast.makeText(context, "You selected " + items.get(position).getName(), Toast.LENGTH_SHORT).show());
@@ -57,7 +58,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     public static class BottomViewHolder extends RecyclerView.ViewHolder {
         private final TextView itemNameTextView;
         private final TextView frequencyTextView;
-        private final TextView priceTextView;
+        private final TextView unitPriceTextView;
+        private final TextView totalPriceTextView;
         private final CardView cardView;
 
         public BottomViewHolder(@NonNull View itemView) {
@@ -65,7 +67,8 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
 
             itemNameTextView = itemView.findViewById(R.id.productName_design);
             frequencyTextView = itemView.findViewById(R.id.unitTotal_design);
-            priceTextView = itemView.findViewById(R.id.unitPrice_design);
+            unitPriceTextView = itemView.findViewById(R.id.unitPrice_design);
+            totalPriceTextView = itemView.findViewById(R.id.totalPrice_design);
             cardView = itemView.findViewById(R.id.bottomSheetDesignCardView);
 
         }

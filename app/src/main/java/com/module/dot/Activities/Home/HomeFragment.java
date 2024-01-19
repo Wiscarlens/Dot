@@ -64,7 +64,9 @@ public class HomeFragment extends Fragment {
     private final ArrayList<Item> selectedItems =  new ArrayList<>();
 
     // Select item total
-    private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.0);
+    private final AtomicReference<Double> totalTax = new AtomicReference<>(0.00);
+    private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.00);
+    private String currentTax;
     private String currentCharge;
     private Long totalItem = 0L;
 
@@ -110,6 +112,9 @@ public class HomeFragment extends Fragment {
         ItemGridAdapter itemGridAdapter = new ItemGridAdapter(itemList, getContext());
         itemGridview.setAdapter(itemGridAdapter);
 
+        updateTax(0.0);
+        updateAmount(0.00);
+
         // When user select an item
         itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
             // Find the selected item
@@ -117,16 +122,19 @@ public class HomeFragment extends Fragment {
                     itemList.get(position).getGlobalID(),
                     itemList.get(position).getName(),
                     itemList.get(position).getPrice(),
+                    itemList.get(position).getTax(),
                     itemList.get(position).getSku(),
                     1L
             );
 
             // TODO: Optimize - All the line below can be part of addToSElected Item method
             double itemSelectedPrice = itemList.get(position).getPrice();
+            double tax = (itemList.get(position).getTax() / 100) * itemSelectedPrice;
 
             totalItem ++;
 
             addToSelectedItems(selectedItem);
+            updateTax(tax);
             updateAmount(itemSelectedPrice);
 
         });
@@ -136,7 +144,7 @@ public class HomeFragment extends Fragment {
             // Open bottom sheet layout
             Dialog dialog = showButtonDialog();
 
-            final double bottomSheetHeight = 0.56; // Initialize to 56% of the screen height
+            final double bottomSheetHeight = 0.58; // Initialize to 56% of the screen height
 
             setBottomSheetHeight(dialog, bottomSheetHeight);
         });
@@ -177,18 +185,20 @@ public class HomeFragment extends Fragment {
         bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         bottomSheetDialog.setContentView(R.layout.bottomsheet_layout);
 
+        TextView taxTotal = bottomSheetDialog.findViewById(R.id.taxTotal);
         TextView transactionTotal = bottomSheetDialog.findViewById(R.id.transactionTotal);
         Button checkoutButton = bottomSheetDialog.findViewById(R.id.checkoutButton);
         RecyclerView bottomSheetRecyclerView = bottomSheetDialog.findViewById(R.id.transactionSheetList); // Find the RecyclerView in the layout
 
+        taxTotal.setText(String.valueOf(currentTax));
         transactionTotal.setText(currentCharge);
 
         // Bottom sheet recycle view
         bottomSheetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Create the adapter and set it to the RecyclerView
-        BottomSheetAdapter bottomSheetAdapter = new BottomSheetAdapter(selectedItems, getContext());
-        bottomSheetRecyclerView.setAdapter(bottomSheetAdapter);
+        OrderItemAdapter orderItemAdapter = new OrderItemAdapter(selectedItems, getContext());
+        bottomSheetRecyclerView.setAdapter(orderItemAdapter);
 
         checkoutButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
@@ -365,6 +375,14 @@ public class HomeFragment extends Fragment {
 
         // Set the button text to the current value of price
         chargeButton.setText(currentCharge);
+    }
+
+    private void updateTax(double amount) {
+        totalTax.set(totalTax.get() + amount);
+
+        currentTax = LocalFormat.getCurrencyFormat(totalTax.get());
+
+
     }
 
 

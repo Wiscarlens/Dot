@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.module.dot.Activities.Home.BottomSheetAdapter;
+import com.module.dot.Activities.Home.OrderItemAdapter;
 import com.module.dot.Activities.Items.Item;
 import com.module.dot.Activities.Orders.Order;
 import com.module.dot.Database.Local.OrderDatabase;
@@ -121,7 +121,7 @@ public class ReceiptFragment extends Fragment {
                             Log.d("Order Number", "onViewCreated: " + selectedItems.get(0).getName());
 
                             // Create the adapter and set it to the RecyclerView
-                            BottomSheetAdapter receiptAdapter = new BottomSheetAdapter(selectedItems, getContext());
+                            OrderItemAdapter receiptAdapter = new OrderItemAdapter(selectedItems, getContext());
                             receiptItems.setAdapter(receiptAdapter);
                         } else {
                             // TODO: Show error message that receipt could not be generated
