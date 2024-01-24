@@ -11,7 +11,7 @@ android {
         applicationId "com.module.dot"
         minSdk 24
         targetSdk 34
-        versionCode 2
+        versionCode 3
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -38,7 +38,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.7.6'
     implementation 'androidx.navigation:navigation-ui:2.7.6'
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-    implementation 'com.google.firebase:firebase-auth:22.3.0'
+    implementation 'com.google.firebase:firebase-auth:22.3.1'
     implementation 'com.google.firebase:firebase-database:20.3.0'
     implementation 'com.google.android.recaptcha:recaptcha:18.4.0'
     implementation 'com.google.firebase:firebase-storage:20.3.0'
