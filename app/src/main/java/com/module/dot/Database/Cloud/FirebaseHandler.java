@@ -50,6 +50,11 @@ public class FirebaseHandler {
 
 
     public void createUser(User newUser, Drawable profileImage, Context context){
+        if (newUser.getEmail() == null || newUser.getEmail().isEmpty() || newUser.getPassword_hash() == null || newUser.getPassword_hash().isEmpty()) {
+            Log.e("FirebaseHandler", "Email or password cannot be empty");
+            return;
+        }
+
         mAuth.createUserWithEmailAndPassword(newUser.getEmail(), newUser.getPassword_hash())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

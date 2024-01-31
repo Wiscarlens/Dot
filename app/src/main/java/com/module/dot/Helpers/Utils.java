@@ -9,12 +9,10 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.security.SecureRandom;
 
 
@@ -185,6 +183,13 @@ public class Utils {
         } else {
             throw new IllegalArgumentException("unsupported drawable type");
         }
+    }
+
+    public static boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 

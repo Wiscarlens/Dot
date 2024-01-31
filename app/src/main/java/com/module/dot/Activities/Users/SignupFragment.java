@@ -213,21 +213,58 @@ public class SignupFragment extends Fragment {
 
         step2Button.setOnClickListener(v -> {
             // Handle Step 2 button click
-            showStepContent(2);
+            if(Objects.requireNonNull(firstName.getText()).toString().isEmpty() ||
+                    Objects.requireNonNull(lastName.getText()).toString().isEmpty() ||
+                    Objects.requireNonNull(DOB.getText()).toString().isEmpty()) {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            } else {
+                showStepContent(2);
+            }
         });
 
         step3Button.setOnClickListener(v -> {
             // Handle Step 3 button click
-            showStepContent(3);
+            if(Objects.requireNonNull(email.getText()).toString().isEmpty()){
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            } else {
+                if (!Utils.isValidEmail(Objects.requireNonNull(email.getText()).toString())){
+                    Toast.makeText(getContext(), "Invalid email address", Toast.LENGTH_SHORT).show();
+                } else {
+                    showStepContent(3);
+                }
+            }
         });
 
         previousButton.setOnClickListener(v -> {
             currentStep--; // Decrease currentStep by 1
+
             showStepContent(currentStep);
+
         });
 
         nextButton.setOnClickListener(v -> {
+            if (currentStep == 1){
+                // Handle Step 2 button click
+                if(Objects.requireNonNull(firstName.getText()).toString().isEmpty() ||
+                        Objects.requireNonNull(lastName.getText()).toString().isEmpty() ||
+                        Objects.requireNonNull(DOB.getText()).toString().isEmpty()) {
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } else if (currentStep == 2) {
+                if(Objects.requireNonNull(email.getText()).toString().isEmpty()){
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    if (!Utils.isValidEmail(Objects.requireNonNull(email.getText()).toString())){
+                        Toast.makeText(getContext(), "Invalid email address", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+            }
+
             currentStep++; // Increase currentStep by 1
+
             showStepContent(currentStep);
         });
 
@@ -235,7 +272,12 @@ public class SignupFragment extends Fragment {
         showStepContent(currentStep);
 
         saveButton.setOnClickListener(v -> {
-            saveToDatabase();
+            if (Objects.requireNonNull(companyName.getText()).toString().isEmpty() ||
+                    Objects.requireNonNull(password.getText()).toString().isEmpty()){
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            } else {
+                saveToDatabase();
+            }
 
 //            // Refresh the recycler view
 //            UserRecyclerAdapter adapter = ((UsersFragment) Objects.requireNonNull(getParentFragmentManager().findFragmentById(R.id.fragment_container))).getAdapter();
@@ -257,9 +299,9 @@ public class SignupFragment extends Fragment {
 
     private void showStepContent(int step) {
         // Default Color
-        int colorYellow = ContextCompat.getColor(getContext(), R.color.black);
-        int colorGray = ContextCompat.getColor(getContext(), R.color.light_gray);
-        int colorWhite = ContextCompat.getColor(getContext(), R.color.white);
+        int colorYellow = ContextCompat.getColor(requireContext(), R.color.black);
+        int colorGray = ContextCompat.getColor(requireContext(), R.color.light_gray);
+        int colorWhite = ContextCompat.getColor(requireContext(), R.color.white);
 
         if (step < 1) {
             step = 1;
