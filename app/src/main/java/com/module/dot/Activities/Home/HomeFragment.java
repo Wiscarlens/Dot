@@ -152,7 +152,7 @@ public class HomeFragment extends Fragment {
         // When user click on scanner button
         scanButton.setOnClickListener(v -> {
                 if (itemList.isEmpty()) {
-                    Toast.makeText(fragmentActivity, "No item in database", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(fragmentActivity, getResources().getString(R.string.empty_database), Toast.LENGTH_SHORT).show();
                 } else {
                     scannerManager.startBarcodeScanning(); // Scan barcode
                     String barcode = scannerManager.getScanItem(); // get barcode
