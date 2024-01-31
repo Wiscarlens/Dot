@@ -46,16 +46,21 @@
             android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:hint="@string/email"
-            app:boxBackgroundColor="@color/white"
+
+            android:textColorHint="@color/dark_gray"
             app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/dark_gray"
+            app:cursorColor="@color/black"
+            app:endIconMode="clear_text"
             app:helperText=""
             app:helperTextTextColor="@color/red"
+            app:hintTextColor="@color/dark_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:placeholderText="example@email.com"
-            app:startIconDrawable="@drawable/baseline_email_24"
-            app:endIconMode="clear_text">
+            app:placeholderTextColor="@color/dark_gray"
+            app:startIconDrawable="@drawable/baseline_email_24">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email"
@@ -63,8 +68,8 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:inputType="textEmailAddress"
-                android:textColorHint="#757575"
-                tools:ignore="TextContrastCheck" />
+                android:textColor="@color/black"
+                android:textColorHint="@color/dark_gray" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -74,15 +79,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:hint="@string/password"
+            android:textColorHint="@color/dark_gray"
             app:boxBackgroundColor="@color/white"
             app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/dark_gray"
+            app:cursorColor="@color/black"
+            app:endIconMode="password_toggle"
             app:helperText=""
             app:helperTextTextColor="@color/red"
+            app:hintTextColor="@color/dark_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:startIconDrawable="@drawable/baseline_lock_24"
-            app:endIconMode="password_toggle">
+            app:placeholderTextColor="@color/dark_gray"
+            app:startIconDrawable="@drawable/baseline_lock_24">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/passwordText"
@@ -90,7 +100,8 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:inputType="textPassword"
-                tools:ignore="TextContrastCheck" />
+                android:textColor="@color/black"
+                android:textColorHint="@color/dark_gray" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <CheckBox
