@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/dialog_bkg"
-    tools:context=".Activities.Home.HomeFragment">
+    tools:context=".view.fragments.HomeFragment">
 
     <ImageView
         android:layout_width="70dp"

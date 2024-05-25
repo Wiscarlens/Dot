@@ -2,6 +2,8 @@ package com.module.dot.Helpers;
 
 import static org.junit.Assert.assertNotEquals;
 
+import com.module.dot.utils.PasswordUtils;
+
 import junit.framework.TestCase;
 
 public class PasswordUtilsTest extends TestCase {
