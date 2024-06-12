@@ -50,8 +50,7 @@ public class ConfirmationFragment extends Fragment {
                     animationView.playAnimation();
                     String data = result.getString("price");
                     price.setText(data);
-                    // TODO: get text from string.xml
-                    status.setText("Payment Successful");
+                    status.setText(R.string.payment_successful);
         });
 
 

@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +31,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,7 +40,7 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 import com.module.dot.view.adapters.OrderItemAdapter;
 import com.module.dot.model.Item;
-import com.module.dot.view.adapters.ItemGridAdapter;
+import com.module.dot.view.adapters.ItemAdapter;
 import com.module.dot.view.MainActivity;
 import com.module.dot.model.Order;
 import com.module.dot.model.Transaction;
@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment {
     private final AtomicReference<Double> totalPrice = new AtomicReference<>(0.00);
     private String currentTax;
     private String currentCharge;
-    private Long totalItem = 0L;
+    public Long totalItem = 0L;
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -94,10 +94,9 @@ public class HomeFragment extends Fragment {
         assert mainActivity != null;
         mainActivity.enableNavigationViews(View.VISIBLE);
 
-//        requireActivity().recreate(); // Refresh MainActivity
-
         LinearLayout noData = view.findViewById(R.id.noDataHomeFragmentLL); // When Database is empty
-        GridView itemGridview = view.findViewById(R.id.itemList);
+        RecyclerView recyclerView = view.findViewById(R.id.itemList);
+//        GridView itemGridview = view.findViewById(R.id.itemList);
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
 
@@ -105,45 +104,47 @@ public class HomeFragment extends Fragment {
 
         try (ItemDatabase itemDatabase = new ItemDatabase(getContext())) {
             if (itemDatabase.isTableEmpty("items")) {
-                itemDatabase.showEmptyStateMessage(itemGridview, noData);
+                itemDatabase.showEmptyStateMessage(recyclerView, noData);
             } else {
-                itemDatabase.showStateMessage(itemGridview, noData);
+                itemDatabase.showStateMessage(recyclerView, noData);
                 itemDatabase.readItem(itemList); // Read data from database and save it the arraylist
             }
         } catch (Exception e) {
             Log.i("UserFragment", Objects.requireNonNull(e.getMessage()));
         }
 
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        recyclerView.setAdapter(new ItemAdapter(itemList, getContext(), this));
 
-        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(itemList, getContext());
-        itemGridview.setAdapter(itemGridAdapter);
+//        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(itemList, getContext());
+//        itemGridview.setAdapter(itemGridAdapter);
 
         updateTax(0.0);
         updateAmount(0.00);
 
-        // When user select an item
-        itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
-            // Find the selected item
-            Item selectedItem = new Item(
-                    itemList.get(position).getGlobalID(),
-                    itemList.get(position).getName(),
-                    itemList.get(position).getPrice(),
-                    itemList.get(position).getTax(),
-                    itemList.get(position).getSku(),
-                    1L
-            );
-
-            // TODO: Optimize - All the line below can be part of addToSElected Item method
-            double itemSelectedPrice = itemList.get(position).getPrice();
-            double tax = (itemList.get(position).getTax() / 100) * itemSelectedPrice;
-
-            totalItem ++;
-
-            addToSelectedItems(selectedItem);
-            updateTax(tax);
-            updateAmount(itemSelectedPrice);
-
-        });
+//        // When user select an item
+//        itemGridview.setOnItemClickListener((parent, view1, position, id) -> {
+//            // Find the selected item
+//            Item selectedItem = new Item(
+//                    itemList.get(position).getGlobalID(),
+//                    itemList.get(position).getName(),
+//                    itemList.get(position).getPrice(),
+//                    itemList.get(position).getTax(),
+//                    itemList.get(position).getSku(),
+//                    1L
+//            );
+//
+//            // TODO: Optimize - All the line below can be part of addToSElected Item method
+//            double itemSelectedPrice = itemList.get(position).getPrice();
+//            double tax = (itemList.get(position).getTax() / 100) * itemSelectedPrice;
+//
+//            totalItem ++;
+//
+//            addToSelectedItems(selectedItem);
+//            updateTax(tax);
+//            updateAmount(itemSelectedPrice);
+//
+//        });
 
         // When user click on charge button
         chargeButton.setOnClickListener(v -> {
@@ -357,7 +358,7 @@ public class HomeFragment extends Fragment {
      *
      * @param newItem The item to be added or whose frequency should be increased.
      */
-    private void addToSelectedItems(Item newItem) {
+    public void addToSelectedItems(Item newItem) {
         // Check if the item is already in selectedItems
         for (Item item : selectedItems) {
             if (Objects.equals(item.getGlobalID(), newItem.getGlobalID())) {
@@ -372,7 +373,7 @@ public class HomeFragment extends Fragment {
         selectedItems.add(newItem);
     }
 
-    private void updateAmount(double amount) {
+    public void updateAmount(double amount) {
         // Add selected item price together
         totalPrice.set(totalPrice.get() + amount); // Add the item price to the total price
 
@@ -383,7 +384,7 @@ public class HomeFragment extends Fragment {
         chargeButton.setText(currentCharge);
     }
 
-    private void updateTax(double amount) {
+    public void updateTax(double amount) {
         totalTax.set(totalTax.get() + amount);
 
         currentTax = LocalFormat.getCurrencyFormat(totalTax.get());

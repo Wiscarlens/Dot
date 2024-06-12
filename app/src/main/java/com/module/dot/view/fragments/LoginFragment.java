@@ -1,14 +1,6 @@
 package com.module.dot.view.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Patterns;
@@ -16,18 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.module.dot.R;
 import com.module.dot.utils.NetworkManager;
-import com.module.dot.view.LoginActivity;
 import com.module.dot.view.MainActivity;
 import com.module.dot.view.utils.UIController;
 
@@ -55,16 +48,13 @@ public class LoginFragment extends Fragment {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-        TextView loginMessage = view.findViewById(R.id.loginMessage);
         emailLayout = view.findViewById(R.id.emailLayout);
         email = view.findViewById(R.id.email);
         passwordLayout = view.findViewById(R.id.passwordLayout);
         password = view.findViewById(R.id.passwordText);
-        CheckBox rememberMe = view.findViewById(R.id.checkBoxRememberMe);
         loginButton = view.findViewById(R.id.loginButton);
         TextView forgotPassword = view.findViewById(R.id.forgotPassword);
         LinearLayout signUp = view.findViewById(R.id.signUpLoginLL);
-        LinearLayout loginLL = view.findViewById(R.id.loginLL);
 
         UIController uiController = new UIController(requireActivity());
 
@@ -101,8 +91,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        // Create an intent to open main page later
-//        Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
 
         loginButton.setOnClickListener(v -> {
             loginButton.setClickable(false);
@@ -141,17 +129,13 @@ public class LoginFragment extends Fragment {
 
         });
 
-        forgotPassword.setOnClickListener(v -> {
-            uiController.openBottomSheet(new ForgotPasswordFragment());
-        });
+        forgotPassword.setOnClickListener(v -> uiController.openBottomSheet(new ForgotPasswordFragment()));
 
-        signUp.setOnClickListener(v -> {
-            uiController.openBottomSheet(new SignupFragment());
-        });
+        signUp.setOnClickListener(v -> uiController.openBottomSheet(new SignupFragment()));
 
     }
 
-    private TextWatcher loginTextWatcher = new TextWatcher() {
+    private final TextWatcher loginTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -159,7 +143,7 @@ public class LoginFragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String passwordInput = password.getText().toString().trim();
+            String passwordInput = String.valueOf(password.getText());
 
             String required = getResources().getString(R.string.required);
 
@@ -176,7 +160,7 @@ public class LoginFragment extends Fragment {
     };
 
     private String checkEmptyEmail() {
-        String emailInput = email.getText().toString().trim();
+        String emailInput = String.valueOf(email.getText()).toLowerCase().trim();
         String message;
 
         String required = getResources().getString(R.string.required);

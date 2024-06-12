@@ -130,7 +130,7 @@ public class ReceiptFragment extends Fragment {
                         }
 
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("ReceiptFragment", Objects.requireNonNull(e.getMessage()));
                     }
 
 

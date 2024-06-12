@@ -66,14 +66,14 @@
 
         </LinearLayout>
 
-        <GridView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/itemList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:numColumns="3"
-            android:gravity="center"
             android:layout_marginTop="35dp"
-            tools:listitem="@layout/item_design" />
+            android:visibility="visible"
+            android:gravity="top"
+            tools:listitem="@layout/item_design"/>
 
     </androidx.cardview.widget.CardView>
 

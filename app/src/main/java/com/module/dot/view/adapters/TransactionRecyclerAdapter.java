@@ -73,6 +73,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         private final TextView totalTextView;
         private final ImageView paymentTypeImageView;
 
+        // TODO: rename design to transaction
         public DesignViewHolder(@NonNull View itemView) {
             super(itemView);
 

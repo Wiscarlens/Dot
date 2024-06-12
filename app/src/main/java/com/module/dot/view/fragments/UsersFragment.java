@@ -19,12 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.module.dot.data.remote.FirebaseHandler;
-import com.module.dot.data.local.UserDatabase;
 import com.module.dot.R;
+import com.module.dot.data.local.UserDatabase;
+import com.module.dot.data.remote.FirebaseHandler;
 import com.module.dot.model.User;
 import com.module.dot.view.adapters.UserRecyclerAdapter;
-import com.module.dot.view.fragments.SignupFragment;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -34,9 +33,7 @@ public class UsersFragment extends Fragment {
     FirebaseAuth auth;
     private UserDatabase userDatabase;
 
-    private LinearLayout noUser;
     private UserRecyclerAdapter adapter;
-    private RecyclerView recyclerView;
 
     private final ArrayList<User> user_for_display = new ArrayList<>();
 
@@ -65,8 +62,8 @@ public class UsersFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         userDatabase = new UserDatabase(getContext());
 
-        noUser = view.findViewById(R.id.noUserFragmentLL); // When users Database is empty
-        recyclerView = view.findViewById(R.id.userList);
+        LinearLayout noUser = view.findViewById(R.id.noUserFragmentLL); // When users Database is empty
+        RecyclerView recyclerView = view.findViewById(R.id.userList);
         FloatingActionButton addUser = view.findViewById(R.id.addUserButton); // Add User button
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

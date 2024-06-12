@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -45,13 +46,13 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
-import com.module.dot.view.LoginActivity;
 import com.module.dot.view.MainActivity;
 import com.module.dot.view.adapters.UserRecyclerAdapter;
 import com.module.dot.data.remote.FirebaseHandler;
 import com.module.dot.utils.Utils;
 import com.module.dot.R;
 import com.module.dot.model.User;
+import com.module.dot.view.utils.UIController;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -157,6 +158,8 @@ public class SignupFragment extends BottomSheetDialogFragment {
         positionTitle = stepThreeLayout.findViewById(R.id.signupPositionText);
         password = stepThreeLayout.findViewById(R.id.signupPasswordText);
         TextInputLayout passwordLayout = stepThreeLayout.findViewById(R.id.signupPasswordLayout);
+        CheckBox termCheckBox = stepThreeLayout.findViewById(R.id.termCheckBox);
+        TextView termsAndConditionsTV = stepThreeLayout.findViewById(R.id.termsConditions);
 
         // Have data from the database
         ArrayList<String> positionOptions = new ArrayList<>(); // Category Option Spinner
@@ -295,6 +298,12 @@ public class SignupFragment extends BottomSheetDialogFragment {
 //            fragmentTransaction.replace(R.id.fragment_container, usersFragment); // Replace previous fragment
 //            fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
 //            fragmentTransaction.commit();
+        });
+
+        UIController uiController = new UIController(requireActivity());
+
+        termsAndConditionsTV.setOnClickListener(v -> {
+            uiController.openBottomSheet(new TermsFragment());
         });
 
 
@@ -500,10 +509,7 @@ public class SignupFragment extends BottomSheetDialogFragment {
             fragmentTransaction.addToBackStack(null); // Add the transaction to the back stack
             fragmentTransaction.commit();
         } else {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            startActivity(intent);
-
-//            Toast.makeText(fragmentActivity, "The user was successfully created!", Toast.LENGTH_SHORT).show();
+            dismiss(); // Close the dialog
         }
 
 

@@ -79,4 +79,35 @@
             android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <LinearLayout
+        android:id="@+id/termCheckBoxLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/termCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/agree_with"
+            android:textSize="11sp"
+            android:layout_marginEnd="2dp"/>
+
+        <TextView
+            android:id="@+id/termsConditions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:linksClickable="true"
+            android:minHeight="48dp"
+            android:text="@string/terms_conditions"
+            android:textColor="@color/black"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            tools:ignore="TextContrastCheck" />
+
+    </LinearLayout>
+
 </LinearLayout>

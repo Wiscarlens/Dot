@@ -2,7 +2,6 @@ package com.module.dot.view;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,24 +27,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.module.dot.R;
+import com.module.dot.data.local.MyDatabaseManager;
+import com.module.dot.data.local.UserDatabase;
+import com.module.dot.model.User;
+import com.module.dot.utils.FileManager;
+import com.module.dot.utils.Utils;
 import com.module.dot.view.fragments.HomeFragment;
 import com.module.dot.view.fragments.ItemsFragment;
 import com.module.dot.view.fragments.LoginFragment;
 import com.module.dot.view.fragments.OrdersFragment;
 import com.module.dot.view.fragments.SettingsFragment;
 import com.module.dot.view.fragments.TransactionsFragment;
-import com.module.dot.model.User;
 import com.module.dot.view.fragments.UsersFragment;
-import com.module.dot.data.remote.FirebaseHandler;
-import com.module.dot.data.local.ItemDatabase;
-import com.module.dot.data.local.MyDatabaseManager;
-import com.module.dot.data.local.OrderDatabase;
-import com.module.dot.data.local.OrderItemsDatabase;
-import com.module.dot.data.local.TransactionDatabase;
-import com.module.dot.data.local.UserDatabase;
-import com.module.dot.utils.FileManager;
-import com.module.dot.utils.Utils;
-import com.module.dot.R;
 import com.module.dot.view.utils.UIController;
 
 import java.util.Objects;
@@ -77,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         uiController = new UIController(this);
 
 
-        createTables(); // Load data from the database
-        loadData(); // Load data from the database
+//        createTables(); // Load data from the database
+//        loadData(); // Load data from the database
 
         // Find views in the navigation header
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -299,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         myDatabaseManager.deleteAll("sqlite_sequence");
                         myDatabaseManager.deleteAll("android_metadata");
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e("Database", "Error cleaning tables", e);
                     }
 
                     FileManager.clearAppCache(this); // Clear the local storage
@@ -320,45 +314,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private void createTables() {
-        try (ItemDatabase itemDatabase = new ItemDatabase(this)){
-            if (!itemDatabase.isTableExists("items")){
-                itemDatabase.onCreate(itemDatabase.getWritableDatabase()); // Create the database
-            }
-        }
+//    private void createTables() {
+//        try (ItemDatabase itemDatabase = new ItemDatabase(this)){
+//            if (!itemDatabase.isTableExists("items")){
+//                itemDatabase.onCreate(itemDatabase.getWritableDatabase()); // Create the database
+//            }
+//        }
+//
+//        try (UserDatabase userDatabase = new UserDatabase(this)){
+//            if (!userDatabase.isTableExists("users")){
+//                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
+//            }
+//        }
+//
+//        try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(this)){
+//            if (!orderItemsDatabase.isTableExists("order_items")) {
+//                orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
+//            }
+//        }
+//
+//        try (TransactionDatabase transactionDatabase = new TransactionDatabase(this)){
+//            if (!transactionDatabase.isTableExists("transactions")) {
+//                transactionDatabase.onCreate(transactionDatabase.getWritableDatabase()); // Create the database
+//            }
+//        }
+//
+//        try (OrderDatabase orderDatabase = new OrderDatabase(this)){
+//            if (!orderDatabase.isTableExists("orders")) {
+//                orderDatabase.onCreate(orderDatabase.getWritableDatabase()); // Create the database
+//            }
+//        }
+//
+//    }
 
-        try (UserDatabase userDatabase = new UserDatabase(this)){
-            if (!userDatabase.isTableExists("users")){
-                userDatabase.onCreate(userDatabase.getWritableDatabase()); // Create the database
-            }
-        }
-
-        try (OrderItemsDatabase orderItemsDatabase = new OrderItemsDatabase(this)){
-            if (!orderItemsDatabase.isTableExists("order_items")) {
-                orderItemsDatabase.onCreate(orderItemsDatabase.getWritableDatabase()); // Create the database
-            }
-        }
-
-        try (TransactionDatabase transactionDatabase = new TransactionDatabase(this)){
-            if (!transactionDatabase.isTableExists("transactions")) {
-                transactionDatabase.onCreate(transactionDatabase.getWritableDatabase()); // Create the database
-            }
-        }
-
-        try (OrderDatabase orderDatabase = new OrderDatabase(this)){
-            if (!orderDatabase.isTableExists("orders")) {
-                orderDatabase.onCreate(orderDatabase.getWritableDatabase()); // Create the database
-            }
-        }
-
-    }
-
-    private void loadData(){
-        FirebaseHandler.readItem("items", this);
-        FirebaseHandler.readUser( "users", this);
-        FirebaseHandler.readOrder("orders", this);
-        FirebaseHandler.readTransaction("transactions", this);
-    }
+//    private void loadData(){
+//        FirebaseHandler.readItem("items", this);
+//        FirebaseHandler.readUser( "users", this);
+//        FirebaseHandler.readOrder("orders", this);
+//        FirebaseHandler.readTransaction("transactions", this);
+//    }
 
     public void enableNavigationViews(int visibility) {
         toolbar.setVisibility(visibility);
