@@ -30,6 +30,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.module.dot.view.fragments.HomeFragment;
 import com.module.dot.view.fragments.ItemsFragment;
+import com.module.dot.view.fragments.LoginFragment;
 import com.module.dot.view.fragments.OrdersFragment;
 import com.module.dot.view.fragments.SettingsFragment;
 import com.module.dot.view.fragments.TransactionsFragment;
@@ -45,6 +46,7 @@ import com.module.dot.data.local.UserDatabase;
 import com.module.dot.utils.FileManager;
 import com.module.dot.utils.Utils;
 import com.module.dot.R;
+import com.module.dot.view.utils.UIController;
 
 import java.util.Objects;
 
@@ -52,19 +54,28 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
-    private Intent loginActivity;
+//    private Intent loginActivity;
 
     private FirebaseAuth mAuth;
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
     View navigationHeader;
+    Toolbar toolbar;
 
     public static User currentUser;
+    UIController uiController;
+    String UID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+//        FirebaseUser currentFirebaseUser = mAuth.getCurrentUser();
+        uiController = new UIController(this);
+
 
         createTables(); // Load data from the database
         loadData(); // Load data from the database
@@ -73,40 +84,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationHeader = navigationView.getHeaderView(0);
 
-        mAuth = FirebaseAuth.getInstance();
-
         drawerLayout = findViewById(R.id.drawer_layout);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
         CircleImageView navHeaderImage = navigationHeader.findViewById(R.id.iv_profile_image);
         TextView navHeaderInitial = navigationHeader.findViewById(R.id.tv_initials);
         TextView navHeaderFullName = navigationHeader.findViewById(R.id.tv_fullName);
         TextView navHeaderEmail = navigationHeader.findViewById(R.id.tv_email);
 
-        String UID = FirebaseHandler.getCurrentUserOnlineID(mAuth);
-        String imagePath = "Profiles/" + UID;
-        StorageReference storageRef = storage.getReference(imagePath);
 
-        final long ONE_MEGABYTE = 512 * 512;
-        storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-            // Data for "images/island.jpg" is returns, use this as needed
-            Log.i("Firebase", "Successfully retrieved profile image");
-            Drawable profileImage = Utils.byteArrayToDrawable(bytes, getResources());
-            navHeaderInitial.setVisibility(View.GONE);
-            navHeaderImage.setImageDrawable(profileImage);
-        }).addOnFailureListener(exception -> {
-            // Handle any errors
-            Log.e("Firebase", "Error getting profile image", exception);
-
-        });
-
-        // TODO: set navigation header here
-//        navHeaderImage.setImageDrawable();
-
-//        navHeaderFullName.setText("fullName");
-//        navHeaderInitial.setText("X");
-//        navHeaderEmail.setText("email");
 
 
 
@@ -119,23 +106,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Set Home fragment as default fragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment())
-                    .commit();
-
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
 
 
-        FirebaseUser user = mAuth.getCurrentUser();
+
+
+
+
 
         if (user != null) {
-            String uid = user.getUid();
+            toolbar.setVisibility(View.VISIBLE);
 
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+            // Set Home fragment as default fragment
+            if (savedInstanceState == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new HomeFragment())
+                        .commit();
+
+                navigationView.setCheckedItem(R.id.nav_home);
+            }
+
+            UID = user.getUid();
+
+            String imagePath = "Profiles/" + UID;
+            StorageReference storageRef = storage.getReference(imagePath);
+
+            final long ONE_MEGABYTE = 512 * 512;
+            storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+                // Data for "images/island.jpg" is returns, use this as needed
+                Log.i("Firebase", "Successfully retrieved profile image");
+                Drawable profileImage = Utils.byteArrayToDrawable(bytes, getResources());
+                navHeaderInitial.setVisibility(View.GONE);
+                navHeaderImage.setImageDrawable(profileImage);
+            }).addOnFailureListener(exception -> {
+                // Handle any errors
+                Log.e("Firebase", "Error getting profile image", exception);
+
+            });
+
+            // TODO: set navigation header here
+//        navHeaderImage.setImageDrawable();
+
+//        navHeaderFullName.setText("fullName");
+//        navHeaderInitial.setText("X");
+//        navHeaderEmail.setText("email");
+
+
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(UID);
 
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -174,7 +191,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Log.e("Firebase", "Error getting user data", databaseError.toException());
                 }
             });
+        } else {
+            toolbar.setVisibility(View.GONE);
+            uiController.changeFragment(new LoginFragment());
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     }
@@ -252,9 +304,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     FileManager.clearAppCache(this); // Clear the local storage
 
-                    loginActivity = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(loginActivity);
-                    finish();
+//                    loginActivity = new Intent(MainActivity.this, LoginActivity.class);
+//                    startActivity(loginActivity);
+//                    finish();
+
+                    uiController.changeFragment(new LoginFragment());
 
                     // Toast Message for log out
                     String messages = getResources().getString(R.string.logout);
@@ -304,6 +358,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FirebaseHandler.readUser( "users", this);
         FirebaseHandler.readOrder("orders", this);
         FirebaseHandler.readTransaction("transactions", this);
+    }
+
+    public void enableNavigationViews(int visibility) {
+        toolbar.setVisibility(visibility);
+//        this.recreate();
     }
 
 }

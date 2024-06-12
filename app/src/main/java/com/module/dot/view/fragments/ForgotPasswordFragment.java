@@ -1,5 +1,7 @@
 package com.module.dot.view.fragments;
 
+import static com.module.dot.view.utils.UIController.makeDialogFullscreen;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.module.dot.R;
 
 /**
@@ -15,7 +19,7 @@ import com.module.dot.R;
  * Use the {@link ForgotPasswordFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ForgotPasswordFragment extends Fragment {
+public class ForgotPasswordFragment extends BottomSheetDialogFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,5 +66,14 @@ public class ForgotPasswordFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_forgot_password, container, false);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
+        makeDialogFullscreen(dialog);
+
     }
 }

@@ -90,6 +90,12 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+        assert mainActivity != null;
+        mainActivity.enableNavigationViews(View.VISIBLE);
+
+//        requireActivity().recreate(); // Refresh MainActivity
+
         LinearLayout noData = view.findViewById(R.id.noDataHomeFragmentLL); // When Database is empty
         GridView itemGridview = view.findViewById(R.id.itemList);
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);

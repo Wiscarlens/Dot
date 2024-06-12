@@ -2,6 +2,8 @@ package com.module.dot.view.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.module.dot.view.utils.UIController.makeDialogFullscreen;
+
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +39,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,7 +58,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class SignupFragment extends Fragment {
+public class SignupFragment extends BottomSheetDialogFragment {
 
     private ImageButton step1Button;
     private ImageButton step2Button;
@@ -531,5 +535,12 @@ public class SignupFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
+        makeDialogFullscreen(dialog);
+
+    }
 }
