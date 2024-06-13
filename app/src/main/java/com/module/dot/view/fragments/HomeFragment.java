@@ -96,7 +96,6 @@ public class HomeFragment extends Fragment {
 
         LinearLayout noData = view.findViewById(R.id.noDataHomeFragmentLL); // When Database is empty
         RecyclerView recyclerView = view.findViewById(R.id.itemList);
-//        GridView itemGridview = view.findViewById(R.id.itemList);
         FloatingActionButton scanButton = view.findViewById(R.id.scanButton);
         chargeButton = view.findViewById(R.id.Charge);
 
@@ -115,9 +114,6 @@ public class HomeFragment extends Fragment {
 
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         recyclerView.setAdapter(new ItemAdapter(itemList, getContext(), this));
-
-//        ItemGridAdapter itemGridAdapter = new ItemGridAdapter(itemList, getContext());
-//        itemGridview.setAdapter(itemGridAdapter);
 
         updateTax(0.0);
         updateAmount(0.00);
@@ -282,7 +278,7 @@ public class HomeFragment extends Fragment {
 
         bottomSheetDialog.show();
 
-        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        Objects.requireNonNull(bottomSheetDialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
@@ -313,7 +309,7 @@ public class HomeFragment extends Fragment {
      */
     private int getScreenHeight() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics.heightPixels;
     }
 
